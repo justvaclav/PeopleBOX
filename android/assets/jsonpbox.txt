@@ -1,0 +1,88 @@
+{
+boxes: [
+	{
+		indisTest: []
+		objectsTest: [
+			{
+				appearance: 3
+				fixity: 1380
+				x: 400
+				tileX: 1
+				tileY: 1
+				num0: 1
+			}
+		]
+		boxY: 2
+		boxZ: 2
+		description: ""
+	}
+]
+inits: []
+jobs: [
+	{
+		name: Ничегонеделатель
+		id: 1
+		salary: 400
+		vacancy: 10
+		startTime: 9
+		hours: 8
+		skills: {}
+	}
+	{
+		name: Копирайтер
+		id: 2
+		salary: 250
+		vacancy: 10
+		type: 1
+		startTime: 9
+		hours: 8
+		skills: {}
+	}
+	{
+		name: Веб-дизайнер
+		id: 3
+		salary: 750
+		vacancy: 10
+		type: 1
+		startTime: 9
+		hours: 8
+		skills: {
+			creativity: 4
+		}
+	}
+	{
+		name: Посудомойщик
+		id: 4
+		salary: 200
+		vacancy: 10
+		startTime: 9
+		hours: 8
+		skills: {}
+	}
+	{
+		name: Врач
+		id: 5
+		salary: 2500
+		vacancy: 10
+		startTime: 9
+		hours: 8
+		skills: {
+			charm: 10
+		}
+	}
+	{
+		name: Учитель
+		id: 6
+		salary: 600
+		vacancy: 10
+		startTime: 9
+		hours: 8
+		skills: {
+			logic: 5
+		}
+	}
+]
+name: testing_tva
+sizeX: 128
+sizeY: 128
+}

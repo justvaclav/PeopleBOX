@@ -1,0 +1,72 @@
+    [
+        {
+        	class: com.peoplebox.SocietyScreen$Book
+        	author: Дж.Оруэлл
+        	desc: ""
+        	name: "Скотный двор"
+        	token: 0
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$Book
+        	author: У.Теккерей
+        	desc: ""
+        	name: "Ярмарка тщеславия"
+        	token: 0
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$Book
+        	author: Г.Гарсиа Маркес
+        	desc: ""
+        	name: "Сто лет одиночества"
+        	token: 0
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$Book
+        	author: Ч.Паланик
+        	desc: ""
+        	name: "Бойцовский клуб"
+        	token: 0
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$Book
+        	author: Э.Ремарк
+        	desc: ""
+        	name: "На Западном фронте без перемен"
+        	token: 0
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$Book
+        	author: Дж.Лондон
+        	desc: ""
+        	name: "Мартин Иден"
+        	token: 0
+        }
+        {
+    	class: com.peoplebox.SocietyScreen$Book
+    	author: Л.Н.Толстой
+    	desc: ""
+    	name: "Война и мир"
+    	token: 0
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$Book
+    	author: Ж.-П.Сартр
+    	desc: ""
+    	name: "Тошнота"
+    	token: 0
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$Book
+    	author: Ги де Мопассан
+    	desc: ""
+    	name: "Милый друг"
+    	token: 0
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$Book
+    	author: С.Кинг
+    	desc: ""
+    	name: "Клатбище домашних жывотных"
+    	token: 0
+    }
+    ]

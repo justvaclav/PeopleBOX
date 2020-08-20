@@ -1,0 +1,205 @@
+[
+    {
+    	class: com.peoplebox.Addition$Channel
+    	audience: 843427
+    	name: TF1
+    	rating: 2
+    	shows: []
+    }
+    {
+    	class: com.peoplebox.Addition$Channel
+    	audience: 842135
+    	name: Antenne 2
+    	rating: 8
+    	shows: []
+    }
+    {
+    	class: com.peoplebox.Addition$Channel
+    	audience: 843406
+    	name: FR3
+    	rating: 6
+    	shows: []
+    }
+    {
+    	class: com.peoplebox.Addition$Channel
+    	audience: 843601
+    	name: La Cinq
+    	rating: 6
+    	shows: []
+    }
+    {
+    	class: com.peoplebox.Addition$Channel
+    	audience: 843067
+    	name: Canal+
+    	rating: 4
+    	shows: []
+    }
+    {
+    	class: com.peoplebox.Addition$Channel
+    	audience: 843522
+    	name: NHK
+    	rating: 7
+    	shows: []
+    }
+    {
+    	class: com.peoplebox.Addition$Channel
+    	audience: 842980
+    	name: BBC
+    	rating: 4
+    	shows: []
+    }
+    {
+    	class: com.peoplebox.Addition$Channel
+    	audience: 842552
+    	name: OPT
+    	rating: 8
+    	shows: []
+    }
+    {
+    	class: com.peoplebox.Addition$Channel
+    	audience: 843153
+    	name: PTP
+    	rating: 8
+    	shows: []
+    }
+    {
+    	class: com.peoplebox.Addition$Channel
+    	audience: 843563
+    	name: HTB
+    	rating: 9
+    	shows: []
+    }
+    {
+    	class: com.peoplebox.Addition$Channel
+    	audience: 842419
+    	name: ZDF
+    	rating: 10
+    	shows: []
+    }
+    {
+    	class: com.peoplebox.Addition$Channel
+    	audience: 842476
+    	name: TB-6
+    	rating: 9
+    	shows: []
+    }
+    {
+    	class: com.peoplebox.Addition$Channel
+    	audience: 843824
+    	name: HBO
+    	rating: 5
+    	shows: []
+    }
+    {
+    	class: com.peoplebox.Addition$Channel
+    	audience: 843527
+    	name: PBS
+    	rating: 8
+    	shows: []
+    }
+    {
+    	class: com.peoplebox.Addition$Channel
+    	audience: 843614
+    	name: CBS
+    	rating: 7
+    	shows: []
+    }
+    {
+    	class: com.peoplebox.Addition$Channel
+    	audience: 843173
+    	name: NBC
+    	rating: 2
+    	shows: []
+    }
+    {
+    	class: com.peoplebox.Addition$Channel
+    	audience: 843020
+    	name: ABC
+    	rating: 1
+    	shows: []
+    }
+    {
+    	class: com.peoplebox.Addition$Channel
+    	audience: 844057
+    	name: FOX
+    	rating: 6
+    	shows: []
+    }
+    {
+    	class: com.peoplebox.Addition$Channel
+    	audience: 844081
+    	name: MTV
+    	rating: 1
+    	shows: []
+    }
+    {
+    	class: com.peoplebox.Addition$Channel
+    	audience: 843279
+    	name: History Channel
+    	rating: 7
+    	shows: []
+    }
+    {
+    	class: com.peoplebox.Addition$Channel
+    	audience: 842781
+    	name: Discovery Channel
+    	rating: 4
+    	shows: []
+    }
+    {
+    	class: com.peoplebox.Addition$Channel
+    	audience: 843757
+    	name: Animal Planet
+    	rating: 6
+    	shows: []
+    }
+    {
+    	class: com.peoplebox.Addition$Channel
+    	audience: 843142
+    	name: TLC
+    	rating: 6
+    	shows: []
+    }
+    {
+    	class: com.peoplebox.Addition$Channel
+    	audience: 843869
+    	name: Travel Channel
+    	rating: 10
+    	shows: []
+    }
+    {
+    	class: com.peoplebox.Addition$Channel
+    	audience: 842428
+    	name: CNN
+    	rating: 8
+    	shows: []
+    }
+    {
+    	class: com.peoplebox.Addition$Channel
+    	audience: 842123
+    	name: National Geographic
+    	rating: 2
+    	shows: []
+    }
+    {
+    	class: com.peoplebox.Addition$Channel
+    	audience: 842885
+    	name: ESPN
+    	rating: 1
+    	shows: []
+    }
+    {
+    	class: com.peoplebox.Addition$Channel
+    	audience: 842312
+    	name: TV4
+    	rating: 2
+    	shows: []
+    }
+    {
+    	class: com.peoplebox.Addition$Channel
+    	audience: 842615
+    	name: SVT
+    	rating: 3
+    	shows: []
+    }
+    ]

@@ -1,0 +1,822 @@
+[
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: Добавить уборную
+    	appear: 1
+    	desc: ""
+    	prodEnd: 9000
+    	texturePath: comm/toiletdoor11.png
+    	type: -1
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: Добавить выход
+    	appear: 1
+    	desc: ""
+    	prodEnd: 9000
+    	texturePath: comm/door11.png
+    	type: -2
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: Холодильник Eco+ 3000
+    	appear: 3
+    	desc: ""
+    	price: 400
+    	prodEnd: 2029
+    	prodStart: 2006
+    	texturePath: kitchen/fridge21.png
+    	type: 1
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: ""
+    	appear: 5
+    	desc: ""
+    	price: 400
+    	prodEnd: 9000
+    	texturePath: kitchen/fridge31.png
+    	type: 1
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: ""
+    	appear: 7
+    	desc: ""
+    	price: 400
+    	prodEnd: 9000
+    	texturePath: kitchen/fridge41.png
+    	type: 1
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: Кровать BadBed
+    	appear: 9
+    	desc: ""
+    	price: 399
+    	prodEnd: 9000
+    	texturePath: beds/bed31.png
+    	type: 2
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: Твоя любимая постель
+    	appear: 13
+    	desc: ""
+    	price: 599
+    	prodEnd: 9000
+    	texturePath: beds/bed41.png
+    	type: 2
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: Нескучная лампа
+    	appear: 3
+    	desc: ""
+    	price: 400
+    	prodEnd: 9000
+    	texturePath: lamps/lamp32.png
+    	type: 3
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: ""
+    	appear: 7
+    	desc: ""
+    	price: 400
+    	prodEnd: 9000
+    	texturePath: lamps/lamp42.png
+    	type: 3
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: Бюджетный рабочий стол
+    	appear: 1
+    	desc: ""
+    	price: 400
+    	prodEnd: 9000
+    	texturePath: tables/table11.png
+    	type: 4
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: Стеклянный и тонкий
+    	appear: 3
+    	desc: ""
+    	price: 400
+    	prodEnd: 9000
+    	texturePath: tables/table31.png
+    	type: 4
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: ""
+    	appear: 7
+    	desc: ""
+    	price: 400
+    	prodEnd: 9000
+    	texturePath: tables/table51.png
+    	type: 4
+    }
+
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: ""
+    	appear: 11
+    	desc: ""
+    	price: 400
+    	prodEnd: 9000
+    	texturePath: tables/table71.png
+    	type: 4
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: ""
+    	appear: 13
+    	desc: ""
+    	price: 400
+    	prodEnd: 9000
+    	texturePath: tables/table81.png
+    	type: 4
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: ""
+    	appear: 15
+    	desc: ""
+    	price: 400
+    	prodEnd: 9000
+    	texturePath: tables/table91.png
+    	type: 4
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: Телевизор Bleambanks \nMonohue
+    	appear: 13
+    	desc: ""
+    	price: 49
+    	prodEnd: 1999
+    	prodStart: 1975
+    	texturePath: tvs/tvset41.png
+    	type: 5
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: Телевизор Hanco \nProVision
+    	appear: 17
+    	desc: ""
+    	price: 899
+    	prodEnd: 2029
+    	prodStart: 2003
+    	texturePath: tvs/tvset51.png
+    	type: 5
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: ""
+    	appear: 21
+    	desc: ""
+    	price: 299
+    	prodEnd: 9000
+    	texturePath: tvs/tvset61.png
+    	type: 5
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: Задумчивый Пентиум
+    	appear: 1
+    	desc: ""
+    	price: 59
+    	prodEnd: 2006
+    	prodStart: 1993
+    	texturePath: pcs/pc11.png
+    	type: 6
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: Моноблок Hanco Kawo
+    	appear: 3
+    	desc: ""
+    	price: 499
+    	prodEnd: 2025
+    	prodStart: 2009
+    	texturePath: pcs/pc21.png
+    	type: 6
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: Сигма-Пи
+    	appear: 5
+    	desc: ""
+    	price: 199
+    	prodEnd: 2004
+    	prodStart: 1998
+    	texturePath: pcs/mac11.png
+    	type: 6
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: ""
+    	appear: 7
+    	desc: ""
+    	price: 899
+    	prodEnd: 2055
+    	prodStart: 2009
+    	texturePath: pcs/pc41.png
+    	type: 6
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: Вечножующий принтер
+    	appear: 7
+    	desc: ""
+    	price: 99
+    	prodEnd: 9000
+    	texturePath: office/printer11.png
+    	type: 23
+    }
+    {
+        	class: com.peoplebox.SocietyScreen$FurnCard
+        	name: Куст 1
+        	appear: 1
+        	desc: ""
+        	price: 49
+        	prodEnd: 9000
+        	texturePath: deco/bush2.png
+        	type: 7
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$FurnCard
+        	name: Куст 2
+        	appear: 16
+        	desc: ""
+        	price: 49
+        	prodEnd: 9000
+        	texturePath: deco/bush3.png
+        	type: 7
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$FurnCard
+        	name: Куст 3
+        	appear: 34
+        	desc: ""
+        	price: 49
+        	prodEnd: 9000
+        	texturePath: deco/plant2.png
+        	type: 7
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$FurnCard
+        	name: Бл9дский фламинго
+        	appear: 42
+        	desc: ""
+        	price: 19
+        	prodEnd: 9000
+        	texturePath: deco/flamingo12.png
+        	type: 7
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$FurnCard
+        	name: ""
+        	appear: 54
+        	desc: ""
+        	price: 1199
+        	prodEnd: 9000
+        	texturePath: deco/aquarium12.png
+        	type: 7
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$FurnCard
+        	name: Милый друг\n(с подстаканником)
+        	appear: 46
+        	desc: ""
+        	price: 149
+        	prodEnd: 9000
+        	texturePath: deco/dolphin12.png
+        	type: 7
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$FurnCard
+        	name: Ведро для бутылочных \nкрышек
+        	appear: 17
+        	desc: ""
+        	price: 29
+        	prodEnd: 9000
+        	texturePath: deco/vase1.png
+        	type: 7
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$FurnCard
+        	name: ""
+        	appear: 1
+        	desc: ""
+        	price: 149
+        	prodEnd: 9000
+        	texturePath: deco/dresser11.png
+        	type: 35
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$FurnCard
+        	name: ""
+        	appear: 3
+        	desc: ""
+        	price: 179
+        	prodEnd: 9000
+        	texturePath: deco/dresser21.png
+        	type: 35
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$FurnCard
+        	name: Произведение искусства \n(лежит)
+        	appear: 32
+        	desc: ""
+        	price: 1499
+        	prodEnd: 9000
+        	texturePath: deco/statue21.png
+        	type: 7
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$FurnCard
+        	name: "Нет, это не Ленин"
+        	appear: 36
+        	desc: ""
+        	price: 1299
+        	prodEnd: 9000
+        	texturePath: deco/statue31.png
+        	type: 7
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$FurnCard
+        	name: Не самая античная статуя
+        	appear: 38
+        	desc: ""
+        	price: 1999
+        	prodEnd: 9000
+        	texturePath: deco/statue41.png
+        	type: 7
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$FurnCard
+        	name: Бутыль доисторическая
+        	appear: 40
+        	desc: ""
+        	price: 2499
+        	prodEnd: 9000
+        	texturePath: deco/statue51.png
+        	type: 7
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$FurnCard
+        	name: Колонна 1
+        	appear: 28
+        	desc: ""
+        	price: 799
+        	prodEnd: 9000
+        	texturePath: deco/column11.png
+        	type: 7
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$FurnCard
+        	name: Колонна 2
+        	appear: 30
+        	desc: ""
+        	price: 799
+        	prodEnd: 9000
+        	texturePath: deco/column21.png
+        	type: 7
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$FurnCard
+        	name: ""
+        	appear: 26
+        	desc: ""
+        	price: 2499
+        	prodEnd: 9000
+        	texturePath: deco/painting11.png
+        	type: 7
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$FurnCard
+        	name: ""
+        	appear: 44
+        	desc: ""
+        	price: 1199
+        	prodEnd: 9000
+        	texturePath: deco/painting22.png
+        	type: 7
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$FurnCard
+        	name: Кресло 3
+        	appear: 9
+        	desc: ""
+        	price: 349
+        	prodEnd: 2035
+        	prodStart: 1978
+        	texturePath: armchairs/armchair31.png
+        	type: 8
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$FurnCard
+        	name: Кресло 4
+        	appear: 11
+        	desc: ""
+        	price: 299
+        	prodEnd: 1985
+        	prodStart: 1954
+        	texturePath: armchairs/armchair41.png
+        	type: 8
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$FurnCard
+        	name: Кресло 5
+        	appear: 13
+        	desc: ""
+        	price: 149
+        	prodEnd: 1985
+        	prodStart: 1954
+        	texturePath: armchairs/armchair51.png
+        	type: 8
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$FurnCard
+        	name: ""
+        	appear: 15
+        	desc: ""
+        	price: 499
+        	prodEnd: 9000
+        	texturePath: armchairs/armchair61.png
+        	type: 8
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$FurnCard
+        	name: ""
+        	appear: 9
+        	desc: ""
+        	price: 400
+        	prodEnd: 9000
+        	texturePath: chairs/chair31.png
+        	type: 9
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$FurnCard
+        	name: Серьезный стул
+        	appear: 5
+        	desc: ""
+        	price: 400
+        	prodEnd: 9000
+        	texturePath: chairs/chair51.png
+        	type: 9
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$FurnCard
+        	name: Несерьезный стул
+        	appear: 7
+        	desc: ""
+        	price: 400
+        	prodEnd: 9999
+        	texturePath: chairs/chair61.png
+        	type: 9
+        }
+{
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: Кухонный стул
+    	appear: 11
+    	desc: ""
+    	price: 400
+    	prodEnd: 9000
+    	texturePath: chairs/chair71.png
+    	type: 9
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: ""
+    	appear: 13
+    	desc: ""
+    	price: 400
+    	prodEnd: 9000
+    	texturePath: chairs/chair81.png
+    	type: 9
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: ""
+    	appear: 15
+    	desc: ""
+    	price: 400
+    	prodEnd: 9000
+    	texturePath: chairs/chair91.png
+    	type: 9
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: ""
+    	appear: 17
+    	desc: ""
+    	price: 400
+    	prodEnd: 9000
+    	texturePath: chairs/barstool11.png
+    	type: 9
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: ""
+    	appear: 19
+    	desc: ""
+    	price: 400
+    	prodEnd: 9000
+    	texturePath: chairs/barstool21.png
+    	type: 9
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: Синтезатор "Omaha \nDX-7"
+    	appear: 1
+    	desc: ""
+    	price: 400
+    	prodEnd: 1999
+    	prodStart: 1983
+    	texturePath: skills/piano31.png
+    	type: 10
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: Некрономикон
+    	appear: 5
+    	desc: ""
+    	price: 400
+    	prodEnd: 9000
+    	texturePath: shelves/bookshelf32.png
+    	type: 11
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: Ламповый стеллаж
+    	appear: 7
+    	desc: ""
+    	price: 400
+    	prodEnd: 9000
+    	texturePath: shelves/bookshelf42.png
+    	type: 11
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: ""
+    	appear: 9
+    	desc: ""
+    	price: 400
+    	prodEnd: 9000
+    	texturePath: shelves/bookshelf52.png
+    	type: 11
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: ""
+    	appear: 11
+    	desc: ""
+    	price: 400
+    	prodEnd: 9000
+    	texturePath: shelves/bookshelf62.png
+    	type: 11
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: Секретные материалы
+    	appear: 3
+    	desc: ""
+    	price: 400
+    	prodEnd: 9000
+    	texturePath: office/drawers11.png
+    	type: 23
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: Кухонная тумба 1
+    	appear: 20
+    	desc: ""
+    	price: 400
+    	prodEnd: 9000
+    	texturePath: kitchen/counter13.png
+    	type: 7
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: Кухонная тумба 2
+    	appear: 22
+    	desc: ""
+    	price: 400
+    	prodEnd: 9000
+    	texturePath: kitchen/counter17.png
+    	type: 7
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: Кухонная тумба 3
+    	appear: 24
+    	desc: ""
+    	price: 400
+    	prodEnd: 9000
+    	texturePath: kitchen/counter11.png
+    	type: 7
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: Плита
+    	appear: 3
+    	desc: ""
+    	price: 400
+    	prodEnd: 9000
+    	texturePath: kitchen/counter15.png
+    	type: 12
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: Плита "Уголёк"
+    	appear: 1
+    	desc: ""
+    	price: 400
+    	prodEnd: 9000
+    	texturePath: kitchen/oven11.png
+    	type: 12
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: Диван 1
+    	appear: 5
+    	desc: ""
+    	price: 400
+    	prodEnd: 2060
+    	prodStart: 1965
+    	texturePath: coaches/couch31.png
+    	type: 16
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: Диван 2
+    	appear: 7
+    	desc: ""
+    	price: 400
+    	prodEnd: 2060
+    	prodStart: 1965
+    	texturePath: coaches/couch41.png
+    	type: 16
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: ""
+    	appear: 9
+    	desc: ""
+    	price: 400
+    	prodEnd: 9000
+    	texturePath: coaches/couch51.png
+    	type: 16
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: ""
+    	appear: 11
+    	desc: ""
+    	price: 400
+    	prodEnd: 9000
+    	texturePath: coaches/couch61.png
+    	type: 16
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: Бильярдный стол
+    	appear: 1
+    	desc: ""
+    	price: 400
+    	prodEnd: 9000
+    	texturePath: deco/pool21.png
+    	type: 19
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: Велотренажёр
+    	appear: 1
+    	desc: ""
+    	price: 400
+    	prodEnd: 9000
+    	texturePath: skills/bike11.png
+    	type: 20
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: Беговая дорожка "Хомяк \nнашего времени"
+    	appear: 1
+    	desc: ""
+    	price: 400
+    	prodEnd: 9000
+    	texturePath: skills/treadmill11.png
+    	type: 22
+    }
+{
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: Уголок химика
+    	appear: 1
+    	desc: ""
+    	price: 400
+    	prodEnd: 9000
+    	texturePath: science/sciencecorner11.png
+    	type: 24
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: Уголок химика
+    	appear: 3
+    	desc: ""
+    	price: 400
+    	prodEnd: 9000
+    	texturePath: science/sciencecorner21.png
+    	type: 24
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: Стеклянная стена 1
+    	appear: 48
+    	desc: ""
+    	price: 400
+    	prodEnd: 9000
+    	texturePath: tvstation/glasswall12.png
+    	type: 7
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: Стеклянная стена 2
+    	appear: 50
+    	desc: ""
+    	price: 400
+    	prodEnd: 9000
+    	texturePath: tvstation/glasswall22.png
+    	type: 7
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: Antenne 2
+    	appear: 14
+    	desc: ""
+    	price: 200
+    	prodStart: 1986
+    	prodEnd: 9000
+    	texturePath: debugItems/antenne2.png
+    	type: 7
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: Аппаратная телеканала
+    	appear: 1
+    	desc: ""
+    	price: 5800
+    	prodStart: 1986
+    	prodEnd: 9000
+    	texturePath: tvstation/tvstation12.png
+    	type: 25
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: Монтажная телеканала
+    	appear: 1
+    	desc: ""
+    	price: 3600
+    	prodStart: 1986
+    	prodEnd: 9000
+    	texturePath: tvstation/instrumentroom12.png
+    	type: 33
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: Студия новостей
+    	appear: 1
+    	desc: ""
+    	price: 1600
+    	prodStart: 1986
+    	prodEnd: 9000
+    	targetX: 170
+    	targetY: 100
+    	texturePath: tvstation/newsstand12.png
+    	type: 31
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$FurnCard
+    	name: Зеленый экран
+    	appear: 1
+    	desc: ""
+    	price: 500
+    	prodStart: 1986
+    	prodEnd: 9000
+    	texturePath: tvstation/greenscreen12.png
+    	type: 30
+    }
+    {
+     	class: com.peoplebox.SocietyScreen$FurnCard
+     	name: Телекамера
+     	appear: 1
+     	desc: ""
+     	price: 1100
+     	prodStart: 1986
+     	prodEnd: 9000
+     	texturePath: tvstation/camera12.png
+     	type: 32
+     }
+]

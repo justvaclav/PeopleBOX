@@ -1,0 +1,256 @@
+{
+    boxX: 7
+    boxY: 10
+    boxZ: 1
+    dd: 2
+    description: ""
+    foodRemain: 54
+    hh: 15
+    indisTest: []
+    min: 45
+    mm: 5
+    objectsTest: [
+    	{
+    		appearance: 2
+    		fixity: 616
+    		floor: 1
+    		num0: 1
+    		tileX: 1
+    		tileY: 1
+    		type: -1
+    		x: 472
+    	}
+    	{
+    		appearance: 2
+    		fixity: 497
+    		floor: 1
+    		num0: 2
+    		tileX: 1
+    		tileY: 1
+    		type: -2
+    		x: 259
+    	}
+    	{
+    		appearance: 1
+    		fixity: 448
+    		floor: 1
+    		num0: 3
+    		tileX: 1
+    		tileY: 1
+    		type: 29
+    		x: 541
+    	}
+    	{
+    		appearance: 32
+    		fixity: 363
+    		floor: 1
+    		num0: 4
+    		tileX: 1
+    		tileY: 1
+    		type: 29
+    		x: 576
+    	}
+    	{
+    		appearance: 28
+    		fixity: 329
+    		floor: 1
+    		num0: 5
+    		tileX: 1
+    		tileY: 1
+    		type: 29
+    		x: 213
+    	}
+    	{
+    		appearance: 28
+    		fixity: 581
+    		floor: 1
+    		num0: 6
+    		tileX: 1
+    		tileY: 1
+    		type: 29
+    		x: 682
+    	}
+    	{
+    		appearance: 28
+    		fixity: 129
+    		floor: 1
+    		num0: 7
+    		tileX: 1
+    		tileY: 1
+    		type: 29
+    		x: 638
+    	}
+    	{
+    		appearance: 30
+    		fixity: 362
+    		floor: 1
+    		num0: 8
+    		tileX: 1
+    		tileY: 1
+    		type: 29
+    		x: 1089
+    	}
+    	{
+    		appearance: 26
+    		fixity: 674
+    		floor: 1
+    		num0: 9
+    		tileX: 1
+    		tileY: 1
+    		type: 29
+    		x: 848
+    	}
+    	{
+    		appearance: 14
+    		fixity: 533
+    		floor: 1
+    		num0: 10
+    		tileX: 1
+    		tileY: 1
+    		type: 8
+    		x: 371
+    	}
+    	{
+    		appearance: 8
+    		fixity: 648
+    		floor: 1
+    		num0: 11
+    		tileX: 1
+    		tileY: 1
+    		type: 16
+    		x: 586
+    	}
+    	{
+    		appearance: 16
+    		fixity: 413
+    		floor: 1
+    		num0: 12
+    		tileX: 1
+    		tileY: 1
+    		type: -20
+    		x: 326
+    	}
+    	{
+    		appearance: 1
+    		fixity: 350
+    		floor: 1
+    		num0: 13
+    		tileX: 1
+    		tileY: 1
+    		type: 29
+    		x: 720
+    	}
+    	{
+    		appearance: 43
+    		fixity: 362
+    		floor: 1
+    		num0: 14
+    		tileX: 1
+    		tileY: 1
+    		type: 7
+    		x: 99
+    	}
+    	{
+    		appearance: 43
+    		fixity: 337
+    		floor: 1
+    		num0: 15
+    		tileX: 1
+    		tileY: 1
+    		type: 29
+    		x: 54
+    	}
+    	{
+    		appearance: 43
+    		fixity: 311
+    		floor: 1
+    		num0: 16
+    		tileX: 1
+    		tileY: 1
+    		type: 29
+    		x: 7
+    	}
+    	{
+    		appearance: 46
+    		fixity: 227
+    		floor: 1
+    		num0: 17
+    		tileX: 1
+    		tileY: 1
+    		type: 29
+    		x: 249
+    	}
+    	{
+    		appearance: 46
+    		fixity: 161
+    		floor: 1
+    		num0: 18
+    		tileX: 1
+    		tileY: 1
+    		type: 29
+    		x: 372
+    	}
+    	{
+    		appearance: 36
+    		fixity: 200
+    		floor: 1
+    		num0: 19
+    		tileX: 1
+    		tileY: 1
+    		type: 29
+    		x: 1100
+    	}
+    	{
+    		appearance: 40
+    		fixity: 123
+    		floor: 1
+    		num0: 20
+    		tileX: 1
+    		tileY: 1
+    		type: 29
+    		x: 946
+    	}
+    	{
+    		appearance: 36
+    		fixity: 43
+    		floor: 1
+    		num0: 21
+    		tileX: 1
+    		tileY: 1
+    		type: 29
+    		x: 806
+    	}
+    	{
+    		appearance: 38
+    		fixity: 570
+    		floor: 1
+    		num0: 22
+    		tileX: 1
+    		tileY: 1
+    		type: 7
+    		x: 1010
+    	}
+    	{
+    		appearance: 44
+    		fixity: 585
+    		floor: 1
+    		num0: 23
+    		tileX: 1
+    		tileY: 1
+    		type: 7
+    		x: 1120
+    	}
+    	{
+    		appearance: 7
+    		fixity: 446
+    		floor: 1
+    		num0: 24
+    		tileX: 1
+    		tileY: 1
+    		type: 16
+    		x: 822
+    	}
+    ]
+    property: Museum
+    yyyy: 2015
+    }

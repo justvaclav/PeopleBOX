@@ -1,0 +1,44 @@
+    [
+        {
+        	class: com.peoplebox.SocietyScreen$Book
+        	author: ?
+        	desc: ""
+        	name: "foodBook1"
+        	token: 0
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$Book
+        	author: ?
+        	desc: ""
+        	name: "foodBook2"
+        	token: 0
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$Book
+        	author: ?
+        	desc: ""
+        	name: "foodBook3"
+        	token: 0
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$Book
+        	author: ?
+        	desc: ""
+        	name: "foodBook4"
+        	token: 0
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$Book
+        	author: ?
+        	desc: ""
+        	name: "foodBook5"
+        	token: 0
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$Book
+        	author: ?
+        	desc: ""
+        	name: "foodBook6"
+        	token: 0
+        }
+    ]

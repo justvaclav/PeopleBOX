@@ -1,0 +1,44 @@
+    [
+        {
+        	class: com.peoplebox.SocietyScreen$Book
+        	author: ?
+        	desc: ""
+        	name: "economicsBook1"
+        	token: 0
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$Book
+        	author: ?
+        	desc: ""
+        	name: "economicsBook2"
+        	token: 0
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$Book
+        	author: ?
+        	desc: ""
+        	name: "economicsBook3"
+        	token: 0
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$Book
+        	author: ?
+        	desc: ""
+        	name: "economicsBook4"
+        	token: 0
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$Book
+        	author: ?
+        	desc: ""
+        	name: "economicsBook5"
+        	token: 0
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$Book
+        	author: ?
+        	desc: ""
+        	name: "economicsBook6"
+        	token: 0
+        }
+    ]

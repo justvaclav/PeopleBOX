@@ -1,0 +1,73 @@
+package com.peoplebox;
+
+//I - for interests, N - for needs, T - for talents
+public enum ProfitEnum {
+    IAnimals,
+    IAutos,
+    IBooks,
+    ICrimes,
+    ICulture,
+    IDesign,
+    IEconomics,
+    IFashion,
+    IFilms,
+    IFood,
+    IGames,
+    IHealth,
+    IHistory,
+    IMusic,
+    IMystic,
+    IPhotos,
+    IPolitics,
+    IScience,
+    ISport,
+    ITechnics,
+    ITravel,
+    IWork,
+    NAesthetics,
+    NBladder,
+    NEducation,
+    NEnergy,
+    NEnvironment,
+    NFun,
+    NHunger,
+    NHygiene,
+    NLove,
+    NPower,
+    NProtection,
+    NShopping,
+    NSocial,
+    NSuccess,
+    TCaution,
+    TImagination,
+    TImmunity,
+    TInfluence,
+    TInsight,
+    TLogic,
+    TMemory,
+    TQuickness,
+    TSpeech,
+    TStamina,
+
+    AgeLessThan,
+    AgeMoreThan,
+    ConsumerAmount,
+    ConsumerPercent,
+    LastLevelAmount, //абс. количество людей на 4 уровне, т.е. потребителей/аудитории и т.п.
+    LastLevelPercent, //процент людей на 4 уровне для суммы процентов, с ним обязателен LastLevelAmount
+    LovePts,
+    Money, //+- для оплаты/получки
+    ObjectNeeded,
+    ScenarioAccepted,
+    ScenarioCancelled,
+    ScenarioNeeded,
+    SelfEsteem,
+
+    //TV CHANNEL
+    Montage, //монтаж, передать технику
+    Footage,
+    ReportLead,
+    CameraEvent,
+    Ads,
+    Emission //прямой эфир
+}

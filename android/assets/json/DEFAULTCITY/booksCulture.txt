@@ -1,0 +1,44 @@
+    [
+        {
+        	class: com.peoplebox.SocietyScreen$Book
+        	author: ?
+        	desc: ""
+        	name: "cultureBook1"
+        	token: 0
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$Book
+        	author: ?
+        	desc: ""
+        	name: "cultureBook2"
+        	token: 0
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$Book
+        	author: ?
+        	desc: ""
+        	name: "cultureBook3"
+        	token: 0
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$Book
+        	author: ?
+        	desc: ""
+        	name: "cultureBook4"
+        	token: 0
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$Book
+        	author: ?
+        	desc: ""
+        	name: "cultureBook5"
+        	token: 0
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$Book
+        	author: ?
+        	desc: ""
+        	name: "cultureBook6"
+        	token: 0
+        }
+    ]

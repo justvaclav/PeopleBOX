@@ -1,0 +1,115 @@
+{
+    boxX: 5
+    boxY: 10
+    dd: 1
+    description: ""
+    foodRemain: 54
+    hh: 19
+    indisTest: []
+    min: 1
+    mm: 5
+    objectsTest: [
+    	{
+    		appearance: 14
+    		fixity: 706
+    		floor: 1
+    		num0: 1
+    		tileX: 1
+    		tileY: 1
+    		type: 7
+    		x: 417
+    	}
+    	{
+    		appearance: 49
+    		fixity: 461
+    		floor: 1
+    		num0: 2
+    		tileX: 1
+    		tileY: 1
+    		type: -20
+    		x: 342
+    	}
+    	{
+    		appearance: 51
+    		fixity: 511
+    		floor: 1
+    		num0: 3
+    		tileX: 1
+    		tileY: 1
+    		type: 7
+    		x: 302
+    	}
+    	{
+    		appearance: 2
+    		fixity: 447
+    		floor: 1
+    		num0: 4
+    		tileX: 1
+    		tileY: 1
+    		type: 31
+    		x: 379
+    	}
+    	{
+    		appearance: 6
+    		fixity: 339
+    		floor: 1
+    		num0: 5
+    		tileX: 1
+    		tileY: 1
+    		type: 3
+    		x: 498
+    	}
+    	{
+    		appearance: 1
+    		fixity: 389
+    		floor: 1
+    		num0: 6
+    		tileX: 1
+    		tileY: 1
+    		type: 32
+    		x: 603
+    	}
+    	{
+    		appearance: 52
+    		fixity: 434
+    		floor: 1
+    		num0: 7
+    		tileX: 1
+    		tileY: 1
+    		type: 7
+    		x: 698
+    	}
+    	{
+    		appearance: 1
+    		fixity: 456
+    		floor: 1
+    		num0: 8
+    		tileX: 1
+    		tileY: 1
+    		type: 23
+    		x: 912
+    	}
+    	{
+    		appearance: 5
+    		fixity: 404
+    		floor: 1
+    		num0: 9
+    		tileX: 1
+    		tileY: 1
+    		type: 23
+    		x: 1083
+    	}
+    	{
+    		appearance: 2
+    		fixity: 214
+    		floor: 1
+    		links: [ 43 ]
+    		num0: 10
+    		tileX: 1
+    		tileY: 1
+    		type: 25
+    		x: 1258
+    	}
+    ]
+    yyyy: 2015
+    }

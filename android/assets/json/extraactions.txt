@@ -1,0 +1,122 @@
+[
+    {
+    	class: com.peoplebox.additions.Action
+    	addInterests: {
+    		sport: 1
+    	}
+    	addNeeds: {
+    		bl: -5
+    		energy: -15
+    		hunger: -5
+    		hygiene: -15
+    	}
+    	addTalents: {
+    		stamina: 1
+    	}
+    	animation: 2
+    	delay: 15
+    	en: [
+    		runs on treadmill
+    	]
+    	holdObject: ""
+    	items: [ 22 ]
+    	ru: [
+    		бегает на дорожке
+    	]
+    	startInterests: {
+    		sport: -30
+    	}
+    	startNeeds: {}
+    	startTalents: {}
+    }
+{
+    	class: com.peoplebox.additions.Action
+    	addInterests: {
+    		sport: 1
+    	}
+    	addNeeds: {
+    		bl: -5
+    		energy: -15
+    		hunger: -5
+    		hygiene: -15
+    	}
+    	addTalents: {
+    		stamina: 1
+    	}
+    	animation: 2
+    	delay: 15
+    	en: [
+    		runs on treadmill
+    	]
+    	holdObject: ""
+    	items: [ 22 ]
+    	ru: [
+    		бегает на дорожке
+    	]
+    	startInterests: {
+    		food: 50
+    	}
+    	startNeeds: {}
+    	startTalents: {}
+    }
+{
+    	class: com.peoplebox.additions.Action
+    	addInterests: {
+    		sport: 1
+    	}
+    	addNeeds: {
+    		bl: -5
+    		energy: -15
+    		hunger: -5
+    		hygiene: -15
+    	}
+    	addTalents: {
+    		stamina: 1
+    	}
+    	animation: 2
+    	delay: 15
+    	en: [
+    		runs on treadmill
+    	]
+    	holdObject: ""
+    	items: [ 22 ]
+    	ru: [
+    		бегает на дорожке
+    	]
+    	startInterests: {
+    		sport: -30
+    	}
+    	startNeeds: {}
+    	startTalents: {}
+    }
+{
+    	class: com.peoplebox.additions.Action
+    	addInterests: {
+    		sport: 1
+    	}
+    	addNeeds: {
+    		bl: -5
+    		energy: -15
+    		hunger: -5
+    		hygiene: -15
+    	}
+    	addTalents: {
+    		stamina: 1
+    	}
+    	animation: 2
+    	delay: 15
+    	en: [
+    		runs on treadmill
+    	]
+    	holdObject: ""
+    	items: [ 22 ]
+    	ru: [
+    		бегает на дорожке
+    	]
+    	startInterests: {
+    		sport: -10
+    	}
+    	startNeeds: {}
+    	startTalents: {}
+    }
+    ]

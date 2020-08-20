@@ -1,0 +1,44 @@
+    [
+        {
+        	class: com.peoplebox.SocietyScreen$Book
+        	author: ?
+        	desc: ""
+        	name: "technicsBook1"
+        	token: 0
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$Book
+        	author: ?
+        	desc: ""
+        	name: "technicsBook2"
+        	token: 0
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$Book
+        	author: ?
+        	desc: ""
+        	name: "technicsBook3"
+        	token: 0
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$Book
+        	author: ?
+        	desc: ""
+        	name: "technicsBook4"
+        	token: 0
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$Book
+        	author: ?
+        	desc: ""
+        	name: "technicsBook5"
+        	token: 0
+        }
+        {
+        	class: com.peoplebox.SocietyScreen$Book
+        	author: ?
+        	desc: ""
+        	name: "technicsBook6"
+        	token: 0
+        }
+    ]

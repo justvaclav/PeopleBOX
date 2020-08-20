@@ -1,0 +1,184 @@
+<html>
+<head>
+<title>MainMenuScreen.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6a8759;}
+.s3 { color: #808080;}
+.s4 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+MainMenuScreen.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">com.peoplebox</span><span class="s0">;</span>
+
+import <span class="s1">com.badlogic.gdx.Gdx</span><span class="s0">;</span>
+import <span class="s1">com.badlogic.gdx.Screen</span><span class="s0">;</span>
+import <span class="s1">com.badlogic.gdx.assets.AssetManager</span><span class="s0">;</span>
+import <span class="s1">com.badlogic.gdx.graphics.Color</span><span class="s0">;</span>
+import <span class="s1">com.badlogic.gdx.graphics.GL20</span><span class="s0">;</span>
+import <span class="s1">com.badlogic.gdx.graphics.OrthographicCamera</span><span class="s0">;</span>
+import <span class="s1">com.badlogic.gdx.graphics.Texture</span><span class="s0">;</span>
+import <span class="s1">com.badlogic.gdx.graphics.g2d.Batch</span><span class="s0">;</span>
+import <span class="s1">com.badlogic.gdx.graphics.g2d.BitmapFont</span><span class="s0">;</span>
+import <span class="s1">com.badlogic.gdx.graphics.g2d.TextureAtlas</span><span class="s0">;</span>
+import <span class="s1">com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator</span><span class="s0">;</span>
+import <span class="s1">com.badlogic.gdx.scenes.scene2d.*</span><span class="s0">;</span>
+import <span class="s1">com.badlogic.gdx.scenes.scene2d.ui.Label</span><span class="s0">;</span>
+import <span class="s1">com.badlogic.gdx.scenes.scene2d.ui.Skin</span><span class="s0">;</span>
+import <span class="s1">com.badlogic.gdx.scenes.scene2d.ui.Table</span><span class="s0">;</span>
+import <span class="s1">com.badlogic.gdx.scenes.scene2d.ui.TextButton</span><span class="s0">;</span>
+import <span class="s1">com.badlogic.gdx.scenes.scene2d.utils.ClickListener</span><span class="s0">;</span>
+import <span class="s1">com.badlogic.gdx.utils.Json</span><span class="s0">;</span>
+import <span class="s1">com.badlogic.gdx.utils.viewport.ExtendViewport</span><span class="s0">;</span>
+
+public class <span class="s1">MainMenuScreen </span><span class="s0">implements </span><span class="s1">Screen {</span>
+    <span class="s0">final </span><span class="s1">Game game</span><span class="s0">;</span>
+    <span class="s1">OrthographicCamera camera</span><span class="s0">;</span>
+    <span class="s1">String str = </span><span class="s2">&quot;&quot;</span><span class="s0">;</span>
+    protected <span class="s1">Label label</span><span class="s0">;</span>
+    protected <span class="s1">BitmapFont font</span><span class="s0">, </span><span class="s1">fontFran</span><span class="s0">;</span>
+    protected <span class="s1">Label crosshair</span><span class="s0">;</span>
+    private <span class="s1">Stage stage</span><span class="s0">;</span>
+    private <span class="s1">TextButton buttonStart</span><span class="s0">, </span><span class="s1">buttonEnd</span><span class="s0">, </span><span class="s1">buttonLoad</span><span class="s0">;</span>
+    private <span class="s1">TextureAtlas atlas</span><span class="s0">;</span>
+    private <span class="s1">Skin skin</span><span class="s0">;</span>
+    private <span class="s1">Table table</span><span class="s0">, </span><span class="s1">tableTva</span><span class="s0">;</span>
+    <span class="s1">AssetManager manager = </span><span class="s0">new </span><span class="s1">AssetManager()</span><span class="s0">;</span>
+
+    public class <span class="s1">LogoView </span><span class="s0">extends </span><span class="s1">Actor {</span>
+        <span class="s3">//https://www.gamefromscratch.com/post/2013/11/27/LibGDX-Tutorial-9-Scene2D-Part-1.aspx</span>
+        <span class="s0">float </span><span class="s1">actorX</span><span class="s0">, </span><span class="s1">actorY</span><span class="s0">;</span>
+        <span class="s1">Texture texture = </span><span class="s0">new </span><span class="s1">Texture(Gdx.files.internal(</span><span class="s2">&quot;pboxlogo1.png&quot;</span><span class="s1">))</span><span class="s0">;</span>
+        public boolean <span class="s1">started = </span><span class="s0">false;</span>
+
+        public <span class="s1">LogoView(</span><span class="s0">float </span><span class="s1">x1</span><span class="s0">, float </span><span class="s1">y1){</span>
+            actorX = x1<span class="s0">;</span>
+            <span class="s1">actorY = y1</span><span class="s0">;</span>
+            <span class="s3">/*setBounds(x1,y1,texture.getWidth(),texture.getHeight()); 
+            addListener(new InputListener(){ 
+                public boolean touchDown (InputEvent event, float x1, float y1, int pointer, int button) { 
+                    ((Map.Tile)event.getTarget()).started = true; 
+                    return true; 
+                } 
+            });*/</span>
+        <span class="s1">}</span>
+
+        <span class="s0">public void </span><span class="s1">draw(Batch batch</span><span class="s0">, float </span><span class="s1">alpha){</span>
+            batch.draw(texture<span class="s0">,</span><span class="s1">actorX</span><span class="s0">,</span><span class="s1">actorY)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+        <span class="s0">public void </span><span class="s1">act(</span><span class="s0">float </span><span class="s1">delta){}</span>
+    }
+
+    <span class="s0">public </span><span class="s1">MainMenuScreen(</span><span class="s0">final </span><span class="s1">Game gam) {</span>
+        game = gam<span class="s0">;</span>
+        <span class="s3">//stage = new Stage();</span>
+        <span class="s1">font = </span><span class="s0">new </span><span class="s1">BitmapFont()</span><span class="s0">;</span>
+        <span class="s1">FreeTypeFontGenerator generator = </span><span class="s0">new </span><span class="s1">FreeTypeFontGenerator(Gdx.files.internal(</span><span class="s2">&quot;ui/fran.ttf&quot;</span><span class="s1">))</span><span class="s0">;</span>
+        <span class="s1">FreeTypeFontGenerator.FreeTypeFontParameter parameter = </span><span class="s0">new </span><span class="s1">FreeTypeFontGenerator.FreeTypeFontParameter()</span><span class="s0">;</span>
+        <span class="s1">parameter.size = </span><span class="s4">48</span><span class="s0">;</span>
+        <span class="s1">fontFran = generator.generateFont(parameter)</span><span class="s0">; </span><span class="s3">// font size 12 pixels</span>
+        <span class="s1">generator.dispose()</span><span class="s0">; </span><span class="s3">// don't forget to dispose to avoid memory leaks!</span>
+        <span class="s1">stage = </span><span class="s0">new </span><span class="s1">Stage(</span><span class="s0">new </span><span class="s1">ExtendViewport(Gdx.graphics.getWidth()</span><span class="s0">,</span><span class="s1">Gdx.graphics.getHeight()))</span><span class="s0">;</span>
+        <span class="s1">label = </span><span class="s0">new </span><span class="s1">Label(</span><span class="s2">&quot;text label&quot;</span><span class="s0">, new </span><span class="s1">Label.LabelStyle(font</span><span class="s0">, </span><span class="s1">Color.WHITE))</span><span class="s0">;</span>
+        <span class="s1">stage.addActor(label)</span><span class="s0">;</span>
+        <span class="s1">Gdx.input.setInputProcessor(stage)</span><span class="s0">;</span>
+        <span class="s1">LogoView myActor = </span><span class="s0">new </span><span class="s1">LogoView(</span><span class="s4">30</span><span class="s0">, </span><span class="s4">400</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">stage.addActor(myActor)</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s0">private void </span><span class="s1">createInterface() {</span>
+        Gdx.input.setInputProcessor(stage)<span class="s0">;</span>
+        <span class="s1">atlas = </span><span class="s0">new </span><span class="s1">TextureAtlas(</span><span class="s2">&quot;ui/b.atlas&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">skin = </span><span class="s0">new </span><span class="s1">Skin(atlas)</span><span class="s0">;</span>
+        <span class="s1">table = </span><span class="s0">new </span><span class="s1">Table(skin)</span><span class="s0">;</span>
+        <span class="s1">table.setBounds(Gdx.graphics.getWidth()/</span><span class="s4">2</span><span class="s0">, </span><span class="s1">Gdx.graphics.getHeight()/</span><span class="s4">2</span><span class="s0">, </span><span class="s4">200</span><span class="s0">, </span><span class="s4">150</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">TextButton.TextButtonStyle tbs = </span><span class="s0">new </span><span class="s1">TextButton.TextButtonStyle()</span><span class="s0">;</span>
+        <span class="s1">tbs.up = skin.getDrawable(</span><span class="s2">&quot;button.9&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">tbs.down = skin.getDrawable(</span><span class="s2">&quot;button.9&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">tbs.pressedOffsetX = </span><span class="s4">1</span><span class="s0">;</span>
+        <span class="s1">tbs.pressedOffsetY = -</span><span class="s4">1</span><span class="s0">;</span>
+        <span class="s1">tbs.font = fontFran</span><span class="s0">;</span>
+        <span class="s1">tbs.fontColor = Color.BLACK</span><span class="s0">;</span>
+        <span class="s1">buttonStart = </span><span class="s0">new </span><span class="s1">TextButton(</span><span class="s2">&quot;Start here&quot;</span><span class="s0">, </span><span class="s1">tbs)</span><span class="s0">;</span>
+        <span class="s1">buttonStart.pad(</span><span class="s4">20</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s3">//buttonStart.getLabel().setFontScale(3, 3);</span>
+        <span class="s1">buttonStart.addListener(</span><span class="s0">new </span><span class="s1">ClickListener() {</span>
+            <span class="s0">public void </span><span class="s1">clicked(InputEvent event</span><span class="s0">, float </span><span class="s1">x</span><span class="s0">, float </span><span class="s1">y) {</span>
+                game.setScreen(<span class="s0">new </span><span class="s1">SocietyTest(game</span><span class="s0">, </span><span class="s4">0</span><span class="s1">))</span><span class="s0">;</span>
+                <span class="s1">dispose()</span><span class="s0">;</span>
+            <span class="s1">}</span>
+        })<span class="s0">;</span>
+        <span class="s1">buttonLoad = </span><span class="s0">new </span><span class="s1">TextButton(</span><span class="s2">&quot;Load game&quot;</span><span class="s0">, </span><span class="s1">tbs)</span><span class="s0">;</span>
+        <span class="s1">buttonLoad.pad(</span><span class="s4">20</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">buttonLoad.addListener(</span><span class="s0">new </span><span class="s1">ClickListener() {</span>
+            <span class="s0">public void </span><span class="s1">clicked(InputEvent event</span><span class="s0">, float </span><span class="s1">x</span><span class="s0">, float </span><span class="s1">y) {</span>
+                game.setScreen(<span class="s0">new </span><span class="s1">SocietyTest(game</span><span class="s0">, </span><span class="s4">1</span><span class="s1">))</span><span class="s0">;</span>
+                <span class="s1">dispose()</span><span class="s0">;</span>
+            <span class="s1">}</span>
+        })<span class="s0">;</span>
+        <span class="s1">buttonEnd = </span><span class="s0">new </span><span class="s1">TextButton(</span><span class="s2">&quot;Exit here&quot;</span><span class="s0">, </span><span class="s1">tbs)</span><span class="s0">;</span>
+        <span class="s1">buttonEnd.pad(</span><span class="s4">20</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s3">//buttonEnd.getLabel().setFontScale(3, 3);</span>
+        <span class="s1">buttonEnd.addListener(</span><span class="s0">new </span><span class="s1">ClickListener() {</span>
+            <span class="s0">public void </span><span class="s1">clicked(InputEvent event</span><span class="s0">, float </span><span class="s1">x</span><span class="s0">, float </span><span class="s1">y) {</span>
+                Gdx.app.exit()<span class="s0">;</span>
+            <span class="s1">}</span>
+        })<span class="s0">;</span>
+        <span class="s1">table.add(buttonStart)</span><span class="s0">;</span>
+        <span class="s1">table.row()</span><span class="s0">;</span>
+        <span class="s1">table.add(buttonLoad)</span><span class="s0">;</span>
+        <span class="s1">table.row()</span><span class="s0">;</span>
+        <span class="s1">table.add(buttonEnd)</span><span class="s0">;</span>
+        <span class="s1">table.row()</span><span class="s0">;</span>
+        <span class="s1">stage.addActor(table)</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    @Override
+    <span class="s0">public void </span><span class="s1">show() {</span>
+        createInterface()<span class="s0">;</span>
+    <span class="s1">}</span>
+
+    @Override
+    <span class="s0">public void </span><span class="s1">resize(</span><span class="s0">int </span><span class="s1">width</span><span class="s0">, int </span><span class="s1">height) {</span>
+
+    }
+
+    @Override
+    <span class="s0">public void </span><span class="s1">pause() {</span>
+
+    }
+
+    @Override
+    <span class="s0">public void </span><span class="s1">resume() {</span>
+
+    }
+
+    @Override
+    <span class="s0">public void </span><span class="s1">hide() {</span>
+
+    }
+
+    @Override
+    <span class="s0">public void </span><span class="s1">dispose() {</span>
+
+    }
+
+    <span class="s0">public void </span><span class="s1">render(</span><span class="s0">float </span><span class="s1">delta) {</span>
+        Gdx.gl.glClearColor(<span class="s4">0</span><span class="s0">, </span><span class="s4">0</span><span class="s0">, </span><span class="s4">0.2f</span><span class="s0">, </span><span class="s4">1</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)</span><span class="s0">;</span>
+        <span class="s1">label.setText(</span><span class="s2">&quot;FPS:&quot; </span><span class="s1">+ Gdx.graphics.getFramesPerSecond() + </span><span class="s2">&quot;, 09 Jan 2019 08:40&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">stage.act(Gdx.graphics.getDeltaTime())</span><span class="s0">;</span>
+        <span class="s1">stage.draw()</span><span class="s0">;</span>
+    <span class="s1">}</span>
+}
+</pre>
+</body>
+</html>

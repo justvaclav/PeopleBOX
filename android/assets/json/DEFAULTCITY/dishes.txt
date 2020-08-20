@@ -1,0 +1,50 @@
+[
+    {
+    	class: com.peoplebox.SocietyScreen$Dish
+    	diff: 2
+    	name: Макароны с сыром
+    	taste: 10
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$Dish
+    	diff: 4
+    	name: Пирог с картофелем
+    	taste: 6
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$Dish
+    	diff: 4
+    	name: Панкейки
+    	taste: 7
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$Dish
+    	diff: 6
+    	name: Брауни
+    	taste: 12
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$Dish
+    	diff: 5
+    	name: Лазанья
+    	taste: 10
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$Dish
+    	diff: 3
+    	name: Пицца "Маргарита"
+    	taste: 8
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$Dish
+    	diff: 9
+    	name: Гаспачо
+    	taste: 15
+    }
+    {
+    	class: com.peoplebox.SocietyScreen$Dish
+    	diff: 5
+    	name: Яблочный пирог
+    	taste: 7
+    }
+    ]

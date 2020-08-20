@@ -1,0 +1,4 @@
+{
+    foodMarkup: 1
+    furnMarkup: 1
+}
