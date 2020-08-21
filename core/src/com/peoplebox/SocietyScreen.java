@@ -3339,7 +3339,7 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
         tableDebugActions.add(mode4);
         tableDebugActions.row();
         stage.addActor(tableDebugActions);
-        //tableDebugActions.setVisible(false);
+        tableDebugActions.setVisible(false);
         scrollPane.setVisible(true);
         //СКРЫТИЕ СЛУЖЕБНЫХ ЭЛЕМЕНТОВ
         cardTva.listen();
@@ -5310,8 +5310,8 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
         private int speech; //речь
         private int quickness; //быстрота
         private int logic; //логика
-        private int imagination; //образы
-        private int insight; //понимание, интуиция
+        private int imagination; //воображение
+        private int insight; //сообразительность
         private int influence; //влияние
         private int stamina; //выносливость
         private int immunity; //устойчивость к болезням
@@ -5841,74 +5841,74 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
 
                 //ДЕЙСТВИЯ РАССТАВЛЯЮТСЯ В ОБРАТНОМ ПОРЯДКЕ: САМЫЕ ПРИОРИТЕТНЫЕ В КОНЕЦ
                 //ОБУЧЕНИЕ
+                ArrayList<Integer> avail = new ArrayList<Integer>();
                 if (society.getIndi(cb, myNum).getNeeds().get(0).getEducation() < society.getIndi(cb, myNum).getTalents().get(0).getMemory() * 0.7 && !(actNeeds.get("education") || actNeeds.get("music") || actNeeds.get("technics") || actNeeds.get("film"))) {
-                    ArrayList<Integer> available = new ArrayList<Integer>();
-                    available.add(18); //лекции в телефоне
-                    if (society.getIndi(cb, myNum).getInterests().get(0).getMusic() > 40 && checkUnocc(10) != 0) {
-                        available.add(3001);
-                    }
-                    if (society.getIndi(cb, myNum).getInterests().get(0).getTechnics() > 40 && checkUnocc(6) != 0 || checkUnocc(34) != 0) {
-                        if (checkUnocc(6) != 0) {
-                            available.add(2501);
-                        }
-                        if (checkUnocc(34) != 0) {
-                            available.add(2502);
-                        }
-                    }
+                    avail.add(18); //лекции в телефоне
                     if (society.getIndi(cb, myNum).getInterests().get(0).getBooks() > 40 && checkUnocc(11) != 0) {
-                        available.add(309);
+                        avail.add(309);
                     }
                     if (society.getIndi(cb, myNum).getInterests().get(0).getFilms() > 40 && checkUnocc(5) != 0) {
-                        available.add(2901);
+                        avail.add(2901);
                     }
-                    if (society.getIndi(cb, myNum).getInterests().get(0).getSport() > 29 && checkUnocc(22) != 0) {
-                        ArrayList<Integer> extra = new ArrayList<Integer>();
-
+                }
+                //ИНТЕРЕСЫ ПО ВООБРАЖЕНИЮ
+                if (society.getIndi(cb, myNum).getNeeds().get(0).getEducation() < society.getIndi(cb, myNum).getTalents().get(0).getImagination() * 0.7 && !(actNeeds.get("music"))) {
+                    //МУЗЫКА
+                    if (society.getIndi(cb, myNum).getInterests().get(0).getMusic() > 40 && checkUnocc(10) != 0)
+                        avail.add(3001);
+                }
+                //ИНТЕРЕСЫ ПО ЛОГИКЕ
+                if (society.getIndi(cb, myNum).getNeeds().get(0).getEducation() < society.getIndi(cb, myNum).getTalents().get(0).getLogic() * 0.7 && !(actNeeds.get("technics"))) {
+                    //ТЕХНИКА
+                    if (society.getIndi(cb, myNum).getInterests().get(0).getTechnics() > 40 && checkUnocc(6) != 0 || checkUnocc(34) != 0) {
+                        if (checkUnocc(6) != 0)
+                            avail.add(2501);
+                        if (checkUnocc(34) != 0)
+                            avail.add(2502);
                     }
-
-                    int act;
-                    try {
-                        act = available.get(rnd(available.size()) - 1);
-                    } catch (ArithmeticException e) {
-                        act = 0;
+                }
+                int ac;
+                try {
+                    ac = avail.get(rnd(avail.size()) - 1);
+                } catch (ArithmeticException e) {
+                    ac = 0;
+                }
+                switch (ac) {
+                    case 18: {
+                        actions.add(new Action(18, (int) actorX + 1, (int) actorY + 1, homez));
+                        break;
                     }
-                    switch (act) {
-                        case 18: {
-                            actions.add(new Action(18, (int) actorX + 1, (int) actorY + 1, homez));
-                            break;
-                        }
-                        case 309: {
-                            int n = observe(11);
-                            if (n != -1)
-                                actions.add(0, new Action(309, objects.get(n).ox + 20, objects.get(n).oy - 2, homez));
-                            break;
-                        }
-                        case 2501: {
-                            int n = observe(6);
-                            if (n != -1)
-                                actions.add(0, new Action(2501, objects.get(n).ox, objects.get(n).oy - 50, homez));
-                            break;
-                        }
-                        case 2502: {
-                            int n = observe(34);
-                            if (n != -1)
-                                actions.add(0, new Action(2502, objects.get(n).ox + 10, objects.get(n).oy - 40, homez));
-                            break;
-                        }
-                        case 2901: {
-                            int n = reserve(myNum, 5);
-                            if (n != -1)
-                                actions.add(0, new Action(2901, objects.get(n).ox + 50, objects.get(n).oy - 140, homez));
-                            break;
-                        }
-                        case 3001: {
-                            int n = reserve(myNum, 10);
-                            if (n != -1)
-                                actions.add(0, new Action(3001, objects.get(n).ox, objects.get(n).oy - 50, homez));
-                            break;
-                        }
-                        default: {
-                        }
+                    case 309: {
+                        int n = observe(11);
+                        if (n != -1)
+                            actions.add(0, new Action(309, objects.get(n).ox + 20, objects.get(n).oy - 2, homez));
+                        break;
+                    }
+                    case 2501: {
+                        int n = observe(6);
+                        if (n != -1)
+                            actions.add(0, new Action(2501, objects.get(n).ox, objects.get(n).oy - 50, homez));
+                        break;
+                    }
+                    case 2502: {
+                        int n = observe(34);
+                        if (n != -1)
+                            actions.add(0, new Action(2502, objects.get(n).ox + 10, objects.get(n).oy - 40, homez));
+                        break;
+                    }
+                    case 2901: {
+                        int n = reserve(myNum, 5);
+                        if (n != -1)
+                            actions.add(0, new Action(2901, objects.get(n).ox + 50, objects.get(n).oy - 140, homez));
+                        break;
+                    }
+                    case 3001: {
+                        int n = reserve(myNum, 10);
+                        if (n != -1)
+                            actions.add(0, new Action(3001, objects.get(n).ox, objects.get(n).oy - 50, homez));
+                        break;
+                    }
+                    default: {
                     }
                 }
                 //ЭСТЕТИКА
@@ -6314,7 +6314,7 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                     }
                 }
                 //ГОЛОД
-                if (society.getIndi(cb, myNum).getNeeds().get(0).getHunger() < 50 - society.getIndi(cb, myNum).getTalents().get(0).getImmunity() * 0.5 && !actNeeds.get("hunger")) {
+                if (society.getIndi(cb, myNum).getNeeds().get(0).getHunger() < 50 - society.getIndi(cb, myNum).getTalents().get(0).getImmunity() * 0.3 && !actNeeds.get("hunger")) {
                     if (society.getBoxes().get(cb).foodRemain > 0) {
                         if (checkUnocc(12) != 0) {
                             int n = reserve(myNum, 12);
@@ -7224,7 +7224,7 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
             catch (NullPointerException e) {}
             batch.draw(texture, ox, oy);
             //smallFontFran.draw(batch, globalString, -1000, 1000);
-            smallFontFran.draw(batch, "occ: " + occ, ox, oy-10);
+            //smallFontFran.draw(batch, "occ: " + occ, ox, oy-10);
             //fontFran.draw(batch, String.valueOf(num0)+"/"+String.valueOf(objectObs)+" x:"+String.valueOf(ox)+" y:"+String.valueOf(oy), ox, oy - 10);
         }
 
@@ -8284,8 +8284,8 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
         SocietyScreen.Custom background;
         if (homex == 10 && homey == 10) {
             Pixmap pixmap200 = new Pixmap(Gdx.files.internal("city/office1/office1-9.png"));
-            if (homez <= 9 && homez >= 2)
-                pixmap200 = new Pixmap(Gdx.files.internal("city/office1/office1-" + homez + ".png"));
+            /*if (homez <= 9 && homez >= 2)
+                pixmap200 = new Pixmap(Gdx.files.internal("city/office1/office1-" + homez + ".png"));*/
             Pixmap pixmap100 = new Pixmap(pixmap200.getWidth() * 2, pixmap200.getHeight() * 2, pixmap200.getFormat());
             pixmap100.drawPixmap(pixmap200,
                     0, 0, pixmap200.getWidth(), pixmap200.getHeight(),
