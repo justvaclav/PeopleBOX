@@ -1208,6 +1208,18 @@ public class Addition {
                 }
                 break;
             }
+            case 2201: {
+                getIndiActor(myNum).marker = 1;
+                if (rnd(3) != 1) {
+                    society.getIndi(cb, myNum).getNeeds().get(0).setEducation(20);
+                    getIndiActor(myNum).markerString = "this articles are too difficult\nto understand\ni got nothing at all";
+                }
+                else {
+                    society.getIndi(cb, myNum).getInterests().get(0).setFashion(society.getIndi(cb, myNum).getInterests().get(0).getFashion() + rnd(2));
+                    society.getIndi(cb, myNum).getNeeds().get(0).setEducation(society.getIndi(cb, myNum).getNeeds().get(0).getEducation() + 45);
+                }
+                break;
+            }
             case 2501: {
                 getIndiActor(myNum).marker = 1;
                 if (rnd(3) != 1) {
@@ -1347,6 +1359,9 @@ public class Addition {
             }
             if (new ArrayList<Integer>(Arrays.asList(1601, 1602, 1603)).contains(actions.get(i).action)) {
                 getIndiActor(myNum).actNeeds.put("economics", turn);
+            }
+            if (new ArrayList<Integer>(Arrays.asList(2201, 2202, 2203)).contains(actions.get(i).action)) {
+                getIndiActor(myNum).actNeeds.put("science", turn);
             }
             if (new ArrayList<Integer>(Arrays.asList(2501, 2502, 2503)).contains(actions.get(i).action)) {
                 getIndiActor(myNum).actNeeds.put("technics", turn);

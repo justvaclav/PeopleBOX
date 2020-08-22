@@ -2283,6 +2283,7 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                 final ScenButton s1602 = new ScenButton(langString.get("scenario1602"));
                 final ScenButton stv = new ScenButton("Add TV Indi system");
                 final ScenButton sdoc = new ScenButton("Add Doctor system");
+                final ScenButton s1101 = new ScenButton(langString.get("scenario1101") + "\033Indi dies when there is no exit.\033");
                 scenButtons.add(s);
                 s.setPosition(Gdx.graphics.getWidth() - 420, 170);
                 cardStage.addActor(s);
@@ -2302,6 +2303,8 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                 cardStage.addActor(stv);
                 sdoc.setPosition(Gdx.graphics.getWidth() - 420, 470);
                 cardStage.addActor(sdoc);
+                s1101.setPosition(Gdx.graphics.getWidth() - 420, 520);
+                cardStage.addActor(s1101);
                 s.addListener(new ClickListener() {
                     public void clicked(InputEvent event, float x, float y) {
                         society.getIndi(cb, indiObs).getScenarios().add(new Scenario(1301));
@@ -2330,6 +2333,11 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                 s1602.addListener(new ClickListener() {
                     public void clicked(InputEvent event, float x, float y) {
                         society.getIndi(cb, indiObs).getScenarios().add(new Scenario(1602));
+                        removeExtraActors();
+                    }});
+                s1101.addListener(new ClickListener() {
+                    public void clicked(InputEvent event, float x, float y) {
+                        society.getIndi(cb, indiObs).getScenarios().add(new Scenario(1101));
                         removeExtraActors();
                     }});
                 stv.addListener(new ClickListener() {
@@ -2431,6 +2439,7 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                 indis.get(indiObs).actNeeds.put("film", false);
                 indis.get(indiObs).actNeeds.put("shopping", false);
                 indis.get(indiObs).actNeeds.put("love", false);
+                indis.get(indiObs).actNeeds.put("science", false);
                 indis.get(indiObs).setVisible(true);
                 indis.get(indiObs).updateAppearance(1, HoldObject.None);
                 for (int i = 0; i < objects.size(); i++) {
@@ -5419,12 +5428,10 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
         transient ArrayList<Action> actions = new ArrayList<Action>();
         transient HashMap<String, Boolean> actNeeds = new HashMap<String, Boolean>();
         int action;
-        int contAction;
         transient float actorX;
         transient float actorY;
         boolean alive = true;
         boolean isTalking = false;
-        transient int waiting;
         private int age;
         private int appearance;
         private int gender;
@@ -5458,7 +5465,6 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
 
         public IndiActor(String name, final String surname, int gender, int age, int wealth, int appearance, float actorX, float actorY, final int myNum) {
             indisN++;
-            contAction = 0;
             markerStringType = "";
             this.name = name;
             this.surname = surname;
@@ -5470,8 +5476,6 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
             this.actorY = actorY;
             this.myNum = myNum;
             action = 0;
-            waiting = 0;
-            talking = 0;
             updateAppearance(1, HoldObject.None);
             addListener(new InputListener() {
                 public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
@@ -5500,6 +5504,7 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
             actNeeds.put("film", false);
             actNeeds.put("shopping", false);
             actNeeds.put("love", false);
+            actNeeds.put("science", false);
         }
 
 
@@ -5545,14 +5550,6 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
 
         public void setStarted(boolean started) {
             this.started = started;
-        }
-
-        public int getTalking() {
-            return talking;
-        }
-
-        public void setTalking(int talking) {
-            this.talking = talking;
         }
 
         public Texture getTexture() {
@@ -5867,6 +5864,13 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                             avail.add(2502);
                     }
                 }
+                //ИНТЕРЕСЫ ПО ИНТУИЦИИ
+                if (society.getIndi(cb, myNum).getNeeds().get(0).getEducation() < society.getIndi(cb, myNum).getTalents().get(0).getInsight() * 0.7 && !(actNeeds.get("technics"))) {
+                    //НАУКА
+                    if (society.getIndi(cb, myNum).getInterests().get(0).getFashion() > 40 && checkUnocc(6) != 0) {
+                        avail.add(2201);
+                    }
+                }
                 int ac;
                 try {
                     ac = avail.get(rnd(avail.size()) - 1);
@@ -5884,10 +5888,11 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                             actions.add(0, new Action(309, objects.get(n).ox + 20, objects.get(n).oy - 2, homez));
                         break;
                     }
+                    case 2201:
                     case 2501: {
-                        int n = observe(6);
+                        int n = reserve(myNum, 6);
                         if (n != -1)
-                            actions.add(0, new Action(2501, objects.get(n).ox, objects.get(n).oy - 50, homez));
+                            actions.add(0, new Action(ac, objects.get(n).ox, objects.get(n).oy - 50, homez));
                         break;
                     }
                     case 2502: {
@@ -6402,6 +6407,18 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                             if (n != -1) {
                                 actions.clear();
                                 actions.add(0, new Action(4001, objects.get(n).ox + 100, objects.get(n).oy + 120 + rnd(20), homez));
+                            }
+                        }
+                        if (society.getIndi(cb, myNum).getScenarios().get(i).getCode() == 1101 && observe(-2) == -1) {
+                            society.getIndi(cb, myNum).getNeeds().get(0).setProtection(society.getIndi(cb, myNum).getNeeds().get(0).getProtection() - 1);
+                            if (rnd(100) == 54) {
+                                society.getIndi(cb, myNum).getScenarios().remove(i);
+                                society.getIndi(cb, myNum).alive = false;
+                                actions.clear();
+                                updateAppearance(1, HoldObject.None);
+                                theme = new Texture(Gdx.files.internal("ui/null.png"));
+                                targetY = 3000;
+                                status = "is dead from claustrophobia since: " + dd + "/" + mm + "/" + yyyy + ", " + hh + "." + min;
                             }
                         }
                     }
