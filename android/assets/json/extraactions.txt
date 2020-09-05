@@ -29,92 +29,29 @@
     	startNeeds: {}
     	startTalents: {}
     }
-{
+    {
     	class: com.peoplebox.additions.Action
     	addInterests: {
-    		sport: 1
+    		music: 2
     	}
     	addNeeds: {
-    		bl: -5
-    		energy: -15
-    		hunger: -5
-    		hygiene: -15
+    		energy: -5
     	}
     	addTalents: {
-    		stamina: 1
+    		imagination : 1
     	}
-    	animation: 2
-    	delay: 15
+    	animation: 3
+    	delay: 25
     	en: [
-    		runs on treadmill
+    		playing melodies
     	]
     	holdObject: ""
-    	items: [ 22 ]
+    	items: [ 10 ]
     	ru: [
-    		бегает на дорожке
+    		наигрывает мелодии
     	]
     	startInterests: {
-    		food: 50
-    	}
-    	startNeeds: {}
-    	startTalents: {}
-    }
-{
-    	class: com.peoplebox.additions.Action
-    	addInterests: {
-    		sport: 1
-    	}
-    	addNeeds: {
-    		bl: -5
-    		energy: -15
-    		hunger: -5
-    		hygiene: -15
-    	}
-    	addTalents: {
-    		stamina: 1
-    	}
-    	animation: 2
-    	delay: 15
-    	en: [
-    		runs on treadmill
-    	]
-    	holdObject: ""
-    	items: [ 22 ]
-    	ru: [
-    		бегает на дорожке
-    	]
-    	startInterests: {
-    		sport: -30
-    	}
-    	startNeeds: {}
-    	startTalents: {}
-    }
-{
-    	class: com.peoplebox.additions.Action
-    	addInterests: {
-    		sport: 1
-    	}
-    	addNeeds: {
-    		bl: -5
-    		energy: -15
-    		hunger: -5
-    		hygiene: -15
-    	}
-    	addTalents: {
-    		stamina: 1
-    	}
-    	animation: 2
-    	delay: 15
-    	en: [
-    		runs on treadmill
-    	]
-    	holdObject: ""
-    	items: [ 22 ]
-    	ru: [
-    		бегает на дорожке
-    	]
-    	startInterests: {
-    		sport: -10
+    		music: 30
     	}
     	startNeeds: {}
     	startTalents: {}

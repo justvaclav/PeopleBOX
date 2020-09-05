@@ -32,7 +32,7 @@ public class MainMenuScreen implements Screen {
     protected BitmapFont font, fontFran;
     private Label crosshair;
     private Stage stage;
-    private TextButton buttonStart, buttonEnd, buttonLoad, buttonMap;
+    private TextButton buttonStart, buttonEnd, buttonRedactor, buttonLoad, buttonMap;
     private TextureAtlas atlas;
     private Skin skin;
     Settings settings;
@@ -248,6 +248,14 @@ public class MainMenuScreen implements Screen {
                 dispose();
             }
         });*/
+        buttonRedactor = new TextButton(langString.get("redactor"), tbs);
+        buttonRedactor.pad(20);
+        buttonRedactor.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new ActionRedactorScreen(game, lang));
+                dispose();
+            }
+        });
         buttonMap = new TextButton(langString.get("changeLang"), tbs);
         buttonMap.pad(20);
         buttonMap.addListener(new ClickListener() {
@@ -271,6 +279,8 @@ public class MainMenuScreen implements Screen {
         table.add(buttonLoad).width(360);
         table.row();
         table.add(buttonMap).width(360);
+        table.row();
+        table.add(buttonRedactor).width(360);
         table.row();
         table.add(buttonEnd).width(360);
         table.row();

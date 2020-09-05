@@ -7,14 +7,18 @@ import java.util.ArrayList;
 public class Action {
     private String[] en, fr, de, it, es, se, fi, nl, da, pt, cz, he, el, jp, kr, ru, zh, pl, th, no, hu;
     private int delay /*in sec*/, animation, startMoney, addMoney;
+    private final int CODE;
     private boolean isSocial = false;
-    private SocietyScreen.NeedsArray startNeeds, addNeeds; //if zero, then ignore
-    private SocietyScreen.InterestsArray startInterests, addInterests; //if zero, then ignore
-    private SocietyScreen.TalentsArray startTalents, addTalents; //if zero, then ignore
-    private ArrayList<Integer> items; //type of furniture that can be needed
+    private SocietyScreen.NeedsArray startNeeds, addNeeds; //if zero, then ignore, if not then it's min level
+    private SocietyScreen.InterestsArray startInterests, addInterests; //if zero, then ignore, if not then it's min level
+    private SocietyScreen.TalentsArray startTalents, addTalents; //if zero, then ignore, if not then it's min level
+    private ArrayList<Integer> items; //type of furniture that can be used for this action
     private String holdObject;
 
-    public Action(int delay, int animation, int startMoney, int addMoney, SocietyScreen.NeedsArray startNeeds, SocietyScreen.NeedsArray addNeeds, SocietyScreen.InterestsArray startInterests, SocietyScreen.InterestsArray addInterests, SocietyScreen.TalentsArray startTalents, SocietyScreen.TalentsArray addTalents, ArrayList<Integer> items, String holdObject) {
+    public Action(int CODE, int delay, int animation, int startMoney, int addMoney, SocietyScreen.NeedsArray startNeeds, SocietyScreen.NeedsArray addNeeds, SocietyScreen.InterestsArray startInterests, SocietyScreen.InterestsArray addInterests, SocietyScreen.TalentsArray startTalents, SocietyScreen.TalentsArray addTalents, ArrayList<Integer> items, String holdObject) {
+        while (CODE > 10000)
+            CODE *= 10;
+        this.CODE = CODE;
         this.delay = delay;
         this.animation = animation;
         this.startMoney = startMoney;
@@ -29,7 +33,13 @@ public class Action {
         this.holdObject = holdObject;
     }
 
-    public Action() {}
+    public Action() {
+        CODE = 80085;
+    }
+
+    public int getCODE() {
+        return CODE;
+    }
 
     public String[] getEn() {
         return en;

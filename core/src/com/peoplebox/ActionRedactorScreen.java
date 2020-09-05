@@ -20,6 +20,8 @@ import com.badlogic.gdx.utils.I18NBundle;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.peoplebox.additions.Action;
+import com.peoplebox.additions.Custom;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -30,15 +32,24 @@ import static com.badlogic.gdx.math.MathUtils.random;
 import static com.peoplebox.Addition.actionDelay;
 import static com.peoplebox.Addition.specialStatus;
 import static com.peoplebox.ScreenshotFactory.saveScreenshot;
+import static com.peoplebox.SocietyScreen.Box.Property.Private;
+import static com.peoplebox.SocietyScreen.whichObject;
 
 public class ActionRedactorScreen implements Screen, GestureDetector.GestureListener {
     final Game game;
+    Custom indiActor;
+    ArrayList<Action> extraActs = new ArrayList<>();
+    Action action = new Action(19999, 1, 1, 0, 0,
+            new SocietyScreen.NeedsArray(), new SocietyScreen.NeedsArray(0, 0, 0, -15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+            new SocietyScreen.InterestsArray(0, 0, 0, 0, 0, 0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+            new SocietyScreen.InterestsArray(0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+            new SocietyScreen.TalentsArray(), new SocietyScreen.TalentsArray(0, 0, 0, 0, 0, 0, 0, 0, 1, 0),
+            new ArrayList<Integer>(Arrays.asList(new Integer[]{22})), "");
     OrthographicCamera camera;
     String str = "";
     long delay = 0, sign = 0;
     protected Label label;
     protected BitmapFont font, fontFran;
-    protected Label crosshair;
     static I18NBundle langString;
     static Label labelGirl, labelAppuyez, labelHint, labelHintTva, labelHintFyra, labelCenter, labelDebug, labelControl, nameView,
             labelEvent, labelTime, labelDay, labelGamePts, labelReset, labelRandomScenario;
@@ -61,7 +72,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
     ArrayList<SocietyScreen.Marker> markers = new ArrayList<SocietyScreen.Marker>();
     ArrayList<SocietyScreen.Dish> dishes = new ArrayList<SocietyScreen.Dish>(Arrays.asList(new SocietyScreen.Dish("Макароны с сыром", 10, 2), new SocietyScreen.Dish("Пирог с картофелем", 6, 4), new SocietyScreen.Dish("Панкейки", 7, 4), new SocietyScreen.Dish("Брауни", 12, 6), new SocietyScreen.Dish("Лазанья", 10, 5), new SocietyScreen.Dish("Пицца \"Маргарита\"", 8, 3), new SocietyScreen.Dish("Гаспачо", 15, 9), new SocietyScreen.Dish("Яблочный пирог", 7, 5)));
     ArrayList<SocietyScreen.ScenButton> scenButtons = new ArrayList<SocietyScreen.ScenButton>();
-    int plus = 0, dd=1, mm=5, yyyy=2015, hh=21, min=50, cardType = 0, wwww = rnd(4), speed = 1000, timeFPS = 0, cardCount = 1, VOLUME = 1;
+    int plus = 0, dd=1, mm=5, yyyy=500, hh=21, min=50, cardType = 0, wwww = rnd(4), speed = 1000, timeFPS = 0, cardCount = 1, VOLUME = 1;
     int neededY = 0; //по дефолту равна половине высоты экрана, переопределяется в рендере с каждой прорисовкой
     static long uiDelay, tapDelay, currentTimeMil = System.currentTimeMillis();
     DecimalFormat df = new DecimalFormat("#.##");
@@ -71,10 +82,8 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
     public ExtendViewport stageViewport, girlStageViewport;
     Texture t2, btnPreview, buttonBackground, NIMBUS, talkCloudEtt, talkCloudTva;
     static Sound talkEtt, talkTva, talkTre, poolEtt, poolTva, uiNo = Gdx.audio.newSound(Gdx.files.internal("sound/no.mp3")), oof= Gdx.audio.newSound(Gdx.files.internal("sound/oof.mp3"));
-    //clickMode: 1-движение камеры 2-движение мебели  3-
-    int homex, homey, homez, control = 0, indisN = 0, clickMode = 1, girlCard = 1, homeZZ = 0, y = -900, num = 0, num0 = 0, jobN = 0, indiObs = -2,
-            objectObs = -1, adaptResTre = 4, card = 0, blockCount = 0;
-    static int currentFloor = 1;
+    int control = 0, indisN = 0, clickMode = 1, girlCard = 1, homeZZ = 0, y = -900, num = 0, num0 = 0, jobN = 0, indiObs = 0,
+            objectObs = -1, adaptResTre = 4, card = 0;
     static int mode = 1, adaptRes = 5, popAct = 0, indisTestN = 0, FPS = 0, furnBefore = 0, ff=1, gamePts = 0;
     final static int cb = 0;
     static int GAMEMODE = 0;
@@ -95,9 +104,9 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
     BitmapFont fontOldGirl;
     BitmapFont fontOswaldBlack;
     static InputMultiplexer multiplexer;
-    static ScrollPane scrollPane, scrollPaneTva, scrollPaneFurn, scrollPaneTre, scrollPaneRelations, scrollPaneIndis;
+    static ScrollPane scrollPane, scrollPaneTva, scrollPaneFurn, scrollPaneTre, scrollPaneRelations, scrollPaneIndis, scrollPaneActNums;
     static TextButton.TextButtonStyle tbsFyra, tbsFem, tbsTre, tbs;
-    SocietyScreen.Custom background, walls, panelLeft, panelEvent, iconEvent, oldGirl, arrowHint, clock, frameBorder, panelRight;
+    SocietyScreen.Custom panelLeft, panelEvent, iconEvent, arrowHint, clock, panelRight, start, finish;
     CustomIcon btnReset, btnRandomScenario, btnTrash;
     static TextButton applyName, btnHelpEtt, btnHelpTva, girlYes, girlNo, btnUp, btnDown, btnRight, btnLeft,
             btnMoveOk, btnOverlay, btnRotate, btnMore, btnRemove, buttonBack, buttonRemove, buttonAdd;
@@ -105,7 +114,8 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
     private Skin skin, skinTre;
     TextField.TextFieldStyle txtStyleTre;
     private static Table tableMove, tableDebugActions, tableNeeds, tableInterests, tableRoom, tableTalents, outerTable, outerTableTva, outerTableNeeds, iconTable,
-            iconTableTva, furnTable, outerTableFurn, tableBroadcast, tableRelations, outerTableRelations, tableRelationsChoose, tableIndis, outerTableIndis;
+            furnTable, outerTableFurn, tableRelations, outerTableRelations, tableRelationsChoose, tableIndis, outerTableIndis,
+            tableActNums, outerTableActNums;
     private Group groupBuild = new Group();
     static SocietyScreen.Society society = new SocietyScreen.Society();
     Json json = new Json();
@@ -270,6 +280,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         jsonStr = fileTva.readString();
         furn = json.fromJson(ArrayList.class, jsonStr);
         furnTable = new Table().left();
+        ArrayList<Integer> types = new ArrayList<>();
         for (int q=0; q<furn.size(); q++) {
             Json json = new Json();
             FileHandle file = Gdx.files.local("E/json/DEFAULTCITY/priceprops.txt");
@@ -277,11 +288,35 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
                 file= Gdx.files.internal("json/DEFAULTCITY/priceprops.txt");
             }
             jsonStr = file.readString();
-            PriceProps prices = json.fromJson(PriceProps.class, jsonStr);
-            furn.get(q).price = (int) (furn.get(q).price * prices.furnMarkup /* * Math.pow(0.9, yyyy - furn.get(q).prodStart)*/);
-            furnTable.add(furn.get(q)).left();
-            furnTable.row();
+            furn.get(q).price = 0;
+            if (!types.contains(furn.get(q).type)) {
+                furnTable.add(furn.get(q)).left();
+                furnTable.row();
+            }
+            types.add(furn.get(q).type);
         }
+        for (int i = 0; i < furn.size(); i++) {
+            if (i == 0)
+                furn.get(i).setBounds(furn.get(i).getX(), furn.get(i).getY(), 550, 96);
+            else
+                furn.get(i).setBounds(furn.get(i).getX(), furn.get(i).getY(), 120, 96);
+            final int ii = i;
+            furn.get(i).addListener(new InputListener() {
+                public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
+                    createObject(furn.get(ii).type, furn.get(ii).appear, 0, 0, 500, 500);
+                    return true;
+                }
+            });
+        }
+        arrowHint = new SocietyScreen.Custom(new Texture("ui/arrows.png"), 540, Gdx.graphics.getHeight() / 2 - 122);
+        arrowHint.setVisible(false);
+        cardStage.addActor(arrowHint);
+        start = new SocietyScreen.Custom(new Texture("ui/start.png"), 200, Gdx.graphics.getHeight() - 270);
+        start.setVisible(false);
+        cardStage.addActor(start);
+        finish = new SocietyScreen.Custom(new Texture("ui/finish.png"), 300, Gdx.graphics.getHeight() - 270);
+        finish.setVisible(false);
+        cardStage.addActor(finish);
         multiplexer = new InputMultiplexer();
         GestureDetector gd = new GestureDetector(this);
         multiplexer.addProcessor(gd);
@@ -315,9 +350,13 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         surnameField.setVisible(false);
         iconTable = new Table();
         tableRelations = new Table().left();
+        tableActNums = new Table().left();
         tableIndis = new Table().left();
         tableNeeds = new Table();
-
+        indiActor = new Custom(new Texture("indis/woman3/woman3stands.png"));
+        indiActor.setX(Gdx.graphics.getWidth()*2/3);
+        indiActor.setY(Gdx.graphics.getHeight()/2);
+        cardStage.addActor(indiActor);
         //tableNeeds.setBounds(90,130, 580, 420);
         /*if (Gdx.graphics.getWidth() < 2001) {
             tableNeeds.setSize(580, 750);
@@ -334,7 +373,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         //tableNeeds.row();
         CustomIcon iconAest = new CustomIcon(new Texture("icons2/aesthetics.png"), langString.get("aesthetics"));
         tableNeeds.add(iconAest);
-        labelAesthetics = new Label("105", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
+        labelAesthetics = new Label("0", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
         labelAesthetics.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
                 cardType = 26; neededY = (int) labelAesthetics.getY();
@@ -357,7 +396,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
             }
         });
         tableNeeds.add(iconBladder);
-        labelBladder = new Label("105", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
+        labelBladder = new Label("0", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
         labelBladder.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
                 cardType = 27; neededY = (int) labelBladder.getY();
@@ -371,7 +410,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         tableNeeds.add(labelBladder);
         CustomIcon iconEducation = new CustomIcon(new Texture("icons2/education.png"), langString.get("education"));
         tableNeeds.add(iconEducation);
-        labelEducation = new Label("105", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
+        labelEducation = new Label("0", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
         labelEducation.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
                 cardType = 28; neededY = (int) labelEducation.getY();
@@ -386,7 +425,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         tableNeeds.row();
         CustomIcon iconEnergy = new CustomIcon(new Texture("icons2/energy.png"), langString.get("energy"));
         tableNeeds.add(iconEnergy);
-        labelEnergy = new Label("105", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
+        labelEnergy = new Label("0", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
         labelEnergy.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
                 cardType = 29; neededY = (int) labelEnergy.getY();
@@ -400,7 +439,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         tableNeeds.add(labelEnergy);
         CustomIcon iconEnv = new CustomIcon(new Texture("icons2/env.png"), langString.get("environment"));
         //tableNeeds.add(iconEnv);
-        labelEnv = new Label("105", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
+        labelEnv = new Label("0", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
         labelEnv.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
                 cardType = 30; neededY = (int) labelEnv.getY();
@@ -414,7 +453,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         //tableNeeds.add(labelEnv);
         CustomIcon iconFun = new CustomIcon(new Texture("icons2/fun.png"), langString.get("fun"));
         tableNeeds.add(iconFun);
-        labelFun = new Label("105", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
+        labelFun = new Label("0", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
         labelFun.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
                 cardType = 31; neededY = (int) labelFun.getY();
@@ -428,7 +467,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         tableNeeds.add(labelFun);
         CustomIcon iconHunger = new CustomIcon(new Texture("icons2/hunger.png"), langString.get("hunger"));
         tableNeeds.add(iconHunger);
-        labelHunger = new Label("105", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
+        labelHunger = new Label("0", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
         labelHunger.setBounds(labelHunger.getX(), labelHunger.getY(), 40, 40);
         labelHunger.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
@@ -447,7 +486,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
 
         CustomIcon iconHygiene = new CustomIcon(new Texture("icons2/hygiene.png"), langString.get("hygiene"));
         tableNeeds.add(iconHygiene);
-        labelHygiene = new Label("105", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
+        labelHygiene = new Label("0", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
         labelHygiene.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
                 cardType = 33; neededY = (int) labelHygiene.getY();
@@ -461,7 +500,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         tableNeeds.add(labelHygiene);
         CustomIcon iconLove = new CustomIcon(new Texture("icons2/love.png"), langString.get("love"));
         tableNeeds.add(iconLove);
-        labelLove = new Label("105", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
+        labelLove = new Label("0", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
         labelLove.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
                 cardType = 34; neededY = (int) labelLove.getY()+64;
@@ -476,7 +515,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
 
         CustomIcon iconPower = new CustomIcon(new Texture("icons2/power.png"), langString.get("power"));
         //tableNeeds.add(iconPower);
-        labelPower = new Label("105", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
+        labelPower = new Label("0", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
         labelPower.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
                 cardType = 35; neededY = (int) labelPower.getY()+64;
@@ -490,7 +529,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         //tableNeeds.add(labelPower);
         CustomIcon iconSafety = new CustomIcon(new Texture("icons2/safety.png"), langString.get("protection"));
         tableNeeds.add(iconSafety);
-        labelSafety = new Label("105", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
+        labelSafety = new Label("0", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
         labelSafety.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
                 cardType = 36; neededY = (int) labelSafety.getY()+64;
@@ -505,7 +544,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         tableNeeds.row();
         CustomIcon iconShopping = new CustomIcon(new Texture("icons2/shopping.png"), langString.get("shopping"));
         tableNeeds.add(iconShopping);
-        labelShopping = new Label("105", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
+        labelShopping = new Label("0", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
         labelShopping.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
                 cardType = 37; neededY = (int) labelShopping.getY()+64;
@@ -520,7 +559,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         //tableNeeds.row();
         CustomIcon iconSocial = new CustomIcon(new Texture("icons2/social.png"), langString.get("social"));
         tableNeeds.add(iconSocial);
-        labelSocial = new Label("105", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
+        labelSocial = new Label("0", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
         labelSocial.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
                 cardType = 38; neededY = (int) labelSocial.getY()+124;
@@ -534,7 +573,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         tableNeeds.add(labelSocial);
         CustomIcon iconSuccess = new CustomIcon(new Texture("icons2/success.png"), langString.get("success"));
         tableNeeds.add(iconSuccess);
-        labelSuccess = new Label("105", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
+        labelSuccess = new Label("0", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
         labelSuccess.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
                 cardType = 39; neededY = (int) labelSuccess.getY()+124;
@@ -555,8 +594,8 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
 
         tableInterests = new Table().top().left();
         CustomIcon iconPolitics = new CustomIcon(new Texture("icons2/politics.png"), langString.get("politics"));
-        //tableInterests.add(iconPolitics);
-        labelPolitics = new Label("105", new Label.LabelStyle(fontOswaldTre, needsOnly.contains(GAMEMODE) ? Color.SCARLET : needsOnly.contains(GAMEMODE) ? Color.SCARLET : Color.CYAN));
+        tableInterests.add(iconPolitics);
+        labelPolitics = new Label("0", new Label.LabelStyle(fontOswaldTre, needsOnly.contains(GAMEMODE) ? Color.SCARLET : needsOnly.contains(GAMEMODE) ? Color.SCARLET : Color.CYAN));
         labelPolitics.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
                 if (new ArrayList<Integer>(Arrays.asList(0,1,2)).contains(GAMEMODE))
@@ -567,10 +606,10 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
                 cardType = 0;
             }
         });
-        //tableInterests.add(labelPolitics);
+        tableInterests.add(labelPolitics);
         CustomIcon iconEconomics = new CustomIcon(new Texture("icons2/economics.png"), langString.get("economics"));
         tableInterests.add(iconEconomics);
-        labelEconomics = new Label("105", new Label.LabelStyle(fontOswaldTre, needsOnly.contains(GAMEMODE) ? Color.SCARLET : Color.CYAN));
+        labelEconomics = new Label("0", new Label.LabelStyle(fontOswaldTre, needsOnly.contains(GAMEMODE) ? Color.SCARLET : Color.CYAN));
         labelEconomics.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
                 if (new ArrayList<Integer>(Arrays.asList(0,1,2)).contains(GAMEMODE))
@@ -583,8 +622,8 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         });
         tableInterests.add(labelEconomics);
         CustomIcon iconHealth = new CustomIcon(new Texture("icons2/health.png"), langString.get("health"));
-        //tableInterests.add(iconHealth);
-        labelHealth = new Label("105", new Label.LabelStyle(fontOswaldTre, needsOnly.contains(GAMEMODE) ? Color.SCARLET : Color.CYAN));
+        tableInterests.add(iconHealth);
+        labelHealth = new Label("0", new Label.LabelStyle(fontOswaldTre, needsOnly.contains(GAMEMODE) ? Color.SCARLET : Color.CYAN));
         labelHealth.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
                 if (new ArrayList<Integer>(Arrays.asList(0,1,2)).contains(GAMEMODE))
@@ -595,10 +634,11 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
                 cardType = 0;
             }
         });
-        //tableInterests.add(labelHealth);
+        tableInterests.add(labelHealth);
+        tableInterests.row();
         CustomIcon iconCrimes = new CustomIcon(new Texture("icons2/crime.png"), langString.get("crimes"));
-        //tableInterests.add(iconCrimes);
-        labelCrimes = new Label("105", new Label.LabelStyle(fontOswaldTre, needsOnly.contains(GAMEMODE) ? Color.SCARLET : Color.CYAN));
+        tableInterests.add(iconCrimes);
+        labelCrimes = new Label("0", new Label.LabelStyle(fontOswaldTre, needsOnly.contains(GAMEMODE) ? Color.SCARLET : Color.CYAN));
         labelCrimes.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
                 if (new ArrayList<Integer>(Arrays.asList(0,1,2)).contains(GAMEMODE))
@@ -609,10 +649,10 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
                 cardType = 0;
             }
         });
-        //tableInterests.add(labelCrimes);
+        tableInterests.add(labelCrimes);
         CustomIcon iconScience = new CustomIcon(new Texture("icons2/science.png"), langString.get("science"));
         tableInterests.add(iconScience);
-        labelScience = new Label("105", new Label.LabelStyle(fontOswaldTre, needsOnly.contains(GAMEMODE) ? Color.SCARLET : Color.CYAN));
+        labelScience = new Label("0", new Label.LabelStyle(fontOswaldTre, needsOnly.contains(GAMEMODE) ? Color.SCARLET : Color.CYAN));
         labelScience.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
                 if (new ArrayList<Integer>(Arrays.asList(0,1,2)).contains(GAMEMODE))
@@ -626,7 +666,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         tableInterests.add(labelScience);
         CustomIcon iconCulture = new CustomIcon(new Texture("icons2/culture.png"), langString.get("culture"));
         tableInterests.add(iconCulture);
-        labelCulture = new Label("105", new Label.LabelStyle(fontOswaldTre, needsOnly.contains(GAMEMODE) ? Color.SCARLET : Color.CYAN));
+        labelCulture = new Label("0", new Label.LabelStyle(fontOswaldTre, needsOnly.contains(GAMEMODE) ? Color.SCARLET : Color.CYAN));
         labelCulture.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
                 if (new ArrayList<Integer>(Arrays.asList(0,1,2)).contains(GAMEMODE))
@@ -641,7 +681,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         tableInterests.row();
         CustomIcon iconFood = new CustomIcon(new Texture("icons2/food.png"), langString.get("food"));
         tableInterests.add(iconFood);
-        labelFood = new Label("105", new Label.LabelStyle(fontOswaldTre, needsOnly.contains(GAMEMODE) ? Color.SCARLET : Color.CYAN));
+        labelFood = new Label("0", new Label.LabelStyle(fontOswaldTre, needsOnly.contains(GAMEMODE) ? Color.SCARLET : Color.CYAN));
         labelFood.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
                 if (new ArrayList<Integer>(Arrays.asList(0,1,2)).contains(GAMEMODE))
@@ -654,8 +694,8 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         });
         tableInterests.add(labelFood);
         CustomIcon iconFashion = new CustomIcon(new Texture("icons2/fashion.png"), langString.get("fashion"));
-        //tableInterests.add(iconFashion);
-        labelFashion = new Label("105", new Label.LabelStyle(fontOswaldTre, needsOnly.contains(GAMEMODE) ? Color.SCARLET : Color.CYAN));
+        tableInterests.add(iconFashion);
+        labelFashion = new Label("0", new Label.LabelStyle(fontOswaldTre, needsOnly.contains(GAMEMODE) ? Color.SCARLET : Color.CYAN));
         labelFashion.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
                 if (new ArrayList<Integer>(Arrays.asList(0,1,2)).contains(GAMEMODE))
@@ -666,10 +706,10 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
                 cardType = 0;
             }
         });
-        //tableInterests.add(labelFashion);
+        tableInterests.add(labelFashion);
         CustomIcon iconSport = new CustomIcon(new Texture("icons2/sport.png"), langString.get("sport"));
         tableInterests.add(iconSport);
-        labelSport = new Label("105", new Label.LabelStyle(fontOswaldTre, needsOnly.contains(GAMEMODE) ? Color.SCARLET : Color.CYAN));
+        labelSport = new Label("0", new Label.LabelStyle(fontOswaldTre, needsOnly.contains(GAMEMODE) ? Color.SCARLET : Color.CYAN));
         labelSport.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
                 if (new ArrayList<Integer>(Arrays.asList(0,1,2)).contains(GAMEMODE))
@@ -681,10 +721,10 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
             }
         });
         tableInterests.add(labelSport);
-        //tableInterests.row();
+        tableInterests.row();
         CustomIcon iconTravel = new CustomIcon(new Texture("icons2/travel.png"), langString.get("travel"));
-        //tableInterests.add(iconTravel);
-        labelTravel = new Label("105", new Label.LabelStyle(fontOswaldTre, needsOnly.contains(GAMEMODE) ? Color.SCARLET : Color.CYAN));
+        tableInterests.add(iconTravel);
+        labelTravel = new Label("0", new Label.LabelStyle(fontOswaldTre, needsOnly.contains(GAMEMODE) ? Color.SCARLET : Color.CYAN));
         labelTravel.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
                 if (new ArrayList<Integer>(Arrays.asList(0,1,2)).contains(GAMEMODE))
@@ -695,10 +735,10 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
                 cardType = 0;
             }
         });
-        //tableInterests.add(labelTravel);
+        tableInterests.add(labelTravel);
         CustomIcon iconTechnics = new CustomIcon(new Texture("icons2/technics.png"), langString.get("technics"));
         tableInterests.add(iconTechnics);
-        labelTechnics = new Label("105", new Label.LabelStyle(fontOswaldTre, needsOnly.contains(GAMEMODE) ? Color.SCARLET : Color.CYAN));
+        labelTechnics = new Label("0", new Label.LabelStyle(fontOswaldTre, needsOnly.contains(GAMEMODE) ? Color.SCARLET : Color.CYAN));
         labelTechnics.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
                 if (new ArrayList<Integer>(Arrays.asList(0,1,2)).contains(GAMEMODE))
@@ -711,8 +751,8 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         });
         tableInterests.add(labelTechnics);
         CustomIcon iconJob = new CustomIcon(new Texture("icons2/work.png"), langString.get("work"));
-        //tableInterests.add(iconJob);
-        labelJob = new Label("105", new Label.LabelStyle(fontOswaldTre, needsOnly.contains(GAMEMODE) ? Color.SCARLET : Color.CYAN));
+        tableInterests.add(iconJob);
+        labelJob = new Label("0", new Label.LabelStyle(fontOswaldTre, needsOnly.contains(GAMEMODE) ? Color.SCARLET : Color.CYAN));
         labelJob.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
                 if (new ArrayList<Integer>(Arrays.asList(0,1,2)).contains(GAMEMODE))
@@ -723,11 +763,11 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
                 cardType = 0;
             }
         });
-        //tableInterests.add(labelJob);
+        tableInterests.add(labelJob);
         tableInterests.row();
         CustomIcon iconAnimals = new CustomIcon(new Texture("icons2/animals.png"), langString.get("animals"));
-        //tableInterests.add(iconAnimals);
-        labelAnimals = new Label("105", new Label.LabelStyle(fontOswaldTre, needsOnly.contains(GAMEMODE) ? Color.SCARLET : Color.CYAN));
+        tableInterests.add(iconAnimals);
+        labelAnimals = new Label("0", new Label.LabelStyle(fontOswaldTre, needsOnly.contains(GAMEMODE) ? Color.SCARLET : Color.CYAN));
         labelAnimals.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
                 if (new ArrayList<Integer>(Arrays.asList(0,1,2)).contains(GAMEMODE))
@@ -738,10 +778,10 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
                 cardType = 0;
             }
         });
-        //tableInterests.add(labelAnimals);
+        tableInterests.add(labelAnimals);
         CustomIcon iconBooks = new CustomIcon(new Texture("icons2/books.png"), langString.get("books"));
         tableInterests.add(iconBooks);
-        labelBooks = new Label("105", new Label.LabelStyle(fontOswaldTre, needsOnly.contains(GAMEMODE) ? Color.SCARLET : Color.CYAN));
+        labelBooks = new Label("0", new Label.LabelStyle(fontOswaldTre, needsOnly.contains(GAMEMODE) ? Color.SCARLET : Color.CYAN));
         labelBooks.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
                 if (new ArrayList<Integer>(Arrays.asList(0,1,2)).contains(GAMEMODE))
@@ -755,7 +795,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         tableInterests.add(labelBooks);
         CustomIcon iconFilms = new CustomIcon(new Texture("icons2/films.png"), langString.get("films"));
         tableInterests.add(iconFilms);
-        labelFilms = new Label("105", new Label.LabelStyle(fontOswaldTre, needsOnly.contains(GAMEMODE) ? Color.SCARLET : Color.CYAN));
+        labelFilms = new Label("0", new Label.LabelStyle(fontOswaldTre, needsOnly.contains(GAMEMODE) ? Color.SCARLET : Color.CYAN));
         labelFilms.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
                 if (new ArrayList<Integer>(Arrays.asList(0,1,2)).contains(GAMEMODE))
@@ -767,10 +807,10 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
             }
         });
         tableInterests.add(labelFilms);
-        //tableInterests.row();
+        tableInterests.row();
         CustomIcon iconMusic = new CustomIcon(new Texture("icons2/music.png"), langString.get("music"));
         tableInterests.add(iconMusic);
-        labelMusic = new Label("105", new Label.LabelStyle(fontOswaldTre, needsOnly.contains(GAMEMODE) ? Color.SCARLET : Color.CYAN));
+        labelMusic = new Label("0", new Label.LabelStyle(fontOswaldTre, needsOnly.contains(GAMEMODE) ? Color.SCARLET : Color.CYAN));
         labelMusic.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
                 if (new ArrayList<Integer>(Arrays.asList(0,1,2)).contains(GAMEMODE))
@@ -783,8 +823,8 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         });
         tableInterests.add(labelMusic);
         CustomIcon iconHistory = new CustomIcon(new Texture("icons2/hourglass.png"), langString.get("history"));
-        //tableInterests.add(iconHistory);
-        labelHistory = new Label("105", new Label.LabelStyle(fontOswaldTre, needsOnly.contains(GAMEMODE) ? Color.SCARLET : Color.CYAN));
+        tableInterests.add(iconHistory);
+        labelHistory = new Label("0", new Label.LabelStyle(fontOswaldTre, needsOnly.contains(GAMEMODE) ? Color.SCARLET : Color.CYAN));
         labelHistory.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
                 if (new ArrayList<Integer>(Arrays.asList(0,1,2)).contains(GAMEMODE))
@@ -795,10 +835,10 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
                 cardType = 0;
             }
         });
-        //tableInterests.add(labelHistory);
+        tableInterests.add(labelHistory);
         CustomIcon iconMystic = new CustomIcon(new Texture("icons2/mystic.png"), langString.get("mystic"));
-        //tableInterests.add(iconMystic);
-        labelMystic = new Label("105", new Label.LabelStyle(fontOswaldTre, needsOnly.contains(GAMEMODE) ? Color.SCARLET : Color.CYAN));
+        tableInterests.add(iconMystic);
+        labelMystic = new Label("0", new Label.LabelStyle(fontOswaldTre, needsOnly.contains(GAMEMODE) ? Color.SCARLET : Color.CYAN));
         labelMystic.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
                 if (new ArrayList<Integer>(Arrays.asList(0,1,2)).contains(GAMEMODE))
@@ -809,14 +849,14 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
                 cardType = 0;
             }
         });
-        //tableInterests.add(labelMystic);
+        tableInterests.add(labelMystic);
         tableInterests.row();
         tableInterests.setVisible(false);
 
         tableTalents = new Table().top().left();
         CustomIcon iconCaution = new CustomIcon(new Texture("icons2/caution.png"), langString.get("caution"));
         tableTalents.add(iconCaution);
-        labelCaution = new Label("105", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
+        labelCaution = new Label("0", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
         labelCaution.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
                 if (new ArrayList<Integer>(Arrays.asList(0,1)).contains(GAMEMODE))
@@ -830,7 +870,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         tableTalents.add(labelCaution);
         CustomIcon iconImagination = new CustomIcon(new Texture("icons2/imagination.png"), langString.get("imagination"));
         tableTalents.add(iconImagination);
-        labelImagination = new Label("105", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
+        labelImagination = new Label("0", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
         labelImagination.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
                 if (new ArrayList<Integer>(Arrays.asList(0,1)).contains(GAMEMODE))
@@ -845,7 +885,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         tableTalents.row();
         CustomIcon iconImmunity = new CustomIcon(new Texture("icons2/immunity.png"), langString.get("immunity"));
         tableTalents.add(iconImmunity);
-        labelImmunity = new Label("105", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
+        labelImmunity = new Label("0", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
         labelImmunity.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
                 if (new ArrayList<Integer>(Arrays.asList(0,1)).contains(GAMEMODE))
@@ -859,7 +899,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         tableTalents.add(labelImmunity);
         CustomIcon iconInfluence = new CustomIcon(new Texture("icons2/influence.png"), langString.get("influence"));
         tableTalents.add(iconInfluence);
-        labelInfluence = new Label("105", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
+        labelInfluence = new Label("0", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
         labelInfluence.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
                 if (new ArrayList<Integer>(Arrays.asList(0,1)).contains(GAMEMODE))
@@ -874,7 +914,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         tableTalents.row();
         CustomIcon iconInsight = new CustomIcon(new Texture("icons2/insight.png"), langString.get("insight"));
         tableTalents.add(iconInsight);
-        labelInsight = new Label("105", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
+        labelInsight = new Label("0", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
         labelInsight.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
                 if (new ArrayList<Integer>(Arrays.asList(0,1)).contains(GAMEMODE))
@@ -888,7 +928,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         tableTalents.add(labelInsight);
         CustomIcon iconLogic = new CustomIcon(new Texture("icons2/logic.png"), langString.get("logic"));
         tableTalents.add(iconLogic);
-        labelLogic = new Label("105", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
+        labelLogic = new Label("0", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
         labelLogic.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
                 if (new ArrayList<Integer>(Arrays.asList(0,1)).contains(GAMEMODE))
@@ -903,7 +943,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         tableTalents.row();
         CustomIcon iconMemory = new CustomIcon(new Texture("icons2/memory.png"), langString.get("memory"));
         tableTalents.add(iconMemory);
-        labelMemory = new Label("105", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
+        labelMemory = new Label("0", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
         labelMemory.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
                 if (new ArrayList<Integer>(Arrays.asList(0,1)).contains(GAMEMODE))
@@ -917,7 +957,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         tableTalents.add(labelMemory);
         CustomIcon iconQuickness = new CustomIcon(new Texture("icons2/quickness.png"), langString.get("quickness"));
         tableTalents.add(iconQuickness);
-        labelQuickness = new Label("105", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
+        labelQuickness = new Label("0", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
         labelQuickness.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
                 if (new ArrayList<Integer>(Arrays.asList(0,1)).contains(GAMEMODE))
@@ -932,7 +972,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         tableTalents.row();
         CustomIcon iconSpeech = new CustomIcon(new Texture("icons2/speech.png"), langString.get("speech"));
         tableTalents.add(iconSpeech);
-        labelSpeech = new Label("105", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
+        labelSpeech = new Label("0", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
         labelSpeech.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
                 if (new ArrayList<Integer>(Arrays.asList(0,1)).contains(GAMEMODE))
@@ -946,7 +986,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         tableTalents.add(labelSpeech);
         CustomIcon iconStamina = new CustomIcon(new Texture("icons2/stamina.png"), langString.get("stamina"));
         tableTalents.add(iconStamina);
-        labelStamina = new Label("105", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
+        labelStamina = new Label("0", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
         labelStamina.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
                 if (new ArrayList<Integer>(Arrays.asList(0,1)).contains(GAMEMODE))
@@ -1151,6 +1191,23 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         });
         iconTable.add(btnMain);
         iconTable.row();
+        CustomIcon btnStrings = new CustomIcon(new Texture("uiTva/strings.png"));
+        btnStrings.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                if (indiObs > -1) {
+                    hideTables(false);
+                    outerTable.setSize(580, 680*Float.parseFloat(String.valueOf(screenCoef * screenCoef)));
+                    cardTva.setType(18); nameField.setVisible(true); surnameField.setVisible(true); applyName.setVisible(true);
+                    outerTable.setVisible(true);
+                    nameField.setText("name"); surnameField.setText("surname");
+                    btnReset.setVisible(true);
+                    labelReset.setVisible(true);
+                }
+                else uiNo.play();
+            }
+        });
+        iconTable.add(btnStrings);
+        iconTable.row();
         labelReset = new Label("RESET ACTIONS", new Label.LabelStyle(fontOswald, Color.WHITE));
         labelReset.setPosition(170, Gdx.graphics.getHeight() - 340);
         labelRandomScenario = new Label(langString.get("newScenario"), new Label.LabelStyle(fontOswald, Color.WHITE));
@@ -1162,15 +1219,6 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
 
             }
         });
-        btnReset = new CustomIcon(new Texture("uiTva/reset.png"));
-        //btnReset = new SocietyTest.Custom(new Texture("uiTva/reset.png"), 520, Gdx.graphics.getHeight() - 75);
-        //btnReset.setBounds(540, Gdx.graphics.getHeight() - 75, 64, 64);
-        btnReset.addListener(new ClickListener() {
-            public void clicked(InputEvent event, float x, float y) {
-
-            }
-        });
-        cardStage.addActor(btnReset);
         //cardStage.addActor(labelReset);
         //btnReset.setVisible(false);
         cardStage.addActor(btnRandomScenario);
@@ -1185,6 +1233,8 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
             public void clicked(InputEvent event, float x, float y) {
                 hideTables(true);
                 outerTableNeeds.setVisible(true);
+                start.setVisible(true);
+                finish.setVisible(true);
             }
         });
         iconTable.add(btnNeeds);
@@ -1194,6 +1244,8 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
             public void clicked(InputEvent event, float x, float y) {
                 hideTables(true);
                 tableTalents.setVisible(true);
+                start.setVisible(true);
+                finish.setVisible(true);
             }
         });
         iconTable.add(btnTalents);
@@ -1203,10 +1255,12 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
             public void clicked(InputEvent event, float x, float y) {
                 hideTables(true);
                 tableInterests.setVisible(true);
+                start.setVisible(true);
+                finish.setVisible(true);
             }
         });
         iconTable.add(btnInterests);
-        iconTable.row();
+        iconTable.row();/*
         final CustomIcon btnRels = new CustomIcon(new Texture("uiTva/relations.png"));
         btnRels.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
@@ -1216,7 +1270,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
             }
         });
         iconTable.add(btnRels);
-        iconTable.row();
+        iconTable.row();*/
         CustomIcon btnGenderTva = new CustomIcon(new Texture("uiTva/loverel.png"));
         btnGenderTva.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
@@ -1285,29 +1339,24 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
                 else uiNo.play();
             }
         });
-        iconTable.add(btnScen);
-        iconTable.row();
+        //iconTable.add(btnScen);
+        //iconTable.row();
         CustomIcon btnRoomTre = new CustomIcon(new Texture("uiTva/room.png"));
         btnRoomTre.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 hideTables(true);
-                tableRoom.setVisible(true);
                 outerTableFurn.setVisible(true);
+                for (int i = 0; i < furnTable.getRows(); i++)
+                    uiNo.play();
             }
         });
         iconTable.add(btnRoomTre);
         iconTable.row();
-        btnTrash = new CustomIcon(new Texture("uiTva/trash2.png"));
+        btnTrash = new CustomIcon(new Texture("uiTva/trash.png"));
         btnTrash.setBounds(570, Gdx.graphics.getHeight()-255, 64, 64);
         btnTrash.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                //removeIndi(indiObs);
-                society.getIndi(cb, indiObs).alive = false;
-                indis.get(indiObs).actions.clear();
-                indis.get(indiObs).updateAppearance(1, SocietyScreen.HoldObject.None);
-                indis.get(indiObs).theme = new Texture(Gdx.files.internal("ui/null.png"));
-                indis.get(indiObs).targetY = 3000;
-                indis.get(indiObs).status = "is dead since: " + dd + "/" + mm + "/" + yyyy + ", " + hh + "." + min;
+
             }
         });
         btnTrash.setVisible(false);
@@ -1364,12 +1413,15 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         outerTable = new Table();
         scrollPaneFurn = new ScrollPane(furnTable);
         scrollPaneRelations = new ScrollPane(tableRelations);
+        scrollPaneActNums = new ScrollPane(tableActNums);
         scrollPaneIndis = new ScrollPane(tableIndis);
         outerTableFurn = new Table();
         outerTableFurn.add(scrollPaneFurn).expand().left();
         outerTableFurn.setVisible(false);
         outerTableRelations = new Table();
         outerTableRelations.add(scrollPaneRelations).expand().left();
+        outerTableActNums = new Table();
+        outerTableActNums.add(scrollPaneActNums).expand().left();
         outerTableIndis = new Table();
         outerTableIndis.add(scrollPaneIndis).expand().left();
         outerTableRelations.setVisible(false);
@@ -1383,7 +1435,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         //scrollPaneTre.layout();
         outerTableNeeds = new Table();
         outerTableNeeds.add(scrollPaneTre).expand().left().top();
-        outerTableNeeds.setPosition(90, 170);
+        outerTableNeeds.setPosition(90, 90);
         outerTableNeeds.setSize(550, 720);
         if (Gdx.graphics.getHeight() < 1079) {
             outerTableNeeds.setSize(550, 420);
@@ -1391,7 +1443,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         else if (Gdx.graphics.getHeight() < 759) {
             outerTableNeeds.setSize(550, 250);
         }
-        tableInterests.setPosition(90, 170);
+        tableInterests.setPosition(90, 90);
         tableInterests.setSize(550, 720);
         if (Gdx.graphics.getHeight() < 1079) {
             tableInterests.setSize(550, 420);
@@ -1399,7 +1451,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         else if (Gdx.graphics.getHeight() < 759) {
             tableInterests.setSize(550, 250);
         }
-        tableTalents.setPosition(90, 170);
+        tableTalents.setPosition(90, 90);
         tableTalents.setSize(550, 720);
         if (Gdx.graphics.getHeight() < 1079) {
             tableTalents.setSize(550, 420);
@@ -1427,6 +1479,8 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         outerTableFurn.setSize(700, 820*Float.parseFloat(String.valueOf(screenCoef)));
         outerTableRelations.setPosition(100, 40);
         outerTableRelations.setSize(600, 820*Float.parseFloat(String.valueOf(screenCoef)));
+        outerTableActNums.setPosition(100, 40);
+        outerTableActNums.setSize(600, 820*Float.parseFloat(String.valueOf(screenCoef)));
         outerTableIndis.setPosition(Gdx.graphics.getWidth()-100, 40);
         outerTableIndis.setSize(170, 850*Float.parseFloat(String.valueOf(screenCoef)));
         //outerTable.add(labelHint);
@@ -1436,6 +1490,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         cardStage.addActor(outerTableTva);
         cardStage.addActor(outerTableFurn);
         cardStage.addActor(outerTableRelations);
+        cardStage.addActor(outerTableActNums);
         cardStage.addActor(outerTableIndis);
         cardStage.addActor(outerTableNeeds);
         cardStage.addActor(tableInterests);
@@ -1467,7 +1522,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
                 for (int q = 0; q<objectsTest.size(); q++) {
                     if (objectsTest.get(q).getType() == 18) {
                         objectsTest.get(q).setAppearance(1);
-                        objects.get(q).setTexture(SocietyScreen.whichObject(objectsTest.get(q).getType(), objectsTest.get(q).getAppearance()));
+                        objects.get(q).setTexture(whichObject(objectsTest.get(q).getType(), objectsTest.get(q).getAppearance()));
                         //objects.get(q).setBounds(objects.get(q).getOX(), objects.get(q).getOY(), 527,363);
                         objects.get(q).bounds = true;
                     }
@@ -1484,7 +1539,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
                 for (int q = 0; q<objectsTest.size(); q++) {
                     if (objectsTest.get(q).getType() == 18) {
                         objectsTest.get(q).setAppearance(2);
-                        objects.get(q).setTexture(SocietyScreen.whichObject(objectsTest.get(q).getType(), objectsTest.get(q).getAppearance()));
+                        objects.get(q).setTexture(whichObject(objectsTest.get(q).getType(), objectsTest.get(q).getAppearance()));
                         objects.get(q).setBounds(objects.get(q).getOX(), objects.get(q).getOY(), 0, 0);
                         objects.get(q).bounds = false;
                     }
@@ -1498,11 +1553,6 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         SocietyScreen.Custom cityButton = new SocietyScreen.Custom(new Texture("ui/cityButton.png"), 85, Gdx.graphics.getHeight()-795);
         cityButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                society.getBoxes().clear();
-                objectsTest.clear();
-                objects.clear();
-                indis.clear();
-                indisTest.clear();
                 game.setScreen(new MainMenuScreen(game, lang));
                 dispose();
                 bckMusic.stop();
@@ -1525,26 +1575,38 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         loadButton.setBounds(100, Gdx.graphics.getHeight()-580, 165, 165);
         loadButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
+                outerTableActNums.setVisible(true);
+                FileHandle file = Gdx.files.local("E/json/extraactions.txt");
+                if (file.exists()) {
+                    jsonStr = file.readString();
+                    extraActs = json.fromJson(ArrayList.class, jsonStr);
+                } else {
+                    file = Gdx.files.internal("json/extraactions.txt");
+                    if (file.exists()) {
+                        jsonStr = file.readString();
+                        extraActs = json.fromJson(ArrayList.class, jsonStr);
+                    } else {
+                        extraActs.add(new com.peoplebox.additions.Action(10000, 15, 2, 0, 0,
+                                new SocietyScreen.NeedsArray(), new SocietyScreen.NeedsArray(-5, -5, -15, -15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+                                new SocietyScreen.InterestsArray(0, 0, 0, 0, 0, 0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+                                new SocietyScreen.InterestsArray(0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+                                new SocietyScreen.TalentsArray(), new SocietyScreen.TalentsArray(0, 0, 0, 0, 0, 0, 0, 0, 1, 0),
+                                new ArrayList<Integer>(Arrays.asList(new Integer[]{22})), ""));
+                        extraActs.add(extraActs.get(0));
 
+                        extraActs.get(0).setRu(new String[]{"бегает на дорожке"});
+                        extraActs.get(0).setEn(new String[]{"runs on treadmill"});
+                        Gdx.app.error("EXTRAACTS", json.prettyPrint(extraActs));
+                    }
+                }
+                tableActNums.clear();
+                for (int i = 0; i < extraActs.size(); i++) {
+                    tableActNums.add(new ActCard(i));
+                }
+                groupBuild.setVisible(false);
             }});
         Label labelLoadButton = new Label(langString.get("loadButton"), new Label.LabelStyle(fontOswald, Color.WHITE));
         labelLoadButton.setPosition(100, Gdx.graphics.getHeight()-625);
-        Label labelUpStairs = new Label("UP", new Label.LabelStyle(fontOswald, Color.WHITE));
-        labelUpStairs.setPosition(100, Gdx.graphics.getHeight()-1040);
-        SocietyScreen.Custom upStairsButton = new SocietyScreen.Custom(new Texture("ui/upstairs.png"), 100, Gdx.graphics.getHeight()-980);
-        upStairsButton.setBounds(100, Gdx.graphics.getHeight()-980, 122, 192);
-        upStairsButton.addListener(new ClickListener() {
-            public void clicked(InputEvent event, float x, float y) {
-
-            }});
-        Label labelDownStairs = new Label("DOWN", new Label.LabelStyle(fontOswald, Color.WHITE));
-        labelDownStairs.setPosition(250, Gdx.graphics.getHeight()-1040);
-        SocietyScreen.Custom downStairsButton = new SocietyScreen.Custom(new Texture("ui/downstairs.png"), 250, Gdx.graphics.getHeight()-980);
-        downStairsButton.setBounds(250, Gdx.graphics.getHeight()-980, 122, 192);
-        downStairsButton.addListener(new ClickListener() {
-            public void clicked(InputEvent event, float x, float y) {
-
-            }});
 
         //groupBuild.addActor(buildButton);
         //groupBuild.addActor(labelBuildButton);
@@ -1558,10 +1620,6 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         groupBuild.addActor(labelSaveButton);
         groupBuild.addActor(loadButton);
         groupBuild.addActor(labelLoadButton);
-        groupBuild.addActor(upStairsButton);
-        groupBuild.addActor(labelUpStairs);
-        groupBuild.addActor(downStairsButton);
-        groupBuild.addActor(labelDownStairs);
         groupBuild.setVisible(false);
         cardStage.addActor(groupBuild);
 
@@ -1599,20 +1657,20 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
                 if (objectsTest.get(objectObs).getAppearance() % 2 == 1) {
                     if (objectsTest.get(objectObs).getType() == 7 || objectsTest.get(objectObs).getType() == 29) {
                         objectsTest.get(objectObs).setAppearance(objectsTest.get(objectObs).getAppearance() - 1);
-                        objects.get(objectObs).setTexture(SocietyScreen.whichObject(objectsTest.get(objectObs).getType(), objectsTest.get(objectObs).getAppearance()));
+                        objects.get(objectObs).setTexture(whichObject(objectsTest.get(objectObs).getType(), objectsTest.get(objectObs).getAppearance()));
                     }
                     else {
                         objectsTest.get(objectObs).setAppearance(objectsTest.get(objectObs).getAppearance() + 1);
-                        objects.get(objectObs).setTexture(SocietyScreen.whichObject(objectsTest.get(objectObs).getType(), objectsTest.get(objectObs).getAppearance()));}
+                        objects.get(objectObs).setTexture(whichObject(objectsTest.get(objectObs).getType(), objectsTest.get(objectObs).getAppearance()));}
                 }
                 else {
                     if (objectsTest.get(objectObs).getType() == 7 || objectsTest.get(objectObs).getType() == 29) {
                         objectsTest.get(objectObs).setAppearance(objectsTest.get(objectObs).getAppearance() + 1);
-                        objects.get(objectObs).setTexture(SocietyScreen.whichObject(objectsTest.get(objectObs).getType(), objectsTest.get(objectObs).getAppearance()));
+                        objects.get(objectObs).setTexture(whichObject(objectsTest.get(objectObs).getType(), objectsTest.get(objectObs).getAppearance()));
                     }
                     else {
                         objectsTest.get(objectObs).setAppearance(objectsTest.get(objectObs).getAppearance() - 1);
-                        objects.get(objectObs).setTexture(SocietyScreen.whichObject(objectsTest.get(objectObs).getType(), objectsTest.get(objectObs).getAppearance()));}
+                        objects.get(objectObs).setTexture(whichObject(objectsTest.get(objectObs).getType(), objectsTest.get(objectObs).getAppearance()));}
                 }
             }
         });
@@ -1640,6 +1698,35 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         //tableDebugActions.setVisible(false);
         scrollPane.setVisible(true);
         cardTva.listen();
+    }
+
+    public class ActCard extends Actor {
+        public TextureRegion texture = new TextureRegion(new Texture(Gdx.files.internal("uiTva/scenario.png")));
+        int ii, act;
+        String s1, s2;
+
+        public ActCard(int act) {
+            this.s2 = s2;
+            this.act = act;
+            this.ii = ii;
+            setBounds(getX(), getY(), 600, 96);
+            addListener(new InputListener() {
+                public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
+                    action = extraActs.get(act);
+                    hideTables(false);
+                    cardTva.type = 18;
+                    labelHintTre.setText(extraActs.get(act).getEn().length == 0 ? "empty action" : extraActs.get(act).getEn()[0]);
+                    return true;
+                }
+            });
+        }
+
+        public void act(float delta) {}
+
+        public void draw(Batch batch, float delta) {
+            fontFranTva.draw(batch, extraActs.get(act).getEn().length == 0 ? "empty action" : extraActs.get(act).getEn()[0], getX()+110, getY()+80);
+            fontOswald.draw(batch, extraActs.get(act).getCODE() + " ", getX(), getY()+80);
+        }
     }
 
     @Override
@@ -1677,6 +1764,94 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         sec = sec + random(sec % 10000);
         long j = sec % i;
         return (int) j + 1;
+    }
+
+    void createObject(int type, int appearance, int cleanliness0, int fixity, int x, int y) {
+        //1-fridges 2-beds 3-lamps 4-tables 5-TVs 6-PCs 7-deco 8-armchairs 9-chairs 11-shelves
+        num0 = objectsTest.size() + 1;
+        Gdx.app.error("num0: "+ num0, "objectsTest.size: "+ objectsTest.size() + ", objects.size:" + objects.size());
+        Texture texture0 = whichObject(type, appearance);
+        ObjectActor myActorTva =  new ObjectActor(texture0, x, yyyy, num0);
+        myActorTva.setTouchable(Touchable.enabled);
+        stage.addActor(myActorTva);
+        yyyy += 100;
+    }
+
+    public class ObjectActor extends Actor {
+        public ObjectActor() {
+        }
+
+        public boolean anim = false;
+        private TextureRegion region;
+        private Texture texture;
+        private int ox, oy;
+        public int num0;
+        public int occ = -1;
+        public int vac = 1;
+        public transient boolean started = false;
+        public transient boolean bounds = true;
+        public long delay, mainDelay;
+
+        public ObjectActor(final Texture texture, int x, int y, int num0) {
+            this.texture = texture;
+            Gdx.app.log("texture", String.valueOf(texture));
+            this.ox = x;
+            this.oy = y;
+            this.num0 = num0;
+            final int num1 = num0;
+            occ = -1;
+            region = new TextureRegion(texture);
+            setBounds(region.getRegionX(), region.getRegionY(),
+                    region.getRegionWidth(), region.getRegionHeight());
+        }
+
+        public Texture getTexture() {
+            return texture;
+        }
+
+        public void setTexture(Texture texture) {
+            this.texture = texture;
+        }
+
+        public int getOX() {
+            return ox;
+        }
+
+        public void setOX(int x) {
+            this.ox = x;
+        }
+
+        public int getOY() {
+            return oy;
+        }
+
+        public void setOY(int y) {
+            this.oy = y;
+        }
+
+        public boolean isStarted() {
+            return started;
+        }
+
+        public void setStarted(boolean started) {
+            this.started = started;
+        }
+
+        public int getNum0() {
+            return num0;
+        }
+
+        public void setNum0(int num0) {
+            this.num0 = num0;
+        }
+
+        public void draw(Batch batch, float alpha) {
+            batch.draw(texture, ox, oy);
+        }
+
+        public void act(float delta) {
+            if (bounds) setBounds(ox, oy, texture.getWidth(), texture.getHeight());
+        }
     }
 
     public class CustomIcon extends Actor {
@@ -1736,9 +1911,11 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
     void hideTables(boolean labelHintHide) {
         panelLeft.setTexture(new Texture(Gdx.files.internal("ui/null.png")));
         cardTva.setType(0);
+        start.setVisible(false);
+        finish.setVisible(false);
         nameField.setVisible(false);
         surnameField.setVisible(false);
-        //btnReset.setVisible(false);
+        outerTableActNums.setVisible(false);
         applyName.setVisible(false);
         outerTableNeeds.setVisible(false);
         tableInterests.setVisible(false);
@@ -1774,70 +1951,12 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         }
         FileHandle fileTva = Gdx.files.internal("json/furn.txt");
         jsonStr = fileTva.readString();
-        furn = json.fromJson(ArrayList.class, jsonStr);
-        furnTable = new Table().left();
-        for (int q=0; q<furn.size(); q++) {
-            Json json = new Json();
-            FileHandle file = Gdx.files.local("E/json/DEFAULTCITY/priceprops.txt");
-            if (!file.exists()) {
-                file= Gdx.files.internal("json/DEFAULTCITY/priceprops.txt");
-            }
-            jsonStr = file.readString();
-            PriceProps prices = json.fromJson(PriceProps.class, jsonStr);
-            furn.get(q).price = (int) (furn.get(q).price * prices.furnMarkup /* * Math.pow(0.9, yyyy - furn.get(q).prodStart)*/);
-            furnTable.add(furn.get(q)).left();
-            furnTable.row();
-        }
     }
 
     public void updateInterface(int type) {
-        int[] arr = new int[] {18, 21, 22, 24, 25, 41, 42, 43};
+        int[] arr = new int[] {18, 42};
         if (type == 18) {
-            java.lang.StringBuilder s = new StringBuilder(langString.get("actionsCount") + ": " +
-                    indis.get(indiObs).actions.size() + "\n");
-            int sum = 0;
-            if (indis.get(indiObs).delay != 0)
-                sum = (int) (System.currentTimeMillis() - (int) indis.get(indiObs).delay);
-            for (int i = 0; i < indis.get(indiObs).actions.size(); i++) {
-                s.append(indis.get(indiObs).actions.get(i).action).append(", ")/*.append(indis.get(indiObs).actions.get(i).toString()).append(", ")*/.append(specialStatus(indis.get(indiObs).actions.get(i).action, indis.get(indiObs).actions.get(i))).append(", ").append(sum == 0 ? "0000" : sum).append("\n");
-                sum -= actionDelay(indis.get(indiObs).actions.get(i).action, indiObs);
-            }
-            labelHint.setText(langString.get("genderSex") + ":" + ((society.getIndi(cb, indiObs).getGender() == 1) ? "мужской" : "женский")
-                    + "\n" + langString.get("age") + ":" + society.getIndi(cb, indiObs).getAge()
-                    + ", год рождения: " + String.valueOf(yyyy - society.getIndi(cb, indiObs).getAge())
-                    + "\n" + langString.get("budget") + ":" + society.getIndi(cb, indiObs).getWealth()
-                    + "\n" + langString.get("address") + ":" + society.getIndi(cb, indiObs).getHomeX() + "/" + society.getIndi(cb, indiObs).getHomeY() + "/" + society.getIndi(cb, indiObs).getHomeZ()
-                    + /*"\n" + "Жизненная цель:" + society.getIndiTest(cb, indiObs).getLifePurpose()
-                        + */ "\n" + langString.get("selfEsteem") + ":" + society.getIndi(cb, indiObs).getSelfEsteem()
-                    +  "\n" + langString.get("lovePts") + ":" + society.getIndi(cb, indiObs).getLove()
-                    +  "\n" + "Тип помещения:" + society.getBoxes().get(cb).getProperty()
-                    +  "\n\n" + s
-            );
-        }
-        if (type == 22) {
-            labelHint.setText("Внешность:" + society.getIndi(cb, indiObs).getSocialLifts().get(0).isAppearance()
-                    + "\n" + "Карьера:" + society.getIndi(cb, indiObs).getSocialLifts().get(0).isCareer()
-                    + "\n" + "Образование:" + society.getIndi(cb, indiObs).getSocialLifts().get(0).isEducation()
-                    + "\n" + "Семья:" + society.getIndi(cb, indiObs).getSocialLifts().get(0).isMarriage());
-        }
-        if (type == 25) {
-            str = "";
-            for (int q = 0; q < society.getInits().size(); q++) {
-                str = str + society.getInits().get(q).getName() + ", лидер:" + society.getIndi(cb, Integer.valueOf(society.getInits().get(q).getName()) - 1).getName() + " " + society.getIndi(cb, Integer.valueOf(society.getInits().get(q).getName()) - 1).getSurname();
-            }
-            labelHint.setText(str);
-        }
-        if (type == 41) {
-            labelHint.setText(society.getJobs().get(society.getIndi(cb, indiObs).getJob()).getName() + "\n3арплата:" + society.getJobs().get(society.getIndi(cb, indiObs).getJob()).getSalary() +
-                    "\nУдалёнка"
-                    //"\nЧасы работы:" + (society.getJobs().get(society.getIndiTest(cb, indiObs).getJob()).getStartTime() + society.getJobs().get(society.getIndiTest(cb, indiObs).getJob()).getHours() >= 24 ? society.getJobs().get(society.getIndiTest(cb, indiObs).getJob()).getStartTime() + ":00 - " + (society.getJobs().get(society.getIndiTest(cb, indiObs).getJob()).getStartTime() + society.getJobs().get(society.getIndiTest(cb, indiObs).getJob()).getHours() - 24) + ":00" : society.getJobs().get(society.getIndiTest(cb, indiObs).getJob()).getStartTime() + ":00 - " + (society.getJobs().get(society.getIndiTest(cb, indiObs).getJob()).getStartTime() + society.getJobs().get(society.getIndiTest(cb, indiObs).getJob()).getHours()) + ":00")
-                    + "\n");
-            if (society.getIndi(cb, indiObs).getEducations().size() != 0) {
-                labelHint.setText(labelHint.getText() + "\n\nОбразование:" + society.getIndi(cb, indiObs).getEducations().get(0).getSpeciality().name + ", " + society.getIndi(cb, indiObs).getEducations().get(0).getUniversity().name);
-            }
-            else {
-                labelHint.setText(labelHint.getText() + "\n\nОбразования нет");
-            }
+            labelHint.setText(langString.get("genderSex") + ":");
         }
         if (type == 42) {
             str = "";
@@ -1854,60 +1973,218 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
                 labelHint.setText(str);
             }
         }
-        if (type == 43) {
-            labelHint.setText("Влечение к мужчинам:" + society.getIndi(cb, indiObs).getGenderProps().get(0).getMaleAppetence()
-                    + "\n" + "Влечение к женщинам:" + society.getIndi(cb, indiObs).getGenderProps().get(0).getFemaleAppetence()
-                    + "\n" + "Желание иметь детей:" + society.getIndi(cb, indiObs).getGenderProps().get(0).getKidsWant()
-            );
-        }
 
-        if (indiObs > -1) {labelAesthetics.setText(society.getIndi(cb, indiObs).getNeeds().get(0).getAesthetics() + " ");
-            labelBladder.setText(society.getIndi(cb, indiObs).getNeeds().get(0).getBl() + " ");
-            labelEducation.setText(society.getIndi(cb, indiObs).getNeeds().get(0).getEducation() + " ");
-            labelEnergy.setText(society.getIndi(cb, indiObs).getNeeds().get(0).getEnergy() + " ");
-            labelEnv.setText(society.getIndi(cb, indiObs).getNeeds().get(0).getEnvironment() + " ");
-            labelFun.setText(society.getIndi(cb, indiObs).getNeeds().get(0).getFun() + " ");
-            labelHunger.setText(society.getIndi(cb, indiObs).getNeeds().get(0).getHunger() + " ");
-            labelHygiene.setText(society.getIndi(cb, indiObs).getNeeds().get(0).getHygiene() + " ");
-            labelLove.setText(society.getIndi(cb, indiObs).getNeeds().get(0).getLove() + " ");
-            labelPower.setText(society.getIndi(cb, indiObs).getNeeds().get(0).getPower() + " ");
-            labelSafety.setText(society.getIndi(cb, indiObs).getNeeds().get(0).getProtection() + " ");
-            labelShopping.setText(society.getIndi(cb, indiObs).getNeeds().get(0).getShopping() + " ");
-            labelSocial.setText(society.getIndi(cb, indiObs).getNeeds().get(0).getSocial() + " ");
-            labelSuccess.setText(society.getIndi(cb, indiObs).getNeeds().get(0).getSuccess() + " ");
-            labelPolitics.setText(society.getIndi(cb, indiObs).getInterests().get(0).getPolitics() + " ");
-            labelEconomics.setText(society.getIndi(cb, indiObs).getInterests().get(0).getEconomics() + " ");
-            labelHealth.setText(society.getIndi(cb, indiObs).getInterests().get(0).getHealth() + " ");
-            labelCrimes.setText(society.getIndi(cb, indiObs).getInterests().get(0).getCrimes() + " ");
-            labelFashion.setText(society.getIndi(cb, indiObs).getInterests().get(0).getFun() + " ");
-            labelCulture.setText(society.getIndi(cb, indiObs).getInterests().get(0).getCulture() + " ");
-            labelFood.setText(society.getIndi(cb, indiObs).getInterests().get(0).getFood() + " ");
-            labelScience.setText(society.getIndi(cb, indiObs).getInterests().get(0).getFashion() + " ");
-            labelSport.setText(society.getIndi(cb, indiObs).getInterests().get(0).getSport() + " ");
-            labelTravel.setText(society.getIndi(cb, indiObs).getInterests().get(0).getTravel() + " ");
-            labelTechnics.setText(society.getIndi(cb, indiObs).getInterests().get(0).getTechnics() + " ");
-            labelJob.setText(society.getIndi(cb, indiObs).getInterests().get(0).getWork() + " ");
-            labelAnimals.setText(society.getIndi(cb, indiObs).getInterests().get(0).getAnimals() + " ");
-            labelBooks.setText(society.getIndi(cb, indiObs).getInterests().get(0).getBooks() + " ");
-            labelFilms.setText(society.getIndi(cb, indiObs).getInterests().get(0).getFilms() + " ");
-            labelMusic.setText(society.getIndi(cb, indiObs).getInterests().get(0).getMusic() + " ");
-            labelHistory.setText(society.getIndi(cb, indiObs).getInterests().get(0).getHistory() + " ");
-            labelMystic.setText(society.getIndi(cb, indiObs).getInterests().get(0).getMystic() + " ");
-            labelCaution.setText(society.getIndi(cb, indiObs).getTalents().get(0).getCaution() + " ");
-            labelImagination.setText(society.getIndi(cb, indiObs).getTalents().get(0).getImagination() + " ");
-            labelInfluence.setText(society.getIndi(cb, indiObs).getTalents().get(0).getInfluence() + " ");
-            labelImmunity.setText(society.getIndi(cb, indiObs).getTalents().get(0).getImmunity() + " ");
-            labelInsight.setText(society.getIndi(cb, indiObs).getTalents().get(0).getInsight() + " ");
-            labelLogic.setText(society.getIndi(cb, indiObs).getTalents().get(0).getLogic() + " ");
-            labelMemory.setText(society.getIndi(cb, indiObs).getTalents().get(0).getMemory() + " ");
-            labelQuickness.setText(society.getIndi(cb, indiObs).getTalents().get(0).getQuickness() + " ");
-            labelSpeech.setText(society.getIndi(cb, indiObs).getTalents().get(0).getSpeech() + " ");
-            labelStamina.setText(society.getIndi(cb, indiObs).getTalents().get(0).getStamina() + " ");
+        if (indiObs > -1) {labelAesthetics.setText(action.getStartNeeds().getAesthetics() + " ");
+            labelBladder.setText(action.getStartNeeds().getBl() + " ");
+            labelEducation.setText(action.getStartNeeds().getEducation() + " ");
+            labelEnergy.setText(action.getStartNeeds().getEnergy() + " ");
+            labelEnv.setText(action.getStartNeeds().getEnvironment() + " ");
+            labelFun.setText(action.getStartNeeds().getFun() + " ");
+            labelHunger.setText(action.getStartNeeds().getHunger() + " ");
+            labelHygiene.setText(action.getStartNeeds().getHygiene() + " ");
+            labelLove.setText(action.getStartNeeds().getLove() + " ");
+            labelPower.setText(action.getStartNeeds().getPower() + " ");
+            labelSafety.setText(action.getStartNeeds().getProtection() + " ");
+            labelShopping.setText(action.getStartNeeds().getShopping() + " ");
+            labelSocial.setText(action.getStartNeeds().getSocial() + " ");
+            labelSuccess.setText(action.getStartNeeds().getSuccess() + " ");
+            labelPolitics.setText(action.getStartInterests().getPolitics() + " ");
+            labelEconomics.setText(action.getStartInterests().getEconomics() + " ");
+            labelHealth.setText(action.getStartInterests().getHealth() + " ");
+            labelCrimes.setText(action.getStartInterests().getCrimes() + " ");
+            labelFashion.setText(action.getStartInterests().getFun() + " ");
+            labelCulture.setText(action.getStartInterests().getCulture() + " ");
+            labelFood.setText(action.getStartInterests().getFood() + " ");
+            labelScience.setText(action.getStartInterests().getFashion() + " ");
+            labelSport.setText(action.getStartInterests().getSport() + " ");
+            labelTravel.setText(action.getStartInterests().getTravel() + " ");
+            labelTechnics.setText(action.getStartInterests().getTechnics() + " ");
+            labelJob.setText(action.getStartInterests().getWork() + " ");
+            labelAnimals.setText(action.getStartInterests().getAnimals() + " ");
+            labelBooks.setText(action.getStartInterests().getBooks() + " ");
+            labelFilms.setText(action.getStartInterests().getFilms() + " ");
+            labelMusic.setText(action.getStartInterests().getMusic() + " ");
+            labelHistory.setText(action.getStartInterests().getHistory() + " ");
+            labelMystic.setText(action.getStartInterests().getMystic() + " ");
+            labelCaution.setText(action.getStartTalents().getCaution() + " ");
+            labelImagination.setText(action.getStartTalents().getImagination() + " ");
+            labelInfluence.setText(action.getStartTalents().getInfluence() + " ");
+            labelImmunity.setText(action.getStartTalents().getImmunity() + " ");
+            labelInsight.setText(action.getStartTalents().getInsight() + " ");
+            labelLogic.setText(action.getStartTalents().getLogic() + " ");
+            labelMemory.setText(action.getStartTalents().getMemory() + " ");
+            labelQuickness.setText(action.getStartTalents().getQuickness() + " ");
+            labelSpeech.setText(action.getStartTalents().getSpeech() + " ");
+            labelStamina.setText(action.getStartTalents().getStamina() + " ");
         }
-        if (labelCelsius.getText().toString().equals("°C")) {
-            labelTemperature.setText(society.getBoxes().get(cb).getTemperature() + "");
+    }
+
+    public void addingParameters() {
+        int counter = 1;
+        if (Gdx.graphics.getFramesPerSecond() < 20) {counter = 3;}
+        if (Gdx.graphics.getFramesPerSecond() > 20) {counter = 2;}
+        if (Gdx.graphics.getFramesPerSecond() > 40) {counter = 1;}
+        //int cardCount = Gdx.graphics.getHeight() / 2 * (Gdx.input.getY() - (Gdx.graphics.getHeight() / 2)) / (Gdx.graphics.getHeight() / 10);
+        int cardCount = counter;//(Gdx.input.getY() - Gdx.graphics.getHeight() / 2) / (3);
+        if (cardType != 0) {
+            if (Gdx.input.getY() > neededY) {
+                cardCount = -counter;
+            }
+            arrowHint.setVisible(true);
+            if (cardType == 1) {
+                action.getStartInterests().setPolitics(action.getStartInterests().getPolitics() + cardCount);
+            }
+            if (cardType == 2) {
+                action.getStartInterests().setEconomics(action.getStartInterests().getEconomics() + cardCount);
+            }
+            if (cardType == 3) {
+                action.getStartInterests().setHealth(action.getStartInterests().getHealth() + cardCount);
+            }
+            if (cardType == 4) {
+                action.getStartInterests().setCrimes(action.getStartInterests().getCrimes() + cardCount);
+            }
+            if (cardType == 5) {
+                action.getStartInterests().setFashion(action.getStartInterests().getFashion() + cardCount);
+            }
+            if (cardType == 6) {
+                action.getStartInterests().setCulture(action.getStartInterests().getCulture() + cardCount);
+            }
+            if (cardType == 7) {
+                action.getStartInterests().setFood(action.getStartInterests().getFood() + cardCount);
+            }
+            if (cardType == 8) {
+                action.getStartInterests().setFun(action.getStartInterests().getFun() + cardCount);
+            }
+            if (cardType == 9) {
+                action.getStartInterests().setSport(action.getStartInterests().getSport() + cardCount);
+            }
+            if (cardType == 10) {
+                action.getStartInterests().setTravel(action.getStartInterests().getTravel() + cardCount);
+            }
+            if (cardType == 11) {
+                action.getStartInterests().setTechnics(action.getStartInterests().getTechnics() + cardCount);
+            }
+            if (cardType == 12) {
+                action.getStartInterests().setWork(action.getStartInterests().getWork() + cardCount);
+            }
+            if (cardType == 13) {
+                action.getStartInterests().setAnimals(action.getStartInterests().getAnimals() + cardCount);
+            }
+            if (cardType == 14) {
+                action.getStartInterests().setBooks(action.getStartInterests().getBooks() + cardCount);
+            }
+            if (cardType == 15) {
+                action.getStartInterests().setFilms(action.getStartInterests().getFilms() + cardCount);
+            }
+            if (cardType == 16) {
+                action.getStartInterests().setMusic(action.getStartInterests().getMusic() + cardCount);
+            }
+            if (cardType == 26) {
+                action.getStartNeeds().setAesthetics(action.getStartNeeds().getAesthetics() + cardCount);
+            }
+            if (cardType == 27) {
+                action.getStartNeeds().setBl(action.getStartNeeds().getBl() + cardCount);
+            }
+            if (cardType == 28) {
+                action.getStartNeeds().setEducation(action.getStartNeeds().getEducation() + cardCount);
+            }
+            if (cardType == 29) {
+                action.getStartNeeds().setEnergy(action.getStartNeeds().getEnergy() + cardCount);
+            }
+            if (cardType == 30) {
+                action.getStartNeeds().setEnvironment(action.getStartNeeds().getEnvironment() + cardCount);
+            }
+            if (cardType == 31) {
+                action.getStartNeeds().setFun(action.getStartNeeds().getFun() + cardCount);
+            }
+            if (cardType == 32) {
+                action.getStartNeeds().setHunger(action.getStartNeeds().getHunger() + cardCount);
+            }
+            if (cardType == 33) {
+                action.getStartNeeds().setHygiene(action.getStartNeeds().getHygiene() + cardCount);
+            }
+            if (cardType == 34) {
+                action.getStartNeeds().setLove(action.getStartNeeds().getLove() + cardCount);
+            }
+            if (cardType == 35) {
+                action.getStartNeeds().setPower(action.getStartNeeds().getPower() + cardCount);
+            }
+            if (cardType == 36) {
+                action.getStartNeeds().setProtection(action.getStartNeeds().getProtection() + cardCount);
+            }
+            if (cardType == 37) {
+                action.getStartNeeds().setShopping(action.getStartNeeds().getShopping() + cardCount);
+            }
+            if (cardType == 38) {
+                action.getStartNeeds().setSocial(action.getStartNeeds().getSocial() + cardCount);
+            }
+            if (cardType == 39) {
+                action.getStartNeeds().setSuccess(action.getStartNeeds().getSuccess() + cardCount);
+            }
+            if (cardType == 44) {
+                action.getStartTalents().setCaution(action.getStartTalents().getCaution() + cardCount);
+            }
+            if (cardType == 45) {
+                action.getStartTalents().setImagination(action.getStartTalents().getImagination() + cardCount);
+            }
+            if (cardType == 46) {
+                action.getStartTalents().setImmunity(action.getStartTalents().getImmunity() + cardCount);
+            }
+            if (cardType == 47) {
+                action.getStartTalents().setInfluence(action.getStartTalents().getInfluence() + cardCount);
+            }
+            if (cardType == 48) {
+                action.getStartTalents().setInsight(action.getStartTalents().getInsight() + cardCount);
+            }
+            if (cardType == 49) {
+                action.getStartTalents().setLogic(action.getStartTalents().getLogic() + cardCount);
+            }
+            if (cardType == 50) {
+                action.getStartTalents().setMemory(action.getStartTalents().getMemory() + cardCount);
+            }
+            if (cardType == 51) {
+                action.getStartTalents().setQuickness(action.getStartTalents().getQuickness() + cardCount);
+            }
+            if (cardType == 52) {
+                action.getStartTalents().setSpeech(action.getStartTalents().getSpeech() + cardCount);
+            }
+            if (cardType == 53) {
+                action.getStartTalents().setStamina(action.getStartTalents().getStamina() + cardCount);
+            }
+            if (cardType == 54) {
+                society.getBoxes().get(cb).setTemperature(society.getBoxes().get(cb).getTemperature() + 0.5f);
+            }
+            if (cardType == 55) {
+                society.getBoxes().get(cb).setWater(true);
+                labelWater.setText("On");
+            }
+            if (cardType == 56) {
+                society.getBoxes().get(cb).setElectricity(true);
+                labelElectricity.setText("On");
+            }
+            if (cardType == 57) {
+                society.getBoxes().get(cb).setCellular(true);
+                labelCellular.setText("On");
+            }
+            if (cardType == 58) {
+                society.getBoxes().get(cb).setWifi(true);
+                labelWifi.setText("On");
+            }
+            if (cardType == 59) {
+                labelCelsius.setText("°C");
+            }
+            if (cardType == 60) {
+            }
+            if (cardType == 61) {
+                action.getStartInterests().setHistory(action.getStartInterests().getHistory() + cardCount);
+            }
+            if (cardType == 62) {
+                action.getStartInterests().setMystic(action.getStartInterests().getMystic() + cardCount);
+            }
         }
-        else labelTemperature.setText(df.format(society.getBoxes().get(cb).getTemperature() * 1.8f + 32));
+        else if (cardType == 0) {
+            arrowHint.setVisible(false);
+        }
     }
 
     public class Card extends Actor{
@@ -1917,7 +2194,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         }
         private int type, ox, oy;
         private String name;
-        Texture texture = new Texture("ui/indiPreview.png");
+        Texture texture = new Texture("ui/actPreview.png");
         private TextureRegion region;
 
         public Card(int type, String name, int ox, int oy) {
@@ -1930,7 +2207,6 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
                     region.getRegionWidth(), region.getRegionHeight());
             addListener(new InputListener() {
                 public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
-                    clickMode = 1;
                     return true;
                 }
             });
@@ -2031,5 +2307,11 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         stage.draw();
         cardStage.act(Gdx.graphics.getDeltaTime());
         cardStage.draw();
+        if (FPS == 5) {
+            neededY = Gdx.graphics.getHeight() / 2;
+            updateInterface(cardTva.type);
+            addingParameters();
+            FPS = 0;
+        }
     }
 }

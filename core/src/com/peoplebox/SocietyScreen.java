@@ -78,7 +78,7 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
     static BitmapFont fontFranTva, fontOswaldFurnPrice;
     BitmapFont fontFran, fontFranTre, smallFontFran, smallFontFranRed, fontOswald, fontOswaldTre, fontOldGirlStatus, fontOldGirl, fontOswaldBlack, font = new BitmapFont();
     static InputMultiplexer multiplexer;
-    static ScrollPane scrollPane, scrollPaneTva, scrollPaneFurn, scrollPaneTre, scrollPaneRelations, scrollPaneIndis, scrollPaneSystem;
+    static ScrollPane scrollPane, scrollPaneTva, scrollPaneFurn, scrollPaneTre, scrollPaneRelations, scrollPaneActions, scrollPaneScenarios, scrollPaneIndis, scrollPaneSystem;
     static TextButton.TextButtonStyle tbsFyra, tbsFem, tbsTre, tbs;
     Custom background, walls, panelLeft, panelEvent, iconEvent, oldGirl, arrowHint, clock, frameBorder, panelRight;
     CustomIcon btnReset, btnRandomScenario, btnTrash;
@@ -87,8 +87,8 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
     private TextureAtlas atlas, atlasTre;
     private Skin skin, skinTre;
     private static Table tableMove, tableDebugActions, tableNeeds, tableInterests, tableRoom, tableTalents, outerTable, outerTableTva, outerTableNeeds, iconTable,
-            iconTableSystem, furnTable, outerTableFurn, tableBroadcast, tableRelations, outerTableRelations, tableRelationsChoose, tableIndis, outerTableIndis,
-            systemTable, outerSystemTable;
+            iconTableSystem, furnTable, outerTableFurn, tableBroadcast, tableRelations, outerTableRelations, tableActions, outerTableActions,
+            tableScenarios, outerTableScenarios, tableRelationsChoose, tableIndis, outerTableIndis, systemTable, outerSystemTable;
     private Group groupBuild = new Group();
     static Society society = new Society();
     RoomController controller = new RoomController(0,0);
@@ -1076,7 +1076,6 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
 
     public class CustomIcon extends Actor {
         //https://www.gamefromscratch.com/post/2013/11/27/LibGDX-Tutorial-9-Scene2D-Part-1.aspx
-        float actorX, actorY;
         Texture texture;
         String str = "";
         public boolean started = false;
@@ -1173,7 +1172,103 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
         public void draw(Batch batch, float delta) {
             batch.draw(texture, getX()+15, getY()+15, 64, 64);
             fontFranTva.draw(batch, name + " " + surname, getX()+100, getY()+80);
-            fontFranTva.draw(batch, level.name(), getX()+100, getY()+40);
+            fontOswaldFurnPrice.draw(batch, level.name(), getX()+100, getY()+45);
+        }
+    }
+
+    public class ActCard extends Actor {
+        public TextureRegion texture;
+        int ii, act;
+        String string;
+
+        public ActCard(String string, int act, int ii) {
+            this.string = string;
+            this.act = act;
+            this.ii = ii;
+            setBounds(getX(), getY(), 600, 96);
+            addListener(new InputListener() {
+                public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
+                    indis.get(indiObs).delay = 0;
+                    indis.get(indiObs).status = "";
+                    indis.get(indiObs).actions.remove(ii);
+                    indis.get(indiObs).actNeeds.put("economics", false);
+                    indis.get(indiObs).actNeeds.put("hunger", false);
+                    indis.get(indiObs).actNeeds.put("bladder", false);
+                    indis.get(indiObs).actNeeds.put("energy", false);
+                    indis.get(indiObs).actNeeds.put("hygiene", false);
+                    indis.get(indiObs).actNeeds.put("aesthetics", false);
+                    indis.get(indiObs).actNeeds.put("fun", false);
+                    indis.get(indiObs).actNeeds.put("education", false);
+                    indis.get(indiObs).actNeeds.put("social", false);
+                    indis.get(indiObs).actNeeds.put("working", false);
+                    indis.get(indiObs).actNeeds.put("music", false);
+                    indis.get(indiObs).actNeeds.put("technics", false);
+                    indis.get(indiObs).actNeeds.put("tvstation", false);
+                    indis.get(indiObs).actNeeds.put("books", false);
+                    indis.get(indiObs).actNeeds.put("film", false);
+                    indis.get(indiObs).actNeeds.put("shopping", false);
+                    indis.get(indiObs).actNeeds.put("love", false);
+                    indis.get(indiObs).actNeeds.put("science", false);
+                    indis.get(indiObs).actNeeds.put("sport", false);
+                    indis.get(indiObs).setVisible(true);
+                    indis.get(indiObs).updateAppearance(1, HoldObject.None);
+                    for (int i = 0; i < objects.size(); i++) {
+                        if (objects.get(i).occ == indiObs) {
+                            objects.get(i).occ = -1;
+                            objects.get(i).texture = whichObject(objectsTest.get(i).getType(), objectsTest.get(i).getAppearance());
+                        }
+                    }
+                    updateActions(indiObs);
+                    return true;
+                }
+            });
+        }
+
+        public void act(float delta) {}
+
+        public void draw(Batch batch, float delta) {
+            int sum = indis.get(indiObs).actions.size() == 0 ? 0 : -actionDelay(indis.get(indiObs).actions.get(0).action, indiObs);
+            if (indis.get(indiObs).delay != 0)
+                sum = (int) (System.currentTimeMillis() - (int) indis.get(indiObs).delay);
+            for (int i = 0; i < ii; i++) {
+                try {
+                    sum -= actionDelay(indis.get(indiObs).actions.get(i).action, indiObs);
+                }
+                catch (IndexOutOfBoundsException e) {
+                    sum -= 0;
+                }
+            }
+            fontFranTva.draw(batch, string, getX(), getY()+80);
+            fontOswaldFurnPrice.draw(batch, (sum == 0 ? "0000" : sum+""), getX(), getY()+45);
+        }
+    }
+
+    public class ScenCard extends Actor {
+        public TextureRegion texture = new TextureRegion(new Texture(Gdx.files.internal("uiTva/scenario.png")));
+        int ii, act;
+        String s1, s2;
+
+        public ScenCard(String string, String s2, int act, int ii) {
+            this.s1 = string;
+            this.s2 = s2;
+            this.act = act;
+            this.ii = ii;
+            setBounds(getX(), getY(), 600, 96);
+            addListener(new InputListener() {
+                public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
+                    society.getIndi(cb, indiObs).getScenarios().remove(ii);
+                    updateScenarios(indiObs);
+                    return true;
+                }
+            });
+        }
+
+        public void act(float delta) {}
+
+        public void draw(Batch batch, float delta) {
+            batch.draw(texture, getX()+15, getY()+15, 64, 64);
+            fontFranTva.draw(batch, s1, getX()+100, getY()+80);
+            fontOswaldFurnPrice.draw(batch, s2, getX()+100, getY()+45);
         }
     }
 
@@ -1193,6 +1288,8 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                     outerTableTva.setVisible(true);
                     indis.get(num).holdCard();
                     updateRelations(num);
+                    updateActions(num);
+                    updateScenarios(num);
                     return true;
                 }
             });
@@ -1223,6 +1320,8 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
         cardEtt.update(); cardTva.update();
         outerTableFurn.setVisible(false);
         outerTableRelations.setVisible(false);
+        outerTableActions.setVisible(false);
+        outerTableScenarios.setVisible(false);
         tableRelationsChoose.setVisible(false);
         outerTableIndis.setVisible(false);
         groupBuild.setVisible(false);
@@ -1274,7 +1373,12 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                         }
                         else {
                             uiNo.play();
+                            uiDelay = System.currentTimeMillis() + 3000;
+                            labelCenter.setText(langString.get("noOneToBuy"));
                         }
+                    }
+                    else if (furn.get(ii).type == -1 || furn.get(ii).type == -2) {
+                        createObject(furn.get(ii).type, furn.get(ii).appear, 0, 0, 500, 500);
                     }
                     else if (furn.get(ii).type != 9000 && indiObs == -1) {
                         uiNo.play();
@@ -1417,6 +1521,8 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
         iconTable = new Table();
         iconTableSystem = new Table();
         tableRelations = new Table().left();
+        tableActions = new Table().left();
+        tableScenarios = new Table().left();
         tableIndis = new Table().left();
         tableNeeds = new Table();
         systemTable = new Table().left();
@@ -2246,6 +2352,8 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                     nameField.setText(indis.get(indiObs).name); surnameField.setText(indis.get(indiObs).surname);
                     btnReset.setVisible(true);
                     labelReset.setVisible(true);
+                    outerTableActions.setVisible(true);
+                    updateActions(indiObs);
                 }
                 else uiNo.play();
             }
@@ -2283,7 +2391,7 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                 final ScenButton s1602 = new ScenButton(langString.get("scenario1602"));
                 final ScenButton stv = new ScenButton("Add TV Indi system");
                 final ScenButton sdoc = new ScenButton("Add Doctor system");
-                final ScenButton s1101 = new ScenButton(langString.get("scenario1101") + "\033Indi dies when there is no exit.\033");
+                final ScenButton s1101 = new ScenButton(langString.get("scenario1101") + "\nIndi dies when there is no exit.\033");
                 scenButtons.add(s);
                 s.setPosition(Gdx.graphics.getWidth() - 420, 170);
                 cardStage.addActor(s);
@@ -2419,6 +2527,8 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
         //btnReset.setBounds(540, Gdx.graphics.getHeight() - 75, 64, 64);
         btnReset.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
+                if (!indis.get(indiObs).alive)
+                    getIndiActor(indiObs).targetY = 3000;
                 indis.get(indiObs).delay = 0;
                 indis.get(indiObs).status = "";
                 indis.get(indiObs).actions.clear();
@@ -2440,6 +2550,7 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                 indis.get(indiObs).actNeeds.put("shopping", false);
                 indis.get(indiObs).actNeeds.put("love", false);
                 indis.get(indiObs).actNeeds.put("science", false);
+                indis.get(indiObs).actNeeds.put("sport", false);
                 indis.get(indiObs).setVisible(true);
                 indis.get(indiObs).updateAppearance(1, HoldObject.None);
                 for (int i = 0; i < objects.size(); i++) {
@@ -2644,6 +2755,8 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                     outerTable.setSize(580, 680*Float.parseFloat(String.valueOf(screenCoef * screenCoef)));
                     btnRandomScenario.setVisible(true);
                     labelRandomScenario.setVisible(true);
+                    outerTableScenarios.setVisible(true);
+                    updateScenarios(indiObs);
                 }
                 else uiNo.play();
             }
@@ -2784,15 +2897,23 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
         outerTable = new Table();
         scrollPaneFurn = new ScrollPane(furnTable);
         scrollPaneRelations = new ScrollPane(tableRelations);
+        scrollPaneActions = new ScrollPane(tableActions);
+        scrollPaneScenarios = new ScrollPane(tableScenarios);
         scrollPaneIndis = new ScrollPane(tableIndis);
         outerTableFurn = new Table();
         outerTableFurn.add(scrollPaneFurn).expand().left();
         outerTableFurn.setVisible(false);
         outerTableRelations = new Table();
         outerTableRelations.add(scrollPaneRelations).expand().left();
+        outerTableActions = new Table();
+        outerTableActions.add(scrollPaneActions).expand().left();
+        outerTableScenarios = new Table();
+        outerTableScenarios.add(scrollPaneScenarios).expand().left();
         outerTableIndis = new Table();
         outerTableIndis.add(scrollPaneIndis).expand().left();
         outerTableRelations.setVisible(false);
+        outerTableActions.setVisible(false);
+        outerTableScenarios.setVisible(false);
         outerTableIndis.setVisible(false);
 
 
@@ -2848,7 +2969,11 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
         outerTableFurn.setPosition(100, 40);
         outerTableFurn.setSize(700, 820*Float.parseFloat(String.valueOf(screenCoef)));
         outerTableRelations.setPosition(100, 40);
-        outerTableRelations.setSize(600, 820*Float.parseFloat(String.valueOf(screenCoef)));
+        outerTableRelations.setSize(530, 820*Float.parseFloat(String.valueOf(screenCoef)));
+        outerTableScenarios.setPosition(100, 40);
+        outerTableScenarios.setSize(530, 820*Float.parseFloat(String.valueOf(screenCoef)));
+        outerTableActions.setPosition(100, 40);
+        outerTableActions.setSize(530, 400*Float.parseFloat(String.valueOf(screenCoef)));
         outerTableIndis.setPosition(Gdx.graphics.getWidth()-170, 40);
         outerTableIndis.setSize(170, 850*Float.parseFloat(String.valueOf(screenCoef)));
 
@@ -2860,6 +2985,8 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
         cardStage.addActor(outerTableTva);
         cardStage.addActor(outerTableFurn);
         cardStage.addActor(outerTableRelations);
+        cardStage.addActor(outerTableActions);
+        cardStage.addActor(outerTableScenarios);
         cardStage.addActor(outerTableIndis);
         cardStage.addActor(outerTableNeeds);
         cardStage.addActor(tableInterests);
@@ -3414,7 +3541,7 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
             genderProps.add(new GenderProps(rnd(200)-100, rnd(200)-100, rnd(200)-100));
             lifts.add(new SocialLiftsArray(0, false, false, false, false));
             Indi ii = new Indi(name, surname, currentGlobalNum, gender, age, classes, iq, job, wealth, homex, homey, homez, inits, needs, talents, skills, lifts, creations, genderProps, relations, interests, appearance, rnd(4), rnd(10), rnd(4), indisTest.size());
-            indisTest.add(ii);
+            society.getBoxes().get(cb).getIndisTest().add(ii);
             IndiActor myActor = new IndiActor(name, surname, gender, age, wealth, appearance, actorX, actorY, indis.size());
             for (int i = 0; i < objectsTest.size(); i++) {
                 if (objectsTest.get(i).type == -2) {
@@ -5484,6 +5611,8 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                     holdCard();
                     outerTableTva.setVisible(true);
                     updateRelations(myNum);
+                    updateActions(myNum);
+                    updateScenarios(myNum);
                     return true;
                 }
             });
@@ -5834,12 +5963,10 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                 }
 
 
-
-
                 //ДЕЙСТВИЯ РАССТАВЛЯЮТСЯ В ОБРАТНОМ ПОРЯДКЕ: САМЫЕ ПРИОРИТЕТНЫЕ В КОНЕЦ
                 //ОБУЧЕНИЕ
                 ArrayList<Integer> avail = new ArrayList<Integer>();
-                if (society.getIndi(cb, myNum).getNeeds().get(0).getEducation() < society.getIndi(cb, myNum).getTalents().get(0).getMemory() * 0.7 && !(actNeeds.get("education") || actNeeds.get("music") || actNeeds.get("technics") || actNeeds.get("film"))) {
+                if (society.getIndi(cb, myNum).getNeeds().get(0).getEducation() < society.getIndi(cb, myNum).getTalents().get(0).getMemory() * 0.7 && !(actNeeds.get("education") || actNeeds.get("music") || actNeeds.get("technics") || actNeeds.get("film") || actNeeds.get("sport"))) {
                     avail.add(18); //лекции в телефоне
                     if (society.getIndi(cb, myNum).getInterests().get(0).getBooks() > 40 && checkUnocc(11) != 0) {
                         avail.add(309);
@@ -5853,6 +5980,20 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                     //МУЗЫКА
                     if (society.getIndi(cb, myNum).getInterests().get(0).getMusic() > 40 && checkUnocc(10) != 0)
                         avail.add(3001);
+                    try {
+                        avail.addAll(lookExtraActs("Music", myNum));
+                    }
+                    catch (NullPointerException | IndexOutOfBoundsException e) {e.printStackTrace();}
+                }
+                //ИНТЕРЕСЫ ПО ВЫНОСЛИВОСТИ
+                if (society.getIndi(cb, myNum).getNeeds().get(0).getEducation() < society.getIndi(cb, myNum).getTalents().get(0).getStamina() * 0.7 && !(actNeeds.get("sport"))) {
+                    //МУЗЫКА
+                    if (society.getIndi(cb, myNum).getInterests().get(0).getMusic() > 40 && checkUnocc(10) != 0)
+                        avail.add(3001);
+                    try {
+                        avail.addAll(lookExtraActs("Music", myNum));
+                    }
+                    catch (NullPointerException | IndexOutOfBoundsException e) {e.printStackTrace();}
                 }
                 //ИНТЕРЕСЫ ПО ЛОГИКЕ
                 if (society.getIndi(cb, myNum).getNeeds().get(0).getEducation() < society.getIndi(cb, myNum).getTalents().get(0).getLogic() * 0.7 && !(actNeeds.get("technics"))) {
@@ -5863,6 +6004,10 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                         if (checkUnocc(34) != 0)
                             avail.add(2502);
                     }
+                    try {
+                        avail.addAll(lookExtraActs("Music", myNum));
+                    }
+                    catch (NullPointerException | IndexOutOfBoundsException e) {e.printStackTrace();}
                 }
                 //ИНТЕРЕСЫ ПО ИНТУИЦИИ
                 if (society.getIndi(cb, myNum).getNeeds().get(0).getEducation() < society.getIndi(cb, myNum).getTalents().get(0).getInsight() * 0.7 && !(actNeeds.get("technics"))) {
@@ -5914,6 +6059,20 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                         break;
                     }
                     default: {
+                        if (ac > 9999) {
+                            int k = -2;
+                            for (int i = 0; i < extraActs.size(); i++) {
+                                if (extraActs.get(i).getCODE() == ac) {
+                                    Collections.shuffle(extraActs.get(i).getItems());
+                                    k = extraActs.get(i).getItems().get(0);
+                                    return;
+                                }
+                            }
+                            int n = reserve(myNum, k);
+                            if (n != -1)
+                                actions.add(0, new Action(ac, objects.get(n).ox, objects.get(n).oy - 2, homez));
+                        }
+                        break;
                     }
                 }
                 //ЭСТЕТИКА
@@ -7708,12 +7867,6 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
             java.lang.StringBuilder s = new StringBuilder(langString.get("actionsCount") + ": " +
                     indis.get(indiObs).actions.size() + "\n");
             int sum = 0;
-            if (indis.get(indiObs).delay != 0)
-                sum = (int) (System.currentTimeMillis() - (int) indis.get(indiObs).delay);
-            for (int i = 0; i < indis.get(indiObs).actions.size(); i++) {
-                s.append(indis.get(indiObs).actions.get(i).action).append(", ")/*.append(indis.get(indiObs).actions.get(i).toString()).append(", ")*/.append(specialStatus(indis.get(indiObs).actions.get(i).action, indis.get(indiObs).actions.get(i))).append(", ").append(sum == 0 ? "0000" : sum).append("\n");
-                sum -= actionDelay(indis.get(indiObs).actions.get(i).action, indiObs);
-            }
             labelHint.setText("Global num:" + society.getIndi(cb, indiObs).globalNum
                     + "\n" + langString.get("genderSex") + ":" + ((society.getIndi(cb, indiObs).getGender() == 1) ? langString.get("male") : langString.get("female"))
                     + "\n" + langString.get("age") + ":" + society.getIndi(cb, indiObs).getAge()
@@ -7860,6 +8013,11 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
     public void render(float delta) {
         FPS++;
         if (FPS == 5) {
+            if (indiObs > -1) {
+                updateActions(indiObs);
+                updateRelations(indiObs);
+                updateScenarios(indiObs);
+            }
             markers.clear();
             updateIndisList();
             autoCreatingMarkers();
@@ -7883,7 +8041,7 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
             }
         }
         if (FPS == 1) {
-            controller.act(delta);
+            //controller.act(delta);
             timeCount();
             timeFPS++;
         }
@@ -8266,7 +8424,7 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                 uiNo.play();
             }
         }
-        file = Gdx.files.local("E/json/extraactions.txt");
+        file = Gdx.files.internal("json/extraactions.txt");//Gdx.files.local("E/json/extraactions.txt");
         if (file.exists()) {
             jsonStr = file.readString();
             extraActs = json.fromJson(ArrayList.class, jsonStr);
@@ -8276,12 +8434,14 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                 jsonStr = file.readString();
                 extraActs = json.fromJson(ArrayList.class, jsonStr);
             } else {
-                extraActs.add(new com.peoplebox.additions.Action(15, 2, 0, 0,
+                extraActs.add(new com.peoplebox.additions.Action(10000, 15, 2, 0, 0,
                         new NeedsArray(), new NeedsArray(-5, -5, -15, -15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
                         new InterestsArray(0, 0, 0, 0, 0, 0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
                         new InterestsArray(0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
                         new TalentsArray(), new TalentsArray(0, 0, 0, 0, 0, 0, 0, 0, 1, 0),
                         new ArrayList<Integer>(Arrays.asList(new Integer[]{22})), ""));
+                extraActs.add(extraActs.get(0));
+
                 extraActs.get(0).setRu(new String[]{"бегает на дорожке"});
                 extraActs.get(0).setEn(new String[]{"runs on treadmill"});
                 Gdx.app.error("EXTRAACTS", json.prettyPrint(extraActs));
@@ -8423,6 +8583,33 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
         }
     }
 
+    void updateScenarios(int myNum) {
+        tableScenarios.clear();
+        for (int i = 0; i < society.getIndi(cb, myNum).getScenarios().size(); i++) {
+            String str = "", str2 = "";
+            try {
+                str = langString.get("scenario" + society.getIndi(cb, indiObs).getScenarios().get(i).getCode());
+                str2 = "Cтадия " + society.getIndi(cb, indiObs).getScenarios().get(i).getSt();
+            }
+            catch (MissingResourceException e) {
+                str = "scenario " + society.getIndi(cb, indiObs).getScenarios().get(i).getCode();
+                if (society.getIndi(cb, indiObs).getScenarios().get(i).getClass() == SystemScenario.class) {
+                    str = society.getIndi(cb, indiObs).getScenarios().get(i).getStr();
+                }
+            }
+            tableScenarios.add(new ScenCard(str, str2, society.getIndi(cb, indiObs).getScenarios().get(i).code, i)).top().left();
+            tableScenarios.row();
+        }
+    }
+
+    void updateActions(int myNum) {
+        tableActions.clear();
+        for (int i = 0; i < indis.get(myNum).actions.size(); i++) {
+            tableActions.add(new ActCard(specialStatus(indis.get(myNum).actions.get(i).action, indis.get(myNum).actions.get(i)), indis.get(myNum).actions.get(i).action, i)).top().left();
+            tableActions.row();
+        }
+    }
+
     void updateIndisList() {
         if (coreFunc.load == 0) {
             tableIndis.clear();
@@ -8513,7 +8700,20 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
     }
 
     ArrayList<Integer> lookExtraActs(String start, int num) {
-        ArrayList<Integer> suit = new ArrayList<Integer>();
+        /*for (int i=0;i<extraActs.size();i++) {
+                        if (extraActs.get(i).getStartTalents().getLogic() < society.getIndi(cb, myNum).getTalents().get(0).getLogic() * 0.7) {
+                            for (int j=0; j < extraActs.get(i).getItems().size(); j++) {
+                                if (checkUnocc(extraActs.get(i).getItems().get(j)) != 0) {
+                                    if (society.getIndi(cb, myNum).getWealth() > extraActs.get(i).getStartMoney()) {
+                                        avail.add(extraActs.get(i).getCODE());
+                                    }
+                                }
+                            }
+                        }
+                    }*/
+        start = start.substring(0,1).toUpperCase() + start.substring(1);
+        String str = "\n";
+        ArrayList<Integer> suit = new ArrayList<Integer>(); //suitable actions nums
         Method method = null, methodIndi = null, methodAct = null;
         try {
             method = NeedsArray.class.getMethod("get" + start);
@@ -8539,18 +8739,24 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                 if ((Integer)method.invoke(methodAct.invoke(extraActs.get(i))) != 0
                         && (Integer)method.invoke(((ArrayList<Object>)methodIndi.invoke(society.getIndi(cb, num))).get(0))
                         >= (Integer)method.invoke(methodAct.invoke(extraActs.get(i)))) {
-                    for (int j = 0; j < extraActs.get(i).getItems().size(); i++) {
-                        if (checkUnocc(extraActs.get(i).getItems().get(j)) != 0) {
-                            suit.add(i);
+                    for (int j = 0; j < extraActs.get(i).getItems().size(); j++) {
+                        if (checkUnocc(extraActs.get(i).getItems().get(j)) != 0 && society.getIndi(cb, num).getWealth() >= extraActs.get(i).getStartMoney()) {
+                            suit.add(extraActs.get(i).getCODE());
                             break;
                         }
                     }
                 }
             } catch (IllegalAccessException e) {
-                e.printStackTrace();
+                str += e.getMessage() + "\n";
             } catch (InvocationTargetException e) {
-                e.printStackTrace();
+                str += e.getMessage() + "\n";
             }
+        }
+        Collections.shuffle(suit);
+        int n = reserve(num, 10);
+        if (n != -1) {
+            suit.add(objects.get(n).ox);
+            suit.add(objects.get(n).oy+2);
         }
         return suit;
     }

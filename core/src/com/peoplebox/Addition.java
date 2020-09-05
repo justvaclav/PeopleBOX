@@ -844,6 +844,12 @@ public class Addition {
         switch (code) {
             case 1401: return 60000*society.getJobs().get(society.getIndi(cb, num).getJob()).getHours();
         }
+        if (code > 9999) {
+            for (int i=0;i<extraActs.size();i++) {
+                if (extraActs.get(i).getCODE() == code)
+                    return extraActs.get(i).getDelay() * 1000;
+            }
+        }
         FileHandle file = Gdx.files.internal("json/parameters.txt");
         try {
             jsonStr = new String(file.readString().getBytes(), "UTF-8");
@@ -1474,6 +1480,17 @@ public class Addition {
                 return "NPE with 1st action indis size";
             }
             return str;}
+        else if (action > 9999) {
+            for (int i=0;i<extraActs.size();i++) {
+                if (extraActs.get(i).getCODE() == action)
+                    try {
+                        return extraActs.get(i).getEn()[0];
+                    }
+                    catch (IndexOutOfBoundsException e) {
+                        return action + "";
+                    }
+            }
+        }
         return status;
     }
 
@@ -1508,6 +1525,17 @@ public class Addition {
                 return "Index out of bounds exception.";
             }
             return str;
+        }
+        if (action > 9999) {
+            for (int i=0;i<extraActs.size();i++) {
+                if (extraActs.get(i).getCODE() == action)
+                    try {
+                        return extraActs.get(i).getEn()[0];
+                    }
+                    catch (IndexOutOfBoundsException e) {
+                        return action + "";
+                    }
+            }
         }
         return status;
     }
