@@ -40,7 +40,7 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
     ArrayList<Marker> markers = new ArrayList<Marker>();
     ArrayList<Dish> dishes = new ArrayList<Dish>(Arrays.asList(new Dish("Макароны с сыром", 10, 2), new Dish("Пирог с картофелем", 6, 4), new Dish("Панкейки", 7, 4), new Dish("Брауни", 12, 6), new Dish("Лазанья", 10, 5), new Dish("Пицца \"Маргарита\"", 8, 3), new Dish("Гаспачо", 15, 9), new Dish("Яблочный пирог", 7, 5)));
     ArrayList<ScenButton> scenButtons = new ArrayList<ScenButton>();
-    int dd=1, mm=5, yyyy=2015, hh=21, min=50, dw=0, cardType = 0, wwww = rnd(4), speed = 1000, timeFPS = 0, VOLUME = 1, currentGlobalNum = -2;
+    int dd=1, mm=5, yyyy=2015, hh=21, min=50, dw=0, cardType = 0, wwww = rnd(4), speed = 1000, VOLUME = 1, currentGlobalNum = -2;
     int neededY = 0; //по дефолту равна половине высоты экрана, переопределяется в рендере с каждой прорисовкой
     static long uiDelay, tapDelay, currentTimeMil = System.currentTimeMillis();
     DecimalFormat df = new DecimalFormat("#.##");
@@ -63,7 +63,7 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
     Texture btnPreview, buttonBackground, NIMBUS, talkCloudEtt, talkCloudTva;
     static Sound talkEtt, talkTva, talkTre, poolEtt, poolTva, uiNo, oof= Gdx.audio.newSound(Gdx.files.internal("sound/oof.mp3"));
     //clickMode: 1-движение камеры 2-движение мебели
-    int homex, homey, homez, control = 0, indisN = 0, clickMode = 1, girlCard = 1, homeZZ = 0, y = -900, num = 0, num0 = 0, jobN = 0, indiObs = -2, groupObs = -1,
+    int homex, homey, homez, control = 0, indisN = 0, clickMode = 1, girlCard = 1, timeFPS = 0, homeZZ = 0, y = -900, num = 0, num0 = 0, jobN = 0, indiObs = -2, groupObs = -1,
             objectObs = -1, adaptResTre = 4, card = 0;
     static int currentFloor = 1, adaptRes = 5, popAct = 0, indisTestN = 0, FPS = 0, furnBefore = 0, ff=1, gamePts = 0;
     final static int cb = 0;
@@ -5603,19 +5603,6 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
             this.actorY = actorY;
             this.myNum = myNum;
             action = 0;
-            updateAppearance(1, HoldObject.None);
-            addListener(new InputListener() {
-                public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
-                    indiObs = myNum;
-                    cardEtt.texture = new Texture("ui/indiPreview.png");
-                    holdCard();
-                    outerTableTva.setVisible(true);
-                    updateRelations(myNum);
-                    updateActions(myNum);
-                    updateScenarios(myNum);
-                    return true;
-                }
-            });
             actNeeds.put("hunger", false);
             actNeeds.put("bladder", false);
             actNeeds.put("energy", false);
@@ -5634,6 +5621,20 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
             actNeeds.put("shopping", false);
             actNeeds.put("love", false);
             actNeeds.put("science", false);
+            actNeeds.put("sport", false);
+            updateAppearance(1, HoldObject.None);
+            addListener(new InputListener() {
+                public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
+                    indiObs = myNum;
+                    cardEtt.texture = new Texture("ui/indiPreview.png");
+                    holdCard();
+                    outerTableTva.setVisible(true);
+                    updateRelations(myNum);
+                    updateActions(myNum);
+                    updateScenarios(myNum);
+                    return true;
+                }
+            });
         }
 
 
@@ -5963,10 +5964,12 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                 }
 
 
+
                 //ДЕЙСТВИЯ РАССТАВЛЯЮТСЯ В ОБРАТНОМ ПОРЯДКЕ: САМЫЕ ПРИОРИТЕТНЫЕ В КОНЕЦ
                 //ОБУЧЕНИЕ
                 ArrayList<Integer> avail = new ArrayList<Integer>();
-                if (society.getIndi(cb, myNum).getNeeds().get(0).getEducation() < society.getIndi(cb, myNum).getTalents().get(0).getMemory() * 0.7 && !(actNeeds.get("education") || actNeeds.get("music") || actNeeds.get("technics") || actNeeds.get("film") || actNeeds.get("sport"))) {
+                if (society.getIndi(cb, myNum).getNeeds().get(0).getEducation() < society.getIndi(cb, myNum).getTalents().get(0).getMemory() * 0.7
+                        && !(actNeeds.get("education") || actNeeds.get("music") || actNeeds.get("technics") || actNeeds.get("film") || actNeeds.get("sport"))) {
                     avail.add(18); //лекции в телефоне
                     if (society.getIndi(cb, myNum).getInterests().get(0).getBooks() > 40 && checkUnocc(11) != 0) {
                         avail.add(309);
@@ -8135,7 +8138,7 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
             }
             for (IndiActor indi : indis) {
                 //try {
-                    sortList.add(new SortCard(indi.getX(), indi.getY(), -indi.getMyNum()));
+                sortList.add(new SortCard(indi.getX(), indi.getY(), -indi.getMyNum()));
                 /*} catch (NullPointerException ignored) {
                 }*/
             }
@@ -8733,7 +8736,7 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
             methodAct = com.peoplebox.additions.Action.class.getMethod("getStartTalents");
         }
         catch (NoSuchMethodException e) {}
-        Gdx.app.error("METHOD INVOCATIONS", method + " " + methodIndi + " " + methodAct);
+        //Gdx.app.error("METHOD INVOCATIONS", method + " " + methodIndi + " " + methodAct);
         for (int i = 0; i<extraActs.size(); i++) {
             try {
                 if ((Integer)method.invoke(methodAct.invoke(extraActs.get(i))) != 0

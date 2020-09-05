@@ -72,7 +72,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
     ArrayList<SocietyScreen.Marker> markers = new ArrayList<SocietyScreen.Marker>();
     ArrayList<SocietyScreen.Dish> dishes = new ArrayList<SocietyScreen.Dish>(Arrays.asList(new SocietyScreen.Dish("Макароны с сыром", 10, 2), new SocietyScreen.Dish("Пирог с картофелем", 6, 4), new SocietyScreen.Dish("Панкейки", 7, 4), new SocietyScreen.Dish("Брауни", 12, 6), new SocietyScreen.Dish("Лазанья", 10, 5), new SocietyScreen.Dish("Пицца \"Маргарита\"", 8, 3), new SocietyScreen.Dish("Гаспачо", 15, 9), new SocietyScreen.Dish("Яблочный пирог", 7, 5)));
     ArrayList<SocietyScreen.ScenButton> scenButtons = new ArrayList<SocietyScreen.ScenButton>();
-    int plus = 0, dd=1, mm=5, yyyy=500, hh=21, min=50, cardType = 0, wwww = rnd(4), speed = 1000, timeFPS = 0, cardCount = 1, VOLUME = 1;
+    int plus = 0, dd=1, mm=5, yyyy=100, hh=21, min=50, cardType = 0, wwww = rnd(4), speed = 1000, timeFPS = 0, cardCount = 1, VOLUME = 1;
     int neededY = 0; //по дефолту равна половине высоты экрана, переопределяется в рендере с каждой прорисовкой
     static long uiDelay, tapDelay, currentTimeMil = System.currentTimeMillis();
     DecimalFormat df = new DecimalFormat("#.##");
@@ -303,7 +303,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
             final int ii = i;
             furn.get(i).addListener(new InputListener() {
                 public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
-                    createObject(furn.get(ii).type, furn.get(ii).appear, 0, 0, 500, 500);
+                    createObject(furn.get(ii).type, furn.get(ii).appear, 0, 0, 800, 500);
                     return true;
                 }
             });
