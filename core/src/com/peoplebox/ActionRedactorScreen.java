@@ -29,22 +29,20 @@ import java.util.Arrays;
 import java.util.MissingResourceException;
 
 import static com.badlogic.gdx.math.MathUtils.random;
-import static com.peoplebox.Addition.actionDelay;
 import static com.peoplebox.Addition.specialStatus;
 import static com.peoplebox.ScreenshotFactory.saveScreenshot;
-import static com.peoplebox.SocietyScreen.Box.Property.Private;
 import static com.peoplebox.SocietyScreen.whichObject;
 
 public class ActionRedactorScreen implements Screen, GestureDetector.GestureListener {
     final Game game;
     Custom indiActor;
     ArrayList<Action> extraActs = new ArrayList<>();
-    Action action = new Action(19999, 1, 1, 0, 0,
-            new SocietyScreen.NeedsArray(), new SocietyScreen.NeedsArray(0, 0, 0, -15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-            new SocietyScreen.InterestsArray(0, 0, 0, 0, 0, 0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-            new SocietyScreen.InterestsArray(0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-            new SocietyScreen.TalentsArray(), new SocietyScreen.TalentsArray(0, 0, 0, 0, 0, 0, 0, 0, 1, 0),
-            new ArrayList<Integer>(Arrays.asList(new Integer[]{22})), "");
+    Action action = new Action(19999, 3, 1, 0, 0,
+            new SocietyScreen.NeedsArray(), new SocietyScreen.NeedsArray(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+            new SocietyScreen.InterestsArray(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+            new SocietyScreen.InterestsArray(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+            new SocietyScreen.TalentsArray(), new SocietyScreen.TalentsArray(0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+            new ArrayList<Integer>(), "");
     OrthographicCamera camera;
     String str = "";
     long delay = 0, sign = 0;
@@ -59,12 +57,9 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
             labelTravel, labelJob, labelAnimals, labelBooks, labelFilms, labelMusic, labelHistory, labelMystic;
     static Label labelCaution, labelImagination, labelImmunity, labelInfluence, labelInsight, labelLogic, labelMemory, labelQuickness, labelSpeech, labelStamina, labelTemperature,
             labelWifi, labelWater, labelElectricity, labelCellular, labelCelsius, labelAudience, labelRating, labelBroadcastStart, labelBroadcastFinish;
-    private Table tableEtt, tableTva, table;
     Texture banner;
     double screenCoefW = 1.0;
     double screenCoefH = 1.0;
-    SpriteBatch batch = new SpriteBatch();
-    AssetManager manager = new AssetManager();
     final String FONT_CHARS = "абвгдеёжзийклмнопрстуфхцчшщъыьэюяabcdefghijklmnopqrstuvwxyzÅÄÖåäöÂâÊêÎîÔôÛûÉéÀàÈèÙùАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;:,{}\"?`'<>";
     String lang;
     ArrayList<SocietyScreen.SortCard> sortList = new ArrayList<SocietyScreen.SortCard>();
@@ -72,11 +67,11 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
     ArrayList<SocietyScreen.Marker> markers = new ArrayList<SocietyScreen.Marker>();
     ArrayList<SocietyScreen.Dish> dishes = new ArrayList<SocietyScreen.Dish>(Arrays.asList(new SocietyScreen.Dish("Макароны с сыром", 10, 2), new SocietyScreen.Dish("Пирог с картофелем", 6, 4), new SocietyScreen.Dish("Панкейки", 7, 4), new SocietyScreen.Dish("Брауни", 12, 6), new SocietyScreen.Dish("Лазанья", 10, 5), new SocietyScreen.Dish("Пицца \"Маргарита\"", 8, 3), new SocietyScreen.Dish("Гаспачо", 15, 9), new SocietyScreen.Dish("Яблочный пирог", 7, 5)));
     ArrayList<SocietyScreen.ScenButton> scenButtons = new ArrayList<SocietyScreen.ScenButton>();
-    int plus = 0, dd=1, mm=5, yyyy=100, hh=21, min=50, cardType = 0, wwww = rnd(4), speed = 1000, timeFPS = 0, cardCount = 1, VOLUME = 1;
+    int plus = 0, dd=1, mm=5, xxxx = 700, yyyy=100, hh=21, min=50, cardType = 0, wwww = rnd(4), speed = 1000, timeFPS = 0, cardCount = 1, VOLUME = 1;
     int neededY = 0; //по дефолту равна половине высоты экрана, переопределяется в рендере с каждой прорисовкой
     static long uiDelay, tapDelay, currentTimeMil = System.currentTimeMillis();
     DecimalFormat df = new DecimalFormat("#.##");
-    static TextField nameField, surnameField, labelHintTre;
+    static TextField codeField, surnameField, labelHintTre;
     enum HoldObject { Knife, Book, Spray, Mixer, Pan, Extinguisher, Phone1, Phone2, None };
     public static Stage stage, cardStage, girlStage;
     public ExtendViewport stageViewport, girlStageViewport;
@@ -106,9 +101,9 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
     static InputMultiplexer multiplexer;
     static ScrollPane scrollPane, scrollPaneTva, scrollPaneFurn, scrollPaneTre, scrollPaneRelations, scrollPaneIndis, scrollPaneActNums;
     static TextButton.TextButtonStyle tbsFyra, tbsFem, tbsTre, tbs;
-    SocietyScreen.Custom panelLeft, panelEvent, iconEvent, arrowHint, clock, panelRight, start, finish;
-    CustomIcon btnReset, btnRandomScenario, btnTrash;
-    static TextButton applyName, btnHelpEtt, btnHelpTva, girlYes, girlNo, btnUp, btnDown, btnRight, btnLeft,
+    SocietyScreen.Custom panelLeft, panelEvent, iconEvent, arrowHint, panelRight, start, finish;
+    CustomIcon btnRandomScenario, btnTrash;
+    static TextButton applyCode, btnHelpEtt, btnHelpTva, girlYes, girlNo, btnUp, btnDown, btnRight, btnLeft,
             btnMoveOk, btnOverlay, btnRotate, btnMore, btnRemove, buttonBack, buttonRemove, buttonAdd;
     private TextureAtlas atlas, atlasTre;
     private Skin skin, skinTre;
@@ -250,6 +245,28 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
             cardStage = new Stage(new ExtendViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
         }
         cardStage.getViewport().setScreenSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        FileHandle file = Gdx.files.local("E/json/extraactions.txt");
+        if (file.exists()) {
+            jsonStr = file.readString();
+            extraActs = json.fromJson(ArrayList.class, jsonStr);
+        } else {
+            file = Gdx.files.internal("json/extraactions.txt");
+            if (file.exists()) {
+                jsonStr = file.readString();
+                extraActs = json.fromJson(ArrayList.class, jsonStr);
+            } else {
+                extraActs.add(new com.peoplebox.additions.Action(10000, 15, 2, 0, 0,
+                        new SocietyScreen.NeedsArray(), new SocietyScreen.NeedsArray(-5, -5, -15, -15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+                        new SocietyScreen.InterestsArray(0, 0, 0, 0, 0, 0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+                        new SocietyScreen.InterestsArray(0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+                        new SocietyScreen.TalentsArray(), new SocietyScreen.TalentsArray(0, 0, 0, 0, 0, 0, 0, 0, 1, 0),
+                        new ArrayList<Integer>(Arrays.asList(new Integer[]{22})), ""));
+                extraActs.add(extraActs.get(0));
+
+                extraActs.get(0).setRu(new String[]{"бегает на дорожке"});
+                extraActs.get(0).setEn(new String[]{"runs on treadmill"});
+            }
+        }
         btnPreview = new Texture("ui/buttonPreview.png");
         buttonBackground = new Texture("ui/b4.png");
         NIMBUS = new Texture("nimbusDeux.png");
@@ -276,18 +293,17 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
     }
 
     void createInterfacePeopleBOX() {
+        int a = rnd(9999);
+        action.setEn(new String[1]);
+        action.getEn()[0] = "test action " + a;
+        action.setRu(new String[1]);
+        action.getRu()[0] = "тестовое действие " + a;
         FileHandle fileTva = Gdx.files.internal("json/furn.txt");
         jsonStr = fileTva.readString();
         furn = json.fromJson(ArrayList.class, jsonStr);
         furnTable = new Table().left();
         ArrayList<Integer> types = new ArrayList<>();
         for (int q=0; q<furn.size(); q++) {
-            Json json = new Json();
-            FileHandle file = Gdx.files.local("E/json/DEFAULTCITY/priceprops.txt");
-            if (!file.exists()) {
-                file= Gdx.files.internal("json/DEFAULTCITY/priceprops.txt");
-            }
-            jsonStr = file.readString();
             furn.get(q).price = 0;
             if (!types.contains(furn.get(q).type)) {
                 furnTable.add(furn.get(q)).left();
@@ -303,7 +319,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
             final int ii = i;
             furn.get(i).addListener(new InputListener() {
                 public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
-                    createObject(furn.get(ii).type, furn.get(ii).appear, 0, 0, 800, 500);
+                    createObject(furn.get(ii).type, furn.get(ii).appear);
                     return true;
                 }
             });
@@ -312,9 +328,27 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         arrowHint.setVisible(false);
         cardStage.addActor(arrowHint);
         start = new SocietyScreen.Custom(new Texture("ui/start.png"), 200, Gdx.graphics.getHeight() - 270);
+        start.setBounds(200, Gdx.graphics.getHeight() - 270, 64, 64);
+        start.addListener(new InputListener() {
+            public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
+                recolorFields(Color.CYAN);
+                if (cardTva.type >= 71 && cardTva.type <= 76)
+                    cardTva.type = cardTva.type + cardTva.type % 2 - 1;
+                return true;
+            }
+        });
         start.setVisible(false);
         cardStage.addActor(start);
         finish = new SocietyScreen.Custom(new Texture("ui/finish.png"), 300, Gdx.graphics.getHeight() - 270);
+        finish.setBounds(300, Gdx.graphics.getHeight() - 270, 64, 64);
+        finish.addListener(new InputListener() {
+            public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
+                recolorFields(Color.WHITE);
+                if (cardTva.type >= 71 && cardTva.type <= 76)
+                    cardTva.type = cardTva.type + cardTva.type % 2;
+                return true;
+            }
+        });
         finish.setVisible(false);
         cardStage.addActor(finish);
         multiplexer = new InputMultiplexer();
@@ -336,17 +370,30 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         txtStyleTre = new TextField.TextFieldStyle();
         txtStyleTre.font = fontOswaldBlack;
         txtStyleTre.fontColor = Color.CYAN;
-        nameField = new TextField("X", txtstyle);
+        codeField = new TextField("X", txtstyle);
         surnameField = new TextField("Y", txtstyle);
-        nameField.setBounds(100, Gdx.graphics.getHeight() - 270, 200, 80);
+        codeField.setBounds(100, Gdx.graphics.getHeight() - 270, 300, 80);
         surnameField.setBounds(300, Gdx.graphics.getHeight() - 270, 200, 80);
-        applyName = new TextButton("OK", tbs);
-        applyName.setBounds(500, Gdx.graphics.getHeight() - 250, 50, 50);
-        applyName.setVisible(false);
-        cardStage.addActor(nameField);
+        applyCode = new TextButton("OK", tbs);
+        applyCode.setBounds(500, Gdx.graphics.getHeight() - 250, 50, 50);
+        applyCode.addListener(new InputListener() {
+            public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
+                try {
+                    int a = Integer.valueOf(codeField.getText());
+                    codeField.setText(a+"");
+                    action.setCODE(a);
+                }
+                catch (NumberFormatException e) {
+                    uiNo.play();
+                }
+                return true;
+            }
+        });
+        applyCode.setVisible(false);
+        cardStage.addActor(codeField);
         cardStage.addActor(surnameField);
-        cardStage.addActor(applyName);
-        nameField.setVisible(false);
+        cardStage.addActor(applyCode);
+        codeField.setVisible(false);
         surnameField.setVisible(false);
         iconTable = new Table();
         tableRelations = new Table().left();
@@ -1180,11 +1227,10 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
                 if (indiObs > -1) {
                     hideTables(false);
                     outerTable.setSize(580, 680*Float.parseFloat(String.valueOf(screenCoef * screenCoef)));
-                    cardTva.setType(18); nameField.setVisible(true); surnameField.setVisible(true); applyName.setVisible(true);
+                    cardTva.setType(18); codeField.setVisible(true); applyCode.setVisible(true);
                     outerTable.setVisible(true);
-                    nameField.setText("name"); surnameField.setText("surname");
-                    btnReset.setVisible(true);
-                    labelReset.setVisible(true);
+                    codeField.setText(action.getCODE() + "");
+                    codeField.setVisible(true);
                 }
                 else uiNo.play();
             }
@@ -1197,10 +1243,8 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
                 if (indiObs > -1) {
                     hideTables(false);
                     outerTable.setSize(580, 680*Float.parseFloat(String.valueOf(screenCoef * screenCoef)));
-                    cardTva.setType(18); nameField.setVisible(true); surnameField.setVisible(true); applyName.setVisible(true);
+                    cardTva.setType(18); codeField.setVisible(true); applyCode.setVisible(true);
                     outerTable.setVisible(true);
-                    nameField.setText("name"); surnameField.setText("surname");
-                    btnReset.setVisible(true);
                     labelReset.setVisible(true);
                 }
                 else uiNo.play();
@@ -1226,12 +1270,16 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         btnRandomScenario.setVisible(false);
         labelRandomScenario.setVisible(false);
         labelReset.setVisible(false);
-        iconTable.add(btnReset);
-        iconTable.row();
         CustomIcon btnNeeds = new CustomIcon(new Texture("uiTva/needs.png"));
         btnNeeds.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
+                int a = cardTva.type;
                 hideTables(true);
+                if (a >= 71 && a <= 76) {
+                    a = a % 2;
+                    cardTva.type = 71 - a + 1;
+                }
+                else cardTva.type = 71;
                 outerTableNeeds.setVisible(true);
                 start.setVisible(true);
                 finish.setVisible(true);
@@ -1242,7 +1290,13 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         CustomIcon btnTalents = new CustomIcon(new Texture("uiTva/talents.png"));
         btnTalents.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
+                int a = cardTva.type;
                 hideTables(true);
+                if (a >= 71 && a <= 76) {
+                    a = a % 2;
+                    cardTva.type = 73 - a + 1;
+                }
+                else cardTva.type = 73;
                 tableTalents.setVisible(true);
                 start.setVisible(true);
                 finish.setVisible(true);
@@ -1253,7 +1307,13 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         CustomIcon btnInterests = new CustomIcon(new Texture("uiTva/interests.png"));
         btnInterests.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
+                int a = cardTva.type;
                 hideTables(true);
+                if (a >= 71 && a <= 76) {
+                    a = a % 2;
+                    cardTva.type = 75 - a + 1;
+                }
+                else cardTva.type = 75;
                 tableInterests.setVisible(true);
                 start.setVisible(true);
                 finish.setVisible(true);
@@ -1346,8 +1406,6 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
             public void clicked(InputEvent event, float x, float y) {
                 hideTables(true);
                 outerTableFurn.setVisible(true);
-                for (int i = 0; i < furnTable.getRows(); i++)
-                    uiNo.play();
             }
         });
         iconTable.add(btnRoomTre);
@@ -1402,11 +1460,6 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         labelTime.setBounds(Gdx.graphics.getWidth() - 138, Gdx.graphics.getHeight() - 70, 150, 70);
         labelGamePts = new Label("", new Label.LabelStyle(fontOswaldBlack, Color.CYAN));
         labelGamePts.setBounds(Gdx.graphics.getWidth() - 208, Gdx.graphics.getHeight() - 70, 150, 70);
-        labelTime.addListener(new ClickListener() {
-            public void clicked(InputEvent event, float x, float y) {
-                clock.setVisible(true);
-            }
-        });
         labelDay = new Label("", new Label.LabelStyle(fontFran, Color.CYAN));
         labelDay.setPosition(Gdx.graphics.getWidth() - 150, Gdx.graphics.getHeight() - 70);
         scrollPane = new ScrollPane(iconTable);
@@ -1566,9 +1619,17 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         saveButton.setBounds(100, Gdx.graphics.getHeight()-370, 165, 165);
         saveButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-
-            }
-        });
+                action.setEn(new String[1]);
+                action.getEn()[0] = "test action " + action.getCODE();
+                action.setRu(new String[1]);
+                action.getRu()[0] = "тестовое действие " + action.getCODE();
+                FileHandle file = Gdx.files.local("E/json/extraactions.txt");
+                Json json = new Json();
+                jsonStr = json.prettyPrint(extraActs);
+                file.writeString(jsonStr, false);
+                uiDelay = System.currentTimeMillis() + 3000;
+                labelCenter.setText(langString.get("saveSaved"));
+            }});
         Label labelSaveButton = new Label(langString.get("saveButton"), new Label.LabelStyle(fontOswald, Color.WHITE));
         labelSaveButton.setPosition(100, Gdx.graphics.getHeight()-420);
         SocietyScreen.Custom loadButton = new SocietyScreen.Custom(new Texture("ui/loadButtonTva.png"), 100, Gdx.graphics.getHeight()-580);
@@ -1596,13 +1657,14 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
 
                         extraActs.get(0).setRu(new String[]{"бегает на дорожке"});
                         extraActs.get(0).setEn(new String[]{"runs on treadmill"});
-                        Gdx.app.error("EXTRAACTS", json.prettyPrint(extraActs));
                     }
                 }
                 tableActNums.clear();
                 for (int i = 0; i < extraActs.size(); i++) {
                     tableActNums.add(new ActCard(i));
+                    tableActNums.row();
                 }
+                tableActNums.add(new ActCard(-1));
                 groupBuild.setVisible(false);
             }});
         Label labelLoadButton = new Label(langString.get("loadButton"), new Label.LabelStyle(fontOswald, Color.WHITE));
@@ -1712,10 +1774,41 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
             setBounds(getX(), getY(), 600, 96);
             addListener(new InputListener() {
                 public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
-                    action = extraActs.get(act);
+                    if (act == -1) {
+                        action = action = new Action(19999, 3, 1, 0, 0,
+                                new SocietyScreen.NeedsArray(), new SocietyScreen.NeedsArray(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+                                new SocietyScreen.InterestsArray(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+                                new SocietyScreen.InterestsArray(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+                                new SocietyScreen.TalentsArray(), new SocietyScreen.TalentsArray(0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+                                new ArrayList<Integer>(), "");
+                        int a = rnd(9999);
+                        action.setEn(new String[1]);
+                        action.getEn()[0] = "test action " + a;
+                        action.setRu(new String[1]);
+                        action.getRu()[0] = "тестовое действие " + a;
+                        extraActs.add(action);
+                        Gdx.app.error("EXTRAACTS SIZE AFTER LOADING", extraActs.size() + "");
+                    }
+                    else
+                        action = extraActs.get(act);
                     hideTables(false);
                     cardTva.type = 18;
-                    labelHintTre.setText(extraActs.get(act).getEn().length == 0 ? "empty action" : extraActs.get(act).getEn()[0]);
+                    if (act > 0)
+                        labelHintTre.setText(extraActs.get(act).getEn().length == 0 ? "empty action" : extraActs.get(act).getEn()[0]);
+                    else
+                        labelHintTre.setText("new action");
+                    xxxx=700; yyyy=100;
+                    for (int i = 0; i<action.getItems().size(); i++) {
+                        Texture texture0 = whichObject(action.getItems().get(i), 1);
+                        ObjectActor myActorTva = new ObjectActor(texture0, xxxx, yyyy, action.getItems().get(i));
+                        myActorTva.setTouchable(Touchable.enabled);
+                        stage.addActor(myActorTva);
+                        yyyy += texture0.getHeight() + 20;
+                        if (yyyy > Gdx.graphics.getHeight() -100) {
+                            xxxx += 300;
+                            yyyy = 100;
+                        }
+                    }
                     return true;
                 }
             });
@@ -1724,8 +1817,11 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         public void act(float delta) {}
 
         public void draw(Batch batch, float delta) {
-            fontFranTva.draw(batch, extraActs.get(act).getEn().length == 0 ? "empty action" : extraActs.get(act).getEn()[0], getX()+110, getY()+80);
-            fontOswald.draw(batch, extraActs.get(act).getCODE() + " ", getX(), getY()+80);
+            if (act > -1) {
+                fontFranTva.draw(batch, extraActs.get(act).getEn().length == 0 ? "empty action" : extraActs.get(act).getEn()[0], getX() + 110, getY() + 80);
+                fontOswald.draw(batch, extraActs.get(act).getCODE() + " ", getX(), getY() + 80);
+            }
+            else fontFranTva.draw(batch, "new empty action", getX() + 110, getY() + 80);
         }
     }
 
@@ -1766,15 +1862,18 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         return (int) j + 1;
     }
 
-    void createObject(int type, int appearance, int cleanliness0, int fixity, int x, int y) {
+    void createObject(int type, int appearance) {
         //1-fridges 2-beds 3-lamps 4-tables 5-TVs 6-PCs 7-deco 8-armchairs 9-chairs 11-shelves
-        num0 = objectsTest.size() + 1;
-        Gdx.app.error("num0: "+ num0, "objectsTest.size: "+ objectsTest.size() + ", objects.size:" + objects.size());
         Texture texture0 = whichObject(type, appearance);
-        ObjectActor myActorTva =  new ObjectActor(texture0, x, yyyy, num0);
+        ObjectActor myActorTva = new ObjectActor(texture0, xxxx, yyyy, type);
         myActorTva.setTouchable(Touchable.enabled);
         stage.addActor(myActorTva);
-        yyyy += 100;
+        yyyy += texture0.getHeight() + 20;
+        if (yyyy > Gdx.graphics.getHeight() -100) {
+            xxxx += 300;
+            yyyy = 100;
+        }
+        action.getItems().add(type);
     }
 
     public class ObjectActor extends Actor {
@@ -1785,24 +1884,35 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         private TextureRegion region;
         private Texture texture;
         private int ox, oy;
-        public int num0;
+        public int type;
         public int occ = -1;
         public int vac = 1;
         public transient boolean started = false;
         public transient boolean bounds = true;
         public long delay, mainDelay;
 
-        public ObjectActor(final Texture texture, int x, int y, int num0) {
+        public ObjectActor(final Texture texture, int x, int y, int type) {
             this.texture = texture;
             Gdx.app.log("texture", String.valueOf(texture));
             this.ox = x;
             this.oy = y;
-            this.num0 = num0;
-            final int num1 = num0;
+            this.type = type;
             occ = -1;
             region = new TextureRegion(texture);
             setBounds(region.getRegionX(), region.getRegionY(),
                     region.getRegionWidth(), region.getRegionHeight());
+            addListener(new InputListener() {
+                public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
+                    for (int i=0; i<action.getItems().size(); i++) {
+                        if (action.getItems().get(i) == type) {
+                            action.getItems().remove(i);
+                        }
+                    }
+                    remove();
+                    ObjectActor.this.remove();
+                    return true;
+                }
+            });
         }
 
         public Texture getTexture() {
@@ -1823,26 +1933,6 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
 
         public int getOY() {
             return oy;
-        }
-
-        public void setOY(int y) {
-            this.oy = y;
-        }
-
-        public boolean isStarted() {
-            return started;
-        }
-
-        public void setStarted(boolean started) {
-            this.started = started;
-        }
-
-        public int getNum0() {
-            return num0;
-        }
-
-        public void setNum0(int num0) {
-            this.num0 = num0;
         }
 
         public void draw(Batch batch, float alpha) {
@@ -1913,10 +2003,10 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         cardTva.setType(0);
         start.setVisible(false);
         finish.setVisible(false);
-        nameField.setVisible(false);
+        codeField.setVisible(false);
         surnameField.setVisible(false);
         outerTableActNums.setVisible(false);
-        applyName.setVisible(false);
+        applyCode.setVisible(false);
         outerTableNeeds.setVisible(false);
         tableInterests.setVisible(false);
         tableTalents.setVisible(false);
@@ -1956,7 +2046,11 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
     public void updateInterface(int type) {
         int[] arr = new int[] {18, 42};
         if (type == 18) {
-            labelHint.setText(langString.get("genderSex") + ":");
+            String str = " ";
+            for (int i=0; i<action.getItems().size(); i++) {
+                str += action.getItems().get(i) + ", ";
+            }
+            labelHint.setText("items:"+ str+"\n"+"en:"+(action.getEn().length == 0 ? "empty action" : action.getEn()[0])+"\nru:" + (action.getRu().length == 0 ? "пустое действие" : action.getRu()[0]) + "\ndelay:" + action.getDelay());
         }
         if (type == 42) {
             str = "";
@@ -1974,7 +2068,8 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
             }
         }
 
-        if (indiObs > -1) {labelAesthetics.setText(action.getStartNeeds().getAesthetics() + " ");
+        if (cardTva.type % 2 == 1) {
+            labelAesthetics.setText(action.getStartNeeds().getAesthetics() + " ");
             labelBladder.setText(action.getStartNeeds().getBl() + " ");
             labelEducation.setText(action.getStartNeeds().getEducation() + " ");
             labelEnergy.setText(action.getStartNeeds().getEnergy() + " ");
@@ -2017,6 +2112,95 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
             labelSpeech.setText(action.getStartTalents().getSpeech() + " ");
             labelStamina.setText(action.getStartTalents().getStamina() + " ");
         }
+        else {
+            labelAesthetics.setText(action.getAddNeeds().getAesthetics() + " ");
+            labelBladder.setText(action.getAddNeeds().getBl() + " ");
+            labelEducation.setText(action.getAddNeeds().getEducation() + " ");
+            labelEnergy.setText(action.getAddNeeds().getEnergy() + " ");
+            labelEnv.setText(action.getAddNeeds().getEnvironment() + " ");
+            labelFun.setText(action.getAddNeeds().getFun() + " ");
+            labelHunger.setText(action.getAddNeeds().getHunger() + " ");
+            labelHygiene.setText(action.getAddNeeds().getHygiene() + " ");
+            labelLove.setText(action.getAddNeeds().getLove() + " ");
+            labelPower.setText(action.getAddNeeds().getPower() + " ");
+            labelSafety.setText(action.getAddNeeds().getProtection() + " ");
+            labelShopping.setText(action.getAddNeeds().getShopping() + " ");
+            labelSocial.setText(action.getAddNeeds().getSocial() + " ");
+            labelSuccess.setText(action.getAddNeeds().getSuccess() + " ");
+            labelPolitics.setText(action.getAddInterests().getPolitics() + " ");
+            labelEconomics.setText(action.getAddInterests().getEconomics() + " ");
+            labelHealth.setText(action.getAddInterests().getHealth() + " ");
+            labelCrimes.setText(action.getAddInterests().getCrimes() + " ");
+            labelFashion.setText(action.getAddInterests().getFun() + " ");
+            labelCulture.setText(action.getAddInterests().getCulture() + " ");
+            labelFood.setText(action.getAddInterests().getFood() + " ");
+            labelScience.setText(action.getAddInterests().getFashion() + " ");
+            labelSport.setText(action.getAddInterests().getSport() + " ");
+            labelTravel.setText(action.getAddInterests().getTravel() + " ");
+            labelTechnics.setText(action.getAddInterests().getTechnics() + " ");
+            labelJob.setText(action.getAddInterests().getWork() + " ");
+            labelAnimals.setText(action.getAddInterests().getAnimals() + " ");
+            labelBooks.setText(action.getAddInterests().getBooks() + " ");
+            labelFilms.setText(action.getAddInterests().getFilms() + " ");
+            labelMusic.setText(action.getAddInterests().getMusic() + " ");
+            labelHistory.setText(action.getAddInterests().getHistory() + " ");
+            labelMystic.setText(action.getAddInterests().getMystic() + " ");
+            labelCaution.setText(action.getAddTalents().getCaution() + " ");
+            labelImagination.setText(action.getAddTalents().getImagination() + " ");
+            labelInfluence.setText(action.getAddTalents().getInfluence() + " ");
+            labelImmunity.setText(action.getAddTalents().getImmunity() + " ");
+            labelInsight.setText(action.getAddTalents().getInsight() + " ");
+            labelLogic.setText(action.getAddTalents().getLogic() + " ");
+            labelMemory.setText(action.getAddTalents().getMemory() + " ");
+            labelQuickness.setText(action.getAddTalents().getQuickness() + " ");
+            labelSpeech.setText(action.getAddTalents().getSpeech() + " ");
+            labelStamina.setText(action.getAddTalents().getStamina() + " ");
+        }
+    }
+
+    private void recolorFields(Color color) {
+        labelAesthetics.setStyle(new Label.LabelStyle(fontOswaldTre, color));
+        labelBladder.setStyle(new Label.LabelStyle(fontOswaldTre, color));
+        labelEducation.setStyle(new Label.LabelStyle(fontOswaldTre, color));
+        labelEnergy.setStyle(new Label.LabelStyle(fontOswaldTre, color));
+        labelEnv.setStyle(new Label.LabelStyle(fontOswaldTre, color));
+        labelFun.setStyle(new Label.LabelStyle(fontOswaldTre, color));
+        labelHunger.setStyle(new Label.LabelStyle(fontOswaldTre, color));
+        labelHygiene.setStyle(new Label.LabelStyle(fontOswaldTre, color));
+        labelLove.setStyle(new Label.LabelStyle(fontOswaldTre, color));
+        labelPower.setStyle(new Label.LabelStyle(fontOswaldTre, color));
+        labelSafety.setStyle(new Label.LabelStyle(fontOswaldTre, color));
+        labelShopping.setStyle(new Label.LabelStyle(fontOswaldTre, color));
+        labelSocial.setStyle(new Label.LabelStyle(fontOswaldTre, color));
+        labelSuccess.setStyle(new Label.LabelStyle(fontOswaldTre, color));
+        labelStamina.setStyle(new Label.LabelStyle(fontOswaldTre, color));
+        labelCaution.setStyle(new Label.LabelStyle(fontOswaldTre, color));
+        labelImagination.setStyle(new Label.LabelStyle(fontOswaldTre, color));
+        labelImmunity.setStyle(new Label.LabelStyle(fontOswaldTre, color));
+        labelInfluence.setStyle(new Label.LabelStyle(fontOswaldTre, color));
+        labelInsight.setStyle(new Label.LabelStyle(fontOswaldTre, color));
+        labelLogic.setStyle(new Label.LabelStyle(fontOswaldTre, color));
+        labelMemory.setStyle(new Label.LabelStyle(fontOswaldTre, color));
+        labelQuickness.setStyle(new Label.LabelStyle(fontOswaldTre, color));
+        labelSpeech.setStyle(new Label.LabelStyle(fontOswaldTre, color));
+        labelPolitics.setStyle(new Label.LabelStyle(fontOswaldTre, color));
+        labelEconomics.setStyle(new Label.LabelStyle(fontOswaldTre, color));
+        labelHealth.setStyle(new Label.LabelStyle(fontOswaldTre, color));
+        labelCrimes.setStyle(new Label.LabelStyle(fontOswaldTre, color));
+        labelScience.setStyle(new Label.LabelStyle(fontOswaldTre, color));
+        labelCulture.setStyle(new Label.LabelStyle(fontOswaldTre, color));
+        labelFood.setStyle(new Label.LabelStyle(fontOswaldTre, color));
+        labelFashion.setStyle(new Label.LabelStyle(fontOswaldTre, color));
+        labelSport.setStyle(new Label.LabelStyle(fontOswaldTre, color));
+        labelTechnics.setStyle(new Label.LabelStyle(fontOswaldTre, color));
+        labelTravel.setStyle(new Label.LabelStyle(fontOswaldTre, color));
+        labelJob.setStyle(new Label.LabelStyle(fontOswaldTre, color));
+        labelAnimals.setStyle(new Label.LabelStyle(fontOswaldTre, color));
+        labelBooks.setStyle(new Label.LabelStyle(fontOswaldTre, color));
+        labelFilms.setStyle(new Label.LabelStyle(fontOswaldTre, color));
+        labelMusic.setStyle(new Label.LabelStyle(fontOswaldTre, color));
+        labelHistory.setStyle(new Label.LabelStyle(fontOswaldTre, color));
+        labelMystic.setStyle(new Label.LabelStyle(fontOswaldTre, color));
     }
 
     public void addingParameters() {
@@ -2032,124 +2216,124 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
             }
             arrowHint.setVisible(true);
             if (cardType == 1) {
-                action.getStartInterests().setPolitics(action.getStartInterests().getPolitics() + cardCount);
+                (cardTva.type % 2 == 0 ? action.getAddInterests() : action.getStartInterests()).setPolitics((cardTva.type % 2 == 0 ? action.getAddInterests() : action.getStartInterests()).getPolitics() + cardCount);
             }
             if (cardType == 2) {
-                action.getStartInterests().setEconomics(action.getStartInterests().getEconomics() + cardCount);
+                (cardTva.type % 2 == 0 ? action.getAddInterests() : action.getStartInterests()).setEconomics((cardTva.type % 2 == 0 ? action.getAddInterests() : action.getStartInterests()).getEconomics() + cardCount);
             }
             if (cardType == 3) {
-                action.getStartInterests().setHealth(action.getStartInterests().getHealth() + cardCount);
+                (cardTva.type % 2 == 0 ? action.getAddInterests() : action.getStartInterests()).setHealth((cardTva.type % 2 == 0 ? action.getAddInterests() : action.getStartInterests()).getHealth() + cardCount);
             }
             if (cardType == 4) {
-                action.getStartInterests().setCrimes(action.getStartInterests().getCrimes() + cardCount);
+                (cardTva.type % 2 == 0 ? action.getAddInterests() : action.getStartInterests()).setCrimes((cardTva.type % 2 == 0 ? action.getAddInterests() : action.getStartInterests()).getCrimes() + cardCount);
             }
             if (cardType == 5) {
-                action.getStartInterests().setFashion(action.getStartInterests().getFashion() + cardCount);
+                (cardTva.type % 2 == 0 ? action.getAddInterests() : action.getStartInterests()).setFashion((cardTva.type % 2 == 0 ? action.getAddInterests() : action.getStartInterests()).getFashion() + cardCount);
             }
             if (cardType == 6) {
-                action.getStartInterests().setCulture(action.getStartInterests().getCulture() + cardCount);
+                (cardTva.type % 2 == 0 ? action.getAddInterests() : action.getStartInterests()).setCulture((cardTva.type % 2 == 0 ? action.getAddInterests() : action.getStartInterests()).getCulture() + cardCount);
             }
             if (cardType == 7) {
-                action.getStartInterests().setFood(action.getStartInterests().getFood() + cardCount);
+                (cardTva.type % 2 == 0 ? action.getAddInterests() : action.getStartInterests()).setFood((cardTva.type % 2 == 0 ? action.getAddInterests() : action.getStartInterests()).getFood() + cardCount);
             }
             if (cardType == 8) {
-                action.getStartInterests().setFun(action.getStartInterests().getFun() + cardCount);
+                (cardTva.type % 2 == 0 ? action.getAddInterests() : action.getStartInterests()).setFun((cardTva.type % 2 == 0 ? action.getAddInterests() : action.getStartInterests()).getFun() + cardCount);
             }
             if (cardType == 9) {
-                action.getStartInterests().setSport(action.getStartInterests().getSport() + cardCount);
+                (cardTva.type % 2 == 0 ? action.getAddInterests() : action.getStartInterests()).setSport((cardTva.type % 2 == 0 ? action.getAddInterests() : action.getStartInterests()).getSport() + cardCount);
             }
             if (cardType == 10) {
-                action.getStartInterests().setTravel(action.getStartInterests().getTravel() + cardCount);
+                (cardTva.type % 2 == 0 ? action.getAddInterests() : action.getStartInterests()).setTravel((cardTva.type % 2 == 0 ? action.getAddInterests() : action.getStartInterests()).getTravel() + cardCount);
             }
             if (cardType == 11) {
-                action.getStartInterests().setTechnics(action.getStartInterests().getTechnics() + cardCount);
+                (cardTva.type % 2 == 0 ? action.getAddInterests() : action.getStartInterests()).setTechnics((cardTva.type % 2 == 0 ? action.getAddInterests() : action.getStartInterests()).getTechnics() + cardCount);
             }
             if (cardType == 12) {
-                action.getStartInterests().setWork(action.getStartInterests().getWork() + cardCount);
+                (cardTva.type % 2 == 0 ? action.getAddInterests() : action.getStartInterests()).setWork((cardTva.type % 2 == 0 ? action.getAddInterests() : action.getStartInterests()).getWork() + cardCount);
             }
             if (cardType == 13) {
-                action.getStartInterests().setAnimals(action.getStartInterests().getAnimals() + cardCount);
+                (cardTva.type % 2 == 0 ? action.getAddInterests() : action.getStartInterests()).setAnimals((cardTva.type % 2 == 0 ? action.getAddInterests() : action.getStartInterests()).getAnimals() + cardCount);
             }
             if (cardType == 14) {
-                action.getStartInterests().setBooks(action.getStartInterests().getBooks() + cardCount);
+                (cardTva.type % 2 == 0 ? action.getAddInterests() : action.getStartInterests()).setBooks((cardTva.type % 2 == 0 ? action.getAddInterests() : action.getStartInterests()).getBooks() + cardCount);
             }
             if (cardType == 15) {
-                action.getStartInterests().setFilms(action.getStartInterests().getFilms() + cardCount);
+                (cardTva.type % 2 == 0 ? action.getAddInterests() : action.getStartInterests()).setFilms((cardTva.type % 2 == 0 ? action.getAddInterests() : action.getStartInterests()).getFilms() + cardCount);
             }
             if (cardType == 16) {
-                action.getStartInterests().setMusic(action.getStartInterests().getMusic() + cardCount);
+                (cardTva.type % 2 == 0 ? action.getAddInterests() : action.getStartInterests()).setMusic((cardTva.type % 2 == 0 ? action.getAddInterests() : action.getStartInterests()).getMusic() + cardCount);
             }
             if (cardType == 26) {
-                action.getStartNeeds().setAesthetics(action.getStartNeeds().getAesthetics() + cardCount);
+                (cardTva.type % 2 == 0 ? action.getAddNeeds() : action.getStartNeeds()).setAesthetics((cardTva.type % 2 == 0 ? action.getAddNeeds() : action.getStartNeeds()).getAesthetics() + cardCount);
             }
             if (cardType == 27) {
-                action.getStartNeeds().setBl(action.getStartNeeds().getBl() + cardCount);
+                (cardTva.type % 2 == 0 ? action.getAddNeeds() : action.getStartNeeds()).setBl((cardTva.type % 2 == 0 ? action.getAddNeeds() : action.getStartNeeds()).getBl() + cardCount);
             }
             if (cardType == 28) {
-                action.getStartNeeds().setEducation(action.getStartNeeds().getEducation() + cardCount);
+                (cardTva.type % 2 == 0 ? action.getAddNeeds() : action.getStartNeeds()).setEducation((cardTva.type % 2 == 0 ? action.getAddNeeds() : action.getStartNeeds()).getEducation() + cardCount);
             }
             if (cardType == 29) {
-                action.getStartNeeds().setEnergy(action.getStartNeeds().getEnergy() + cardCount);
+                (cardTva.type % 2 == 0 ? action.getAddNeeds() : action.getStartNeeds()).setEnergy((cardTva.type % 2 == 0 ? action.getAddNeeds() : action.getStartNeeds()).getEnergy() + cardCount);
             }
             if (cardType == 30) {
-                action.getStartNeeds().setEnvironment(action.getStartNeeds().getEnvironment() + cardCount);
+                (cardTva.type % 2 == 0 ? action.getAddNeeds() : action.getStartNeeds()).setEnvironment((cardTva.type % 2 == 0 ? action.getAddNeeds() : action.getStartNeeds()).getEnvironment() + cardCount);
             }
             if (cardType == 31) {
-                action.getStartNeeds().setFun(action.getStartNeeds().getFun() + cardCount);
+                (cardTva.type % 2 == 0 ? action.getAddNeeds() : action.getStartNeeds()).setFun((cardTva.type % 2 == 0 ? action.getAddNeeds() : action.getStartNeeds()).getFun() + cardCount);
             }
             if (cardType == 32) {
-                action.getStartNeeds().setHunger(action.getStartNeeds().getHunger() + cardCount);
+                (cardTva.type % 2 == 0 ? action.getAddNeeds() : action.getStartNeeds()).setHunger((cardTva.type % 2 == 0 ? action.getAddNeeds() : action.getStartNeeds()).getHunger() + cardCount);
             }
             if (cardType == 33) {
-                action.getStartNeeds().setHygiene(action.getStartNeeds().getHygiene() + cardCount);
+                (cardTva.type % 2 == 0 ? action.getAddNeeds() : action.getStartNeeds()).setHygiene((cardTva.type % 2 == 0 ? action.getAddNeeds() : action.getStartNeeds()).getHygiene() + cardCount);
             }
             if (cardType == 34) {
-                action.getStartNeeds().setLove(action.getStartNeeds().getLove() + cardCount);
+                (cardTva.type % 2 == 0 ? action.getAddNeeds() : action.getStartNeeds()).setLove((cardTva.type % 2 == 0 ? action.getAddNeeds() : action.getStartNeeds()).getLove() + cardCount);
             }
             if (cardType == 35) {
-                action.getStartNeeds().setPower(action.getStartNeeds().getPower() + cardCount);
+                (cardTva.type % 2 == 0 ? action.getAddNeeds() : action.getStartNeeds()).setPower((cardTva.type % 2 == 0 ? action.getAddNeeds() : action.getStartNeeds()).getPower() + cardCount);
             }
             if (cardType == 36) {
-                action.getStartNeeds().setProtection(action.getStartNeeds().getProtection() + cardCount);
+                (cardTva.type % 2 == 0 ? action.getAddNeeds() : action.getStartNeeds()).setProtection((cardTva.type % 2 == 0 ? action.getAddNeeds() : action.getStartNeeds()).getProtection() + cardCount);
             }
             if (cardType == 37) {
-                action.getStartNeeds().setShopping(action.getStartNeeds().getShopping() + cardCount);
+                (cardTva.type % 2 == 0 ? action.getAddNeeds() : action.getStartNeeds()).setShopping((cardTva.type % 2 == 0 ? action.getAddNeeds() : action.getStartNeeds()).getShopping() + cardCount);
             }
             if (cardType == 38) {
-                action.getStartNeeds().setSocial(action.getStartNeeds().getSocial() + cardCount);
+                (cardTva.type % 2 == 0 ? action.getAddNeeds() : action.getStartNeeds()).setSocial((cardTva.type % 2 == 0 ? action.getAddNeeds() : action.getStartNeeds()).getSocial() + cardCount);
             }
             if (cardType == 39) {
-                action.getStartNeeds().setSuccess(action.getStartNeeds().getSuccess() + cardCount);
+                (cardTva.type % 2 == 0 ? action.getAddNeeds() : action.getStartNeeds()).setSuccess((cardTva.type % 2 == 0 ? action.getAddNeeds() : action.getStartNeeds()).getSuccess() + cardCount);
             }
             if (cardType == 44) {
-                action.getStartTalents().setCaution(action.getStartTalents().getCaution() + cardCount);
+                (cardTva.type % 2 == 0 ? action.getAddTalents() : action.getStartTalents()).setCaution((cardTva.type % 2 == 0 ? action.getAddTalents() : action.getStartTalents()).getCaution() + cardCount);
             }
             if (cardType == 45) {
-                action.getStartTalents().setImagination(action.getStartTalents().getImagination() + cardCount);
+                (cardTva.type % 2 == 0 ? action.getAddTalents() : action.getStartTalents()).setImagination((cardTva.type % 2 == 0 ? action.getAddTalents() : action.getStartTalents()).getImagination() + cardCount);
             }
             if (cardType == 46) {
-                action.getStartTalents().setImmunity(action.getStartTalents().getImmunity() + cardCount);
+                (cardTva.type % 2 == 0 ? action.getAddTalents() : action.getStartTalents()).setImmunity((cardTva.type % 2 == 0 ? action.getAddTalents() : action.getStartTalents()).getImmunity() + cardCount);
             }
             if (cardType == 47) {
-                action.getStartTalents().setInfluence(action.getStartTalents().getInfluence() + cardCount);
+                (cardTva.type % 2 == 0 ? action.getAddTalents() : action.getStartTalents()).setInfluence((cardTva.type % 2 == 0 ? action.getAddTalents() : action.getStartTalents()).getInfluence() + cardCount);
             }
             if (cardType == 48) {
-                action.getStartTalents().setInsight(action.getStartTalents().getInsight() + cardCount);
+                (cardTva.type % 2 == 0 ? action.getAddTalents() : action.getStartTalents()).setInsight((cardTva.type % 2 == 0 ? action.getAddTalents() : action.getStartTalents()).getInsight() + cardCount);
             }
             if (cardType == 49) {
-                action.getStartTalents().setLogic(action.getStartTalents().getLogic() + cardCount);
+                (cardTva.type % 2 == 0 ? action.getAddTalents() : action.getStartTalents()).setLogic((cardTva.type % 2 == 0 ? action.getAddTalents() : action.getStartTalents()).getLogic() + cardCount);
             }
             if (cardType == 50) {
-                action.getStartTalents().setMemory(action.getStartTalents().getMemory() + cardCount);
+                (cardTva.type % 2 == 0 ? action.getAddTalents() : action.getStartTalents()).setMemory((cardTva.type % 2 == 0 ? action.getAddTalents() : action.getStartTalents()).getMemory() + cardCount);
             }
             if (cardType == 51) {
-                action.getStartTalents().setQuickness(action.getStartTalents().getQuickness() + cardCount);
+                (cardTva.type % 2 == 0 ? action.getAddTalents() : action.getStartTalents()).setQuickness((cardTva.type % 2 == 0 ? action.getAddTalents() : action.getStartTalents()).getQuickness() + cardCount);
             }
             if (cardType == 52) {
-                action.getStartTalents().setSpeech(action.getStartTalents().getSpeech() + cardCount);
+                (cardTva.type % 2 == 0 ? action.getAddTalents() : action.getStartTalents()).setSpeech((cardTva.type % 2 == 0 ? action.getAddTalents() : action.getStartTalents()).getSpeech() + cardCount);
             }
             if (cardType == 53) {
-                action.getStartTalents().setStamina(action.getStartTalents().getStamina() + cardCount);
+                (cardTva.type % 2 == 0 ? action.getAddTalents() : action.getStartTalents()).setStamina((cardTva.type % 2 == 0 ? action.getAddTalents() : action.getStartTalents()).getStamina() + cardCount);
             }
             if (cardType == 54) {
                 society.getBoxes().get(cb).setTemperature(society.getBoxes().get(cb).getTemperature() + 0.5f);
@@ -2176,10 +2360,10 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
             if (cardType == 60) {
             }
             if (cardType == 61) {
-                action.getStartInterests().setHistory(action.getStartInterests().getHistory() + cardCount);
+                (cardTva.type % 2 == 0 ? action.getAddInterests() : action.getStartInterests()).setHistory((cardTva.type % 2 == 0 ? action.getAddInterests() : action.getStartInterests()).getHistory() + cardCount);
             }
             if (cardType == 62) {
-                action.getStartInterests().setMystic(action.getStartInterests().getMystic() + cardCount);
+                (cardTva.type % 2 == 0 ? action.getAddInterests() : action.getStartInterests()).setMystic((cardTva.type % 2 == 0 ? action.getAddInterests() : action.getStartInterests()).getMystic() + cardCount);
             }
         }
         else if (cardType == 0) {
@@ -2307,11 +2491,12 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         stage.draw();
         cardStage.act(Gdx.graphics.getDeltaTime());
         cardStage.draw();
-        if (FPS == 5) {
+        if (FPS == 8) {
             neededY = Gdx.graphics.getHeight() / 2;
             updateInterface(cardTva.type);
             addingParameters();
             FPS = 0;
+            labelHintFyra.setText(cardTva.type+"");
         }
     }
 }

@@ -330,6 +330,7 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
 
 
 
+
         //furn.add(new FurnCard(f, 400, 1, 1, "Холодильник Hanco Freeze", "Холодильник Ханко Фриз всегда был довольно экономичным вариантом. Его особенность в очень долгом сроке службы. Гарантия на 40 лет вас устроит?", new Texture("kitchen/fridge11.png")));
         //furn.add(new FurnCard(f, 400, 15, 1, 2006, 2029, "Буфет \"Недешёвый\"", "", new Texture("comm/buffet12.png")));
         //furn.add(new FurnCard(f, 400, 3, 1, "Бабушкина лампа", "", new Texture("lamps/lamp1.png")));
@@ -1521,7 +1522,7 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
         iconTable = new Table();
         iconTableSystem = new Table();
         tableRelations = new Table().left();
-        tableActions = new Table().left();
+        tableActions = new Table().left().top();
         tableScenarios = new Table().left();
         tableIndis = new Table().left();
         tableNeeds = new Table();
@@ -2307,6 +2308,8 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
 
         labelCenter = new Label("", new Label.LabelStyle(fontOswald, Color.DARK_GRAY));
         labelCenter.setPosition(660, 120);
+        uiDelay = System.currentTimeMillis() + 3000;
+        labelCenter.setText("Extra actions loaded:" + extraActs.size());
 
         tableMove = new Table(skinTva);
         tableMove.setBounds(650, 10, Gdx.graphics.getWidth()-770, 100);
@@ -2974,8 +2977,8 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
         outerTableScenarios.setSize(530, 820*Float.parseFloat(String.valueOf(screenCoef)));
         outerTableActions.setPosition(100, 40);
         outerTableActions.setSize(530, 400*Float.parseFloat(String.valueOf(screenCoef)));
-        outerTableIndis.setPosition(Gdx.graphics.getWidth()-170, 40);
-        outerTableIndis.setSize(170, 850*Float.parseFloat(String.valueOf(screenCoef)));
+        outerTableIndis.setPosition(Gdx.graphics.getWidth()-170, 120);
+        outerTableIndis.setSize(170, 800*Float.parseFloat(String.valueOf(screenCoef)));
 
 
 
@@ -5978,6 +5981,33 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                         avail.add(2901);
                     }
                 }
+
+
+
+
+
+
+
+
+
+
+
+
+                try {
+                    avail.addAll(lookExtraActs("sport", myNum));
+                }
+                catch (NullPointerException | IndexOutOfBoundsException e) {e.printStackTrace();}
+
+
+
+
+
+
+
+
+
+
+
                 //ИНТЕРЕСЫ ПО ВООБРАЖЕНИЮ
                 if (society.getIndi(cb, myNum).getNeeds().get(0).getEducation() < society.getIndi(cb, myNum).getTalents().get(0).getImagination() * 0.7 && !(actNeeds.get("music"))) {
                     //МУЗЫКА
@@ -5994,7 +6024,7 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                     if (society.getIndi(cb, myNum).getInterests().get(0).getMusic() > 40 && checkUnocc(10) != 0)
                         avail.add(3001);
                     try {
-                        avail.addAll(lookExtraActs("Music", myNum));
+                        avail.addAll(lookExtraActs("Sport", myNum));
                     }
                     catch (NullPointerException | IndexOutOfBoundsException e) {e.printStackTrace();}
                 }
@@ -6008,7 +6038,7 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                             avail.add(2502);
                     }
                     try {
-                        avail.addAll(lookExtraActs("Music", myNum));
+                        avail.addAll(lookExtraActs("Food", myNum));
                     }
                     catch (NullPointerException | IndexOutOfBoundsException e) {e.printStackTrace();}
                 }
@@ -6063,17 +6093,20 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                     }
                     default: {
                         if (ac > 9999) {
+                            Gdx.app.error("METHOD INVOCATIONS", name + " " + surname + " " + myNum + " has wanted something from extraActs");
                             int k = -2;
                             for (int i = 0; i < extraActs.size(); i++) {
                                 if (extraActs.get(i).getCODE() == ac) {
                                     Collections.shuffle(extraActs.get(i).getItems());
                                     k = extraActs.get(i).getItems().get(0);
-                                    return;
+                                    i = extraActs.size();
                                 }
                             }
                             int n = reserve(myNum, k);
-                            if (n != -1)
+                            if (n != -1) {
                                 actions.add(0, new Action(ac, objects.get(n).ox, objects.get(n).oy - 2, homez));
+                                Gdx.app.error("METHOD INVOCATIONS", name + " " + surname + " " + myNum + " has known that needed object is free");
+                            }
                         }
                         break;
                     }
@@ -7872,15 +7905,16 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
             int sum = 0;
             labelHint.setText("Global num:" + society.getIndi(cb, indiObs).globalNum
                     + "\n" + langString.get("genderSex") + ":" + ((society.getIndi(cb, indiObs).getGender() == 1) ? langString.get("male") : langString.get("female"))
-                    + "\n" + langString.get("age") + ":" + society.getIndi(cb, indiObs).getAge()
-                    + ", " + langString.get("yearBirth") + ": " + String.valueOf(yyyy - society.getIndi(cb, indiObs).getAge())
+                    + "\n" + langString.get("age") + ":" + String.valueOf(yyyy - society.getIndi(cb, indiObs).getAge())
+                    + ", " + langString.get("yearBirth") + ": " + society.getIndi(cb, indiObs).getAge()
                     + "\n" + langString.get("budget") + ":" + society.getIndi(cb, indiObs).getWealth()
                     + "\n" + langString.get("address") + ":" + society.getIndi(cb, indiObs).getHomeX() + "/" + society.getIndi(cb, indiObs).getHomeY() + "/" + society.getIndi(cb, indiObs).getHomeZ()
                     + /*"\n" + "Жизненная цель:" + society.getIndiTest(cb, indiObs).getLifePurpose()
                         + */ "\n" + langString.get("selfEsteem") + ":" + society.getIndi(cb, indiObs).getSelfEsteem()
                     +  "\n" + langString.get("lovePts") + ":" + society.getIndi(cb, indiObs).getLove()
                     +  "\n" + "Тип помещения:" + society.getBoxes().get(cb).getProperty()
-                    +  "\n\n" + s
+                    +  "\n\n"
+                    + "EXTRA ACTIONS LOADED:" + extraActs.size() + "\n" + s
             );
         }
         if (type == 22) {
@@ -8427,7 +8461,7 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                 uiNo.play();
             }
         }
-        file = Gdx.files.internal("json/extraactions.txt");//Gdx.files.local("E/json/extraactions.txt");
+        file = Gdx.files.local("E/json/extraactions.txt");
         if (file.exists()) {
             jsonStr = file.readString();
             extraActs = json.fromJson(ArrayList.class, jsonStr);
@@ -8736,7 +8770,7 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
             methodAct = com.peoplebox.additions.Action.class.getMethod("getStartTalents");
         }
         catch (NoSuchMethodException e) {}
-        //Gdx.app.error("METHOD INVOCATIONS", method + " " + methodIndi + " " + methodAct);
+        Gdx.app.error("METHOD INVOCATIONS", method + " " + methodIndi + " " + methodAct);
         for (int i = 0; i<extraActs.size(); i++) {
             try {
                 if ((Integer)method.invoke(methodAct.invoke(extraActs.get(i))) != 0
@@ -8756,11 +8790,12 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
             }
         }
         Collections.shuffle(suit);
-        int n = reserve(num, 10);
+        int n = reserve(num, 10); // type = 10???
         if (n != -1) {
             suit.add(objects.get(n).ox);
             suit.add(objects.get(n).oy+2);
         }
+        Gdx.app.error("METHOD INVOCATIONS", method + " " + methodIndi + " " + methodAct + "SUIT:" + suit.size());
         return suit;
     }
 }

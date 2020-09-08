@@ -7,7 +7,7 @@ import java.util.ArrayList;
 public class Action {
     private String[] en, fr, de, it, es, se, fi, nl, da, pt, cz, he, el, jp, kr, ru, zh, pl, th, no, hu;
     private int delay /*in sec*/, animation, startMoney, addMoney;
-    private final int CODE;
+    private int CODE;
     private boolean isSocial = false;
     private SocietyScreen.NeedsArray startNeeds, addNeeds; //if zero, then ignore, if not then it's min level
     private SocietyScreen.InterestsArray startInterests, addInterests; //if zero, then ignore, if not then it's min level
@@ -39,6 +39,10 @@ public class Action {
 
     public int getCODE() {
         return CODE;
+    }
+
+    public void setCODE(int CODE) {
+        this.CODE = CODE;
     }
 
     public String[] getEn() {
