@@ -3,13 +3,14 @@ package com.peoplebox;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.*;
@@ -44,13 +45,16 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
             new SocietyScreen.TalentsArray(), new SocietyScreen.TalentsArray(0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
             new ArrayList<Integer>(), "");
     OrthographicCamera camera;
+    SpriteBatch batch;
+    ModelBatch mBatch;
+    ModelInstance ballInstance;
     String str = "";
     long delay = 0, sign = 0;
     protected Label label;
     protected BitmapFont font, fontFran;
     static I18NBundle langString;
     static Label labelGirl, labelAppuyez, labelHint, labelHintTva, labelHintFyra, labelCenter, labelDebug, labelControl, nameView,
-            labelEvent, labelTime, labelDay, labelGamePts, labelReset, labelRandomScenario;
+            labelEvent, labelTime, labelDay, labelGamePts, labelReset, labelRandomScenario, labelMoney;
     static Label labelBladder, labelEnergy, labelHunger, labelEducation, labelEnv, labelFun, labelHygiene, labelLove, labelPower, labelSafety, labelShopping,
             labelSocial, labelAesthetics, labelSuccess;
     static Label labelPolitics, labelEconomics, labelHealth, labelCrimes, labelScience, labelCulture, labelFood, labelFashion, labelSport, labelTechnics,
@@ -71,7 +75,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
     int neededY = 0; //по дефолту равна половине высоты экрана, переопределяется в рендере с каждой прорисовкой
     static long uiDelay, tapDelay, currentTimeMil = System.currentTimeMillis();
     DecimalFormat df = new DecimalFormat("#.##");
-    static TextField codeField, surnameField, labelHintTre;
+    static TextField codeField, statusField, labelHintTre;
     enum HoldObject { Knife, Book, Spray, Mixer, Pan, Extinguisher, Phone1, Phone2, None };
     public static Stage stage, cardStage, girlStage;
     public ExtendViewport stageViewport, girlStageViewport;
@@ -247,12 +251,12 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         cardStage.getViewport().setScreenSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         FileHandle file = Gdx.files.local("E/json/extraactions.txt");
         if (file.exists()) {
-            jsonStr = file.readString();
+            jsonStr = file.readString().replace("bladderadder", "bladder");
             extraActs = json.fromJson(ArrayList.class, jsonStr);
         } else {
             file = Gdx.files.internal("json/extraactions.txt");
             if (file.exists()) {
-                jsonStr = file.readString();
+                jsonStr = file.readString().replace("bl", "bladder").replace("bladderadder", "bladder");
                 extraActs = json.fromJson(ArrayList.class, jsonStr);
             } else {
                 extraActs.add(new com.peoplebox.additions.Action(10000, 15, 2, 0, 0,
@@ -371,9 +375,9 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         txtStyleTre.font = fontOswaldBlack;
         txtStyleTre.fontColor = Color.CYAN;
         codeField = new TextField("X", txtstyle);
-        surnameField = new TextField("Y", txtstyle);
+        statusField = new TextField("action status here", txtstyle);
         codeField.setBounds(100, Gdx.graphics.getHeight() - 270, 300, 80);
-        surnameField.setBounds(300, Gdx.graphics.getHeight() - 270, 200, 80);
+        statusField.setBounds(100, Gdx.graphics.getHeight() - 320, 400, 80);
         applyCode = new TextButton("OK", tbs);
         applyCode.setBounds(500, Gdx.graphics.getHeight() - 250, 50, 50);
         applyCode.addListener(new InputListener() {
@@ -382,6 +386,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
                     int a = Integer.valueOf(codeField.getText());
                     codeField.setText(a+"");
                     action.setCODE(a);
+                    action.setRu(new String[] {statusField.getText()});
                 }
                 catch (NumberFormatException e) {
                     uiNo.play();
@@ -391,10 +396,10 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         });
         applyCode.setVisible(false);
         cardStage.addActor(codeField);
-        cardStage.addActor(surnameField);
+        cardStage.addActor(statusField);
         cardStage.addActor(applyCode);
         codeField.setVisible(false);
-        surnameField.setVisible(false);
+        statusField.setVisible(false);
         iconTable = new Table();
         tableRelations = new Table().left();
         tableActNums = new Table().left();
@@ -634,6 +639,21 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         tableNeeds.add(labelSuccess);
 
         tableNeeds.row();
+
+        CustomIcon iconMoney = new CustomIcon(new Texture("icons2/success.png"), langString.get("success"));
+        tableNeeds.add(iconMoney);
+        labelMoney = new Label("0", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
+        labelMoney.addListener(new ClickListener() {
+            public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
+                cardType = 39; neededY = (int) labelSuccess.getY()+124;
+                return true;
+            }
+            public void touchUp(InputEvent event, float x1, float y1, int pointer, int button) {
+                cardType = 0;
+                //return true;
+            }
+        });
+        tableNeeds.add(labelSuccess);
 
         //scrollPaneNeeds = new ScrollPane(tableNeeds);
         //outerTableNeeds = new Table();
@@ -1226,11 +1246,13 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
             public void clicked(InputEvent event, float x, float y) {
                 if (indiObs > -1) {
                     hideTables(false);
-                    outerTable.setSize(580, 680*Float.parseFloat(String.valueOf(screenCoef * screenCoef)));
+                    outerTable.setSize(580, 620*Float.parseFloat(String.valueOf(screenCoef * screenCoef)));
                     cardTva.setType(18); codeField.setVisible(true); applyCode.setVisible(true);
                     outerTable.setVisible(true);
                     codeField.setText(action.getCODE() + "");
                     codeField.setVisible(true);
+                    statusField.setText(action.getRu()[0] + "");
+                    statusField.setVisible(true);
                 }
                 else uiNo.play();
             }
@@ -1244,6 +1266,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
                     hideTables(false);
                     outerTable.setSize(580, 680*Float.parseFloat(String.valueOf(screenCoef * screenCoef)));
                     cardTva.setType(18); codeField.setVisible(true); applyCode.setVisible(true);
+                    statusField.setVisible(true);
                     outerTable.setVisible(true);
                     labelReset.setVisible(true);
                 }
@@ -1644,7 +1667,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
                 } else {
                     file = Gdx.files.internal("json/extraactions.txt");
                     if (file.exists()) {
-                        jsonStr = file.readString();
+                        jsonStr = file.readString().replace("bl", "bladder").replace("bladderadder", "bladder");
                         extraActs = json.fromJson(ArrayList.class, jsonStr);
                     } else {
                         extraActs.add(new com.peoplebox.additions.Action(10000, 15, 2, 0, 0,
@@ -2004,7 +2027,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         start.setVisible(false);
         finish.setVisible(false);
         codeField.setVisible(false);
-        surnameField.setVisible(false);
+        statusField.setVisible(false);
         outerTableActNums.setVisible(false);
         applyCode.setVisible(false);
         outerTableNeeds.setVisible(false);
@@ -2070,7 +2093,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
 
         if (cardTva.type % 2 == 1) {
             labelAesthetics.setText(action.getStartNeeds().getAesthetics() + " ");
-            labelBladder.setText(action.getStartNeeds().getBl() + " ");
+            labelBladder.setText(action.getStartNeeds().getBladder() + " ");
             labelEducation.setText(action.getStartNeeds().getEducation() + " ");
             labelEnergy.setText(action.getStartNeeds().getEnergy() + " ");
             labelEnv.setText(action.getStartNeeds().getEnvironment() + " ");
@@ -2114,7 +2137,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
         }
         else {
             labelAesthetics.setText(action.getAddNeeds().getAesthetics() + " ");
-            labelBladder.setText(action.getAddNeeds().getBl() + " ");
+            labelBladder.setText(action.getAddNeeds().getBladder() + " ");
             labelEducation.setText(action.getAddNeeds().getEducation() + " ");
             labelEnergy.setText(action.getAddNeeds().getEnergy() + " ");
             labelEnv.setText(action.getAddNeeds().getEnvironment() + " ");
@@ -2267,7 +2290,7 @@ public class ActionRedactorScreen implements Screen, GestureDetector.GestureList
                 (cardTva.type % 2 == 0 ? action.getAddNeeds() : action.getStartNeeds()).setAesthetics((cardTva.type % 2 == 0 ? action.getAddNeeds() : action.getStartNeeds()).getAesthetics() + cardCount);
             }
             if (cardType == 27) {
-                (cardTva.type % 2 == 0 ? action.getAddNeeds() : action.getStartNeeds()).setBl((cardTva.type % 2 == 0 ? action.getAddNeeds() : action.getStartNeeds()).getBl() + cardCount);
+                (cardTva.type % 2 == 0 ? action.getAddNeeds() : action.getStartNeeds()).setBladder((cardTva.type % 2 == 0 ? action.getAddNeeds() : action.getStartNeeds()).getBladder() + cardCount);
             }
             if (cardType == 28) {
                 (cardTva.type % 2 == 0 ? action.getAddNeeds() : action.getStartNeeds()).setEducation((cardTva.type % 2 == 0 ? action.getAddNeeds() : action.getStartNeeds()).getEducation() + cardCount);

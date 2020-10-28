@@ -919,11 +919,11 @@ public class Addition {
                 break;
             }
             case 201: {
-                society.getIndi(cb, myNum).getNeeds().get(0).setBl(100);
+                society.getIndi(cb, myNum).getNeeds().get(0).setBladder(100);
                 break;
             }
             case 202: {
-                society.getIndi(cb, myNum).getNeeds().get(0).setBl(100);
+                society.getIndi(cb, myNum).getNeeds().get(0).setBladder(100);
                 society.getIndi(cb, myNum).getNeeds().get(0).setHygiene(0);
                 society.getIndi(cb, myNum).getNeeds().get(0).setSuccess(0);
                 society.getIndi(cb, myNum).getNeeds().get(0).setFun(society.getIndi(cb, myNum).getNeeds().get(0).getFun() < 50 ? 0 : society.getIndi(cb, myNum).getNeeds().get(0).getFun() - 50);
