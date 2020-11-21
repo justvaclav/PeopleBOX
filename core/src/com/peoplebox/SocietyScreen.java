@@ -57,6 +57,7 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
     public String str, dest, jsonStr, lang, globalListString = "";
     static Label label, labelGirl, labelAppuyez, labelHint, labelHintTva, labelHintTre, labelHintFyra, labelCenter, labelDebug, labelControl, nameView,
             labelEvent, labelTime, labelDay, labelGamePts, labelReset, labelRandomScenario;
+    static Label labelBudget, labelLovePts, labelSelfEsteem, labelAge, labelSex;
     static Label labelBladder, labelEnergy, labelHunger, labelEducation, labelEnv, labelFun, labelHygiene, labelLove, labelPower, labelSafety, labelShopping,
             labelSocial, labelAesthetics, labelSuccess;
     static Label labelPolitics, labelEconomics, labelHealth, labelCrimes, labelScience, labelCulture, labelFood, labelFashion, labelSport, labelTechnics,
@@ -85,7 +86,7 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
     static BitmapFont fontFranTva, fontOswaldFurnPrice;
     BitmapFont fontFran, fontFranTre, smallFontFran, smallFontFranRed, fontOswald, fontOswaldTre, fontOldGirlStatus, fontOldGirl, fontOswaldBlack, font = new BitmapFont();
     static InputMultiplexer multiplexer;
-    static ScrollPane scrollPane, scrollPaneTva, scrollPaneFurn, scrollPaneTre, scrollPaneRelations, scrollPaneActions, scrollPaneScenarios, scrollPaneIndis, scrollPaneSystem;
+    static ScrollPane scrollPane, scrollPaneTva, scrollPaneFurn, scrollPaneTre, scrollPaneMain, scrollPaneRelations, scrollPaneActions, scrollPaneScenarios, scrollPaneIndis, scrollPaneSystem;
     static TextButton.TextButtonStyle tbsFyra, tbsFem, tbsTre, tbs;
     Custom background, walls, panelLeft, panelEvent, iconEvent, oldGirl, arrowHint, clock, frameBorder, panelRight;
     CustomIcon btnReset, btnRandomScenario, btnTrash;
@@ -93,8 +94,8 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
             btnMoveOk, btnOverlay, btnRotate, btnMore, btnRemove, buttonBack, buttonRemove, buttonAdd;
     private TextureAtlas atlas, atlasTre;
     private Skin skin, skinTre;
-    private static Table tableMove, tableDebugActions, tableNeeds, tableInterests, tableRoom, tableTalents, outerTable, outerTableTva, outerTableNeeds, iconTable,
-            iconTableSystem, furnTable, outerTableFurn, tableBroadcast, tableRelations, outerTableRelations, tableActions, outerTableActions,
+    private static Table tableMove, tableDebugActions, tableNeeds, tableInterests, tableRoom, tableMain, tableTalents, outerTable, outerTableTva, outerTableMain,
+            outerTableNeeds, iconTable, iconTableSystem, furnTable, outerTableFurn, tableBroadcast, tableRelations, outerTableRelations, tableActions, outerTableActions,
             tableScenarios, outerTableScenarios, tableRelationsChoose, tableIndis, outerTableIndis, systemTable, outerSystemTable;
     private Group groupBuild = new Group();
     static Society society = new Society();
@@ -890,7 +891,30 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                         for (int j=0; j<3; j++) { //по количеству уровней в системе
                             for (int k=0; k<society.getSocialSystems().get(i).screws.get(j).size(); k++) {
                                 for (int l=0; l < society.getSocialSystems().get(i).screws.get(j).get(k).hours.size(); l++) {
+                                    Screw screw = society.getSocialSystems().get(i).screws.get(j).get(k);
+                                    //рабочая смена заканчивается
                                     if (society.getSocialSystems().get(i).screws.get(j).get(k).hours.get(l).get(0) == dw && //совпадение дня недели
+                                            society.getSocialSystems().get(i).screws.get(j).get(k).hours.get(l).get(1) +
+                                                    society.getSocialSystems().get(i).screws.get(j).get(k).hours.get(l).get(2)== hh+1 &&
+                                            society.getSocialSystems().get(i).screws.get(j).get(k).isWorking) {
+                                        for (TransmitItem transmit: society.getSocialSystems().get(i).screws.get(j).get(k).transmit.keySet()) {
+                                            if (society.getSocialSystems().get(i).profits.containsKey(transmit.name)) {
+                                                society.getSocialSystems().get(i).profits.put(transmit.name,
+                                                        (int) (society.getSocialSystems().get(i).profits.get(transmit) +
+                                                                society.getSocialSystems().get(i).screws.get(j).get(k).transmit.get(transmit) *
+                                                                        society.getSocialSystems().get(i).screws.get(j).get(k).efficiency));
+                                                society.getSocialSystems().get(i).screws.get(j).get(k).isWorking = false;
+                                            }
+                                            else {
+                                                society.getSocialSystems().get(i).profits.put(transmit.name,
+                                                        (int) (society.getSocialSystems().get(i).screws.get(j).get(k).transmit.get(transmit) *
+                                                                        society.getSocialSystems().get(i).screws.get(j).get(k).efficiency));
+                                                society.getSocialSystems().get(i).screws.get(j).get(k).isWorking = false;
+                                            }
+                                        }
+                                    }
+                                    //рабочая смена начинается
+                                    else if (society.getSocialSystems().get(i).screws.get(j).get(k).hours.get(l).get(0) == dw && //совпадение дня недели
                                             society.getSocialSystems().get(i).screws.get(j).get(k).hours.get(l).get(1) == hh+1) { //работа начнется через 5 минут
                                         int num = society.getIndiNumByGlobal(society.getSocialSystems().get(i).screws.get(j).get(k).id);
                                         List<Integer> etiquette = society.getSocialSystems().get(i).screws.get(j).get(k).etiquette;
@@ -899,33 +923,40 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                                             indis.get(num).marker = 1;
                                         }
                                         else {
+                                            screw.isWorking = true;
                                             int type = -1;
-                                            for (int m=0; m<society.getSocialSystems().get(i).screws.get(j).get(k).receive.size(); m++) {
-                                                int amount = society.getSocialSystems().get(i).screws.get(j).get(k).receive.get(m).amount;
-                                                switch (society.getSocialSystems().get(i).screws.get(j).get(k).receive.get(m).type) {
-                                                    case ObjectNeeded:
-                                                        type = amount;
-                                                        break;
-                                                    case Money:
-                                                        society.getIndi(cb, num).wealth += amount;
-                                                        society.getIndi(cb, society.getIndiNumByGlobal(society.getSocialSystems().get(i).screws.get(0).get(0).id)).wealth -= amount;
-                                                        break;
-                                                    case AgeMoreThan:
-                                                        if (society.getIndi(cb, num).age < amount) {
-                                                            indis.get(num).markerString = "i'm too young for this\n"+"AgeMoreThan:"+type;
-                                                            indis.get(num).marker = 1;
-                                                            return;
-                                                        }
-                                                        break;
-                                                    case AgeLessThan:
-                                                        if (society.getIndi(cb, num).age > amount) {
-                                                            indis.get(num).markerString = "i'm too old for this\n"+"AgeLessThan:"+type;
-                                                            indis.get(num).marker = 1;
-                                                            return;
-                                                        }
-                                                        break;
-                                                    default:
-                                                        break;
+                                            for (TransmitItem transmit : society.getSocialSystems().get(i).screws.get(j).get(k).transmit.keySet()) {
+                                                int amountTransmit = society.getSocialSystems().get(i).screws.get(j).get(k).transmit.get(transmit);
+                                                for (ProfitEnum receive : transmit.receives.keySet()) {
+                                                    int amountReceive = transmit.receives.get(receive);
+                                                    switch (receive) {
+                                                        case ObjectNeeded:
+                                                            type = amountReceive;
+                                                            break;
+                                                        case Money:
+                                                            society.getIndi(cb, num).wealth += amountReceive;
+                                                            society.getIndi(cb, society.getIndiNumByGlobal(society.getSocialSystems().get(i).screws.get(0).get(0).id)).wealth -= amountReceive;
+                                                            break;
+                                                        case AgeMoreThan:
+                                                            if (society.getIndi(cb, num).age < amountReceive) {
+                                                                indis.get(num).markerString = "i'm too young for this\n" + "AgeMoreThan:" + amountReceive;
+                                                                indis.get(num).marker = 1;
+                                                                screw.isWorking = false;
+                                                                return;
+                                                            }
+                                                            break;
+                                                        case AgeLessThan:
+                                                            if (society.getIndi(cb, num).age > amountReceive) {
+                                                                indis.get(num).markerString = "i'm too old for this\n" + "AgeLessThan:" + amountReceive;
+                                                                indis.get(num).marker = 1;
+                                                                screw.isWorking = false;
+                                                                return;
+                                                            }
+                                                            break;
+                                                        default:
+                                                            screw.isWorking = false;
+                                                            break;
+                                                    }
                                                 }
                                             }
                                             int n = -2;
@@ -938,6 +969,7 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                                             else {
                                                 indis.get(num).markerString = "there is no free object needed for my role\n"+"ObjectNeeded:"+type;
                                                 indis.get(num).marker = 1;
+                                                screw.isWorking = false;
                                             }
                                         }
                                     }
@@ -1199,7 +1231,7 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                     indis.get(indiObs).delay = 0;
                     indis.get(indiObs).status = "";
                     indis.get(indiObs).actions.remove(ii);
-                    indis.get(indiObs).actNeeds.put("economics", false);
+                    /*indis.get(indiObs).actNeeds.put("economics", false);
                     indis.get(indiObs).actNeeds.put("hunger", false);
                     indis.get(indiObs).actNeeds.put("bladder", false);
                     indis.get(indiObs).actNeeds.put("energy", false);
@@ -1217,7 +1249,7 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                     indis.get(indiObs).actNeeds.put("shopping", false);
                     indis.get(indiObs).actNeeds.put("love", false);
                     indis.get(indiObs).actNeeds.put("science", false);
-                    indis.get(indiObs).actNeeds.put("sport", false);
+                    indis.get(indiObs).actNeeds.put("sport", false);*/
                     indis.get(indiObs).setVisible(true);
                     indis.get(indiObs).updateAppearance(1, HoldObject.None);
                     for (int i = 0; i < objects.size(); i++) {
@@ -1236,21 +1268,19 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
 
         public void draw(Batch batch, float delta) {
             int sum = indis.get(indiObs).actions.size() == 0 ? 0 : -actionDelay(indis.get(indiObs).actions.get(0).action, indiObs);
-            if (indis.get(indiObs).delay != 0)
-                sum = (int) (System.currentTimeMillis() - (int) indis.get(indiObs).delay);
-            for (int i = 0; i < ii; i++) {
-                try {
-                    sum -= actionDelay(indis.get(indiObs).actions.get(i).action, indiObs);
+                if (indis.get(indiObs).delay != 0)
+                    sum = (int) (System.currentTimeMillis() - (int) indis.get(indiObs).delay);
+                for (int i = 0; i < ii; i++) {
+                    try {
+                        sum -= actionDelay(indis.get(indiObs).actions.get(i).action, indiObs);
+                    } catch (IndexOutOfBoundsException e) {
+                        sum -= 0;
+                    }
                 }
-                catch (IndexOutOfBoundsException e) {
-                    sum -= 0;
-                }
-            }
             fontFranTva.draw(batch, string, getX(), getY()+80);
             fontOswaldFurnPrice.draw(batch, (sum == 0 ? "0000" : sum+""), getX(), getY()+45);
         }
     }
-
     public class ScenCard extends Actor {
         public TextureRegion texture = new TextureRegion(new Texture(Gdx.files.internal("uiTva/scenario.png")));
         int ii, act;
@@ -1330,6 +1360,7 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
         outerTableRelations.setVisible(false);
         outerTableActions.setVisible(false);
         outerTableScenarios.setVisible(false);
+        outerTableMain.setVisible(false);
         tableRelationsChoose.setVisible(false);
         outerTableIndis.setVisible(false);
         groupBuild.setVisible(false);
@@ -1529,10 +1560,11 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
         iconTable = new Table();
         iconTableSystem = new Table();
         tableRelations = new Table().left();
-        tableActions = new Table().left().top();
+        tableActions = new Table().top().left();
         tableScenarios = new Table().left();
         tableIndis = new Table().left();
         tableNeeds = new Table();
+        tableMain = new Table().left().top();
         systemTable = new Table().left();
 
         //tableNeeds.setBounds(90,130, 580, 420);
@@ -1549,12 +1581,77 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
         style.fontColor = Color.CHARTREUSE;
         //tableNeeds.add(nameField).width(200);
         //tableNeeds.row();
+        SocietyScreen.CustomIcon iconBudget = new SocietyScreen.CustomIcon(new Texture("icons2/economics.png"), langString.get("budget"));
+        tableMain.add(iconBudget);
+        labelBudget = new Label("105", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
+        labelBudget.addListener(new ClickListener() {
+            public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
+                cardType = 83;
+                return true;
+            }
+            public void touchUp(InputEvent event, float x1, float y1, int pointer, int button) {
+                cardType = 0;
+            }
+        });
+        tableMain.add(labelBudget).colspan(4).left();
+        labelSex = new Label("105", new Label.LabelStyle(fontOswaldTre, Color.WHITE));
+        labelSex.addListener(new ClickListener() {
+            public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
+                cardType = 82;
+                return true;
+            }
+            public void touchUp(InputEvent event, float x1, float y1, int pointer, int button) {
+                cardType = 0;
+            }
+        });
+        tableMain.add(labelSex).right();
+        tableMain.row();
+        SocietyScreen.CustomIcon iconAge = new SocietyScreen.CustomIcon(new Texture("icons2/hourglass.png"), langString.get("age"));
+        tableMain.add(iconAge);
+        labelAge = new Label("105", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
+        labelAge.addListener(new ClickListener() {
+            public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
+                cardType = 84;
+                return true;
+            }
+            public void touchUp(InputEvent event, float x1, float y1, int pointer, int button) {
+                cardType = 0;
+            }
+        });
+        tableMain.add(labelAge);
+        SocietyScreen.CustomIcon iconSelfEsteem = new SocietyScreen.CustomIcon(new Texture("icons2/success.png"), langString.get("selfEsteem"));
+        tableMain.add(iconSelfEsteem);
+        labelSelfEsteem = new Label("105", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
+        labelSelfEsteem.addListener(new ClickListener() {
+            public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
+                cardType = 85;
+                return true;
+            }
+            public void touchUp(InputEvent event, float x1, float y1, int pointer, int button) {
+                cardType = 0;
+            }
+        });
+        tableMain.add(labelSelfEsteem);
+        SocietyScreen.CustomIcon iconLovePts = new SocietyScreen.CustomIcon(new Texture("icons2/love.png"), langString.get("lovePts"));
+        tableMain.add(iconLovePts);
+        labelLovePts = new Label("105", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
+        labelLovePts.addListener(new ClickListener() {
+            public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
+                cardType = 86;
+                return true;
+            }
+            public void touchUp(InputEvent event, float x1, float y1, int pointer, int button) {
+                cardType = 0;
+            }
+        });
+        tableMain.add(labelLovePts);
+        tableMain.row();
         SocietyScreen.CustomIcon iconAest = new SocietyScreen.CustomIcon(new Texture("icons2/aesthetics.png"), langString.get("aesthetics"));
         tableNeeds.add(iconAest);
         labelAesthetics = new Label("105", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
         labelAesthetics.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
-                cardType = 26; neededY = (int) labelAesthetics.getY();
+                cardType = 26;
                 return true;
             }
             public void touchUp(InputEvent event, float x1, float y1, int pointer, int button) {
@@ -1567,7 +1664,7 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
         labelBladder = new Label("105", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
         labelBladder.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
-                cardType = 27; neededY = (int) labelBladder.getY();
+                cardType = 27;
                 return true;
             }
             public void touchUp(InputEvent event, float x1, float y1, int pointer, int button) {
@@ -1580,7 +1677,7 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
         labelEducation = new Label("105", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
         labelEducation.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
-                cardType = 28; neededY = (int) labelEducation.getY();
+                cardType = 28;
                 return true;
             }
             public void touchUp(InputEvent event, float x1, float y1, int pointer, int button) {
@@ -1594,7 +1691,7 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
         labelEnergy = new Label("105", new Label.LabelStyle(fontOswaldTre, Color.CYAN));
         labelEnergy.addListener(new ClickListener() {
             public boolean touchDown(InputEvent event, float x1, float y1, int pointer, int button) {
-                cardType = 29; neededY = (int) labelEnergy.getY();
+                cardType = 29;
                 return true;
             }
             public void touchUp(InputEvent event, float x1, float y1, int pointer, int button) {
@@ -2355,6 +2452,7 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                     labelReset.setVisible(true);
                     outerTableActions.setVisible(true);
                     updateActions(indiObs);
+                    outerTableMain.setVisible(true);
                 }
                 else uiNo.play();
             }
@@ -2363,7 +2461,7 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
         btnMainSystem.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 if (groupObs > -1) {
-                    hideTables(false);
+                    hideTables(true);
                     outerTable.setSize(580, 680*Float.parseFloat(String.valueOf(screenCoef * screenCoef)));
                     cardTva.setType(63);
                     outerTable.setVisible(true);
@@ -2455,50 +2553,65 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                         ArrayList<Screw> stageScrew = new ArrayList<Screw>();
                         int id = society.getSocialSystems().size();
                         createRandomIndi("Producer", "TV", 1);
-                        stageScrew.add(new Screw(num,
-                                Arrays.asList(new Profit(Money, 30000)),
-                                Arrays.asList(new Profit(Money, 5000)), Arrays.asList(0)));
+                        stageScrew.add(new Screw(currentGlobalNum,
+                                new HashMap<TransmitItem, Integer>() {{
+                                    put(new TransmitItem(Money, new HashMap<>(), 30000), 5000);
+                                }}, Arrays.asList(0),
+                                Arrays.asList(Arrays.asList(0,10,1))));
                         newSystem.add((ArrayList<Screw>) stageScrew.clone());
                         stageScrew.clear();
                         createRandomIndi("Reporteur", "TV", 1);
                         stageScrew.add(new Screw(currentGlobalNum,
-                                Arrays.asList(new Profit(Money, 1500)),
-                                Arrays.asList(new Profit(Footage, 2), new Profit(ReportLead, 4)), Arrays.asList(0)));
+                                new HashMap<TransmitItem, Integer>() {{
+                                    put(new TransmitItem(Footage, new HashMap<ProfitEnum, Integer>(), 750), 2);
+                                    put(new TransmitItem(ReportLead, new HashMap<ProfitEnum, Integer>(), 750), 4);
+                                }}, Arrays.asList(0),
+                                Arrays.asList(Arrays.asList(0,19,2), Arrays.asList(1,19,2), Arrays.asList(2,19,2), Arrays.asList(3,19,2))));
                         createRandomIndi("Presentatrice", "TV", 0);
                         stageScrew.add(new Screw(currentGlobalNum,
-                                Arrays.asList(new Profit(Money, 1800), new Profit(ObjectNeeded, 31), new Profit(ReportLead, 10)),
-                                Arrays.asList(new Profit(ConsumerPercent, 5), new Profit(CameraEvent, 1)), Arrays.asList(4001),
+                                new HashMap<TransmitItem, Integer>() {{
+                                    put(new TransmitItem(ConsumerPercent, new HashMap<ProfitEnum, Integer>() {{put(ReportLead, 10);}}, 900), 5);
+                                    put(new TransmitItem(CameraEvent, new HashMap<ProfitEnum, Integer>() {{put(ObjectNeeded, 31);}}, 900), 1);
+                                }}, Arrays.asList(4001),
                                 Arrays.asList(Arrays.asList(0,19,2), Arrays.asList(1,19,2), Arrays.asList(2,19,2), Arrays.asList(3,19,2))));
                         createRandomIndi("Editeur", "TV", 0);
                         stageScrew.add(new Screw(currentGlobalNum,
-                                Arrays.asList(new Profit(Money, 2000)),
-                                Arrays.asList(new Profit(ReportLead, 15)), Arrays.asList(0)));
+                                new HashMap<TransmitItem, Integer>() {{
+                                    put(new TransmitItem(ReportLead, new HashMap<>(), 2000), 2);
+                                }}, Arrays.asList(0)));
                         createRandomIndi("Cameraman", "TV", 1);
                         stageScrew.add(new Screw(currentGlobalNum,
-                                Arrays.asList(new Profit(Money, 1000), new Profit(CameraEvent, 1)),
-                                Arrays.asList(new Profit(Footage, 5)), Arrays.asList(4000),
-                                Arrays.asList(Arrays.asList(0,18,3), Arrays.asList(1,18,3), Arrays.asList(2,18,3), Arrays.asList(3,18,3))));
+                                new HashMap<TransmitItem, Integer>() {{
+                                    put(new TransmitItem(Footage, new HashMap<ProfitEnum, Integer>() {{put(CameraEvent, 1);}}, 1000), 5);
+                                }}, Arrays.asList(4000), Arrays.asList(Arrays.asList(0,18,3), Arrays.asList(1,18,3), Arrays.asList(2,18,3), Arrays.asList(3,18,3))));
                         createRandomIndi("Montageur", "TV", 0);
                         stageScrew.add(new Screw(currentGlobalNum,
-                                Arrays.asList(new Profit(Money, 1500), new Profit(Footage, 5)),
-                                Arrays.asList(new Profit(Montage, 1)), Arrays.asList(0)));
+                                new HashMap<TransmitItem, Integer>() {{
+                                    put(new TransmitItem(Montage, new HashMap<ProfitEnum, Integer>() {{put(Footage, 5);}}, 1500), 1);
+                                }}, Arrays.asList(0),
+                                Arrays.asList(Arrays.asList(0,16,2), Arrays.asList(1,16,2), Arrays.asList(2,16,2), Arrays.asList(3,16,2))));
                         createRandomIndi("Pub agent", "TV", 0);
                         stageScrew.add(new Screw(currentGlobalNum,
-                                Arrays.asList(new Profit(Money, 2500)),
-                                Arrays.asList(new Profit(Ads, 5)), Arrays.asList(0)));
+                                new HashMap<TransmitItem, Integer>() {{
+                                    put(new TransmitItem(Ads, new HashMap<>(), 2500), 5);
+                                }}, Arrays.asList(0),
+                                Arrays.asList(Arrays.asList(0,14,2), Arrays.asList(1,14,2), Arrays.asList(2,14,2), Arrays.asList(3,14,2))));
                         newSystem.add((ArrayList<Screw>) stageScrew.clone());
                         stageScrew.clear();
                         createRandomIndi("Technicien", "TV", 1);
                         stageScrew.add(new Screw(currentGlobalNum,
-                                Arrays.asList(new Profit(Money, 1500), new Profit(Montage, 1), new Profit(Ads, 4)),
-                                Arrays.asList(new Profit(Emission, 1)), Arrays.asList(0)));
+                                new HashMap<TransmitItem, Integer>() {{
+                                    put(new TransmitItem(Emission, new HashMap<ProfitEnum, Integer>() {{put(Ads, 4); put(Montage, 1);}}, 1500), 1);
+                                }}, Arrays.asList(0),
+                                Arrays.asList(Arrays.asList(0,18,3), Arrays.asList(1,18,3), Arrays.asList(2,18,3), Arrays.asList(3,18,3))));
                         newSystem.add((ArrayList<Screw>) stageScrew.clone());
                         stageScrew.clear();
                         newSystem.add((ArrayList<Screw>) stageScrew.clone());
                         stageScrew.clear();
                         stageScrew.add(new Screw(-1000,
-                                Arrays.asList(new Profit(Emission, 1)),
-                                Arrays.asList(new Profit(Money, 30000)), Arrays.asList(0)));
+                                new HashMap<TransmitItem, Integer>() {{
+                                    put(new TransmitItem(Money, new HashMap<ProfitEnum, Integer>() {{put(Emission, 1);}}, 30000), 1);
+                                }}, Arrays.asList(0)));
                         newSystem.add((ArrayList<Screw>) stageScrew.clone());
                         stageScrew.clear();
                         society.getSocialSystems().add(new SocialSystem(0, "Le journal de La Cinq", newSystem, SocialSystemType.Channel, society.getIndi(cb, num-6).getInterests().get(0), society.getIndi(cb, num-6).getTalents().get(0)));
@@ -2506,7 +2619,7 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                         Gdx.app.error("social systems", society.getSocialSystems().toString());
                         removeExtraActors();
                     }});
-                sdoc.addListener(new ClickListener() {
+                /*sdoc.addListener(new ClickListener() {
                     public void clicked(InputEvent event, float x, float y) {
                         LinkedList<ArrayList<Screw>> newSystem = new LinkedList<ArrayList<Screw>>();
                         ArrayList<Screw> stageScrew = new ArrayList<Screw>();
@@ -2520,7 +2633,7 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                         checkEfficiency(id);
                         Gdx.app.error("social systems", society.getSocialSystems().toString());
                         removeExtraActors();
-                    }});
+                    }});*/
             }
         });
         btnReset = new SocietyScreen.CustomIcon(new Texture("uiTva/reset.png"));
@@ -2913,7 +3026,7 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
         outerTableRelations = new Table();
         outerTableRelations.add(scrollPaneRelations).expand().left();
         outerTableActions = new Table();
-        outerTableActions.add(scrollPaneActions).expand().left();
+        outerTableActions.add(scrollPaneActions).expand().left().top();
         outerTableScenarios = new Table();
         outerTableScenarios.add(scrollPaneScenarios).expand().left();
         outerTableIndis = new Table();
@@ -2928,11 +3041,17 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
         //scrollPaneTva.layout();
         outerTableTva = new Table().top().left();
         scrollPaneTre = new ScrollPane(tableNeeds);
+        scrollPaneMain = new ScrollPane(tableMain);
         //scrollPaneTre.layout();
         outerTableNeeds = new Table();
         outerTableNeeds.add(scrollPaneTre).expand().left().top();
         outerTableNeeds.setPosition(90, 170);
         outerTableNeeds.setSize(550, 720);
+        outerTableMain = new Table();
+        outerTableMain.add(scrollPaneMain).expand().left().top();
+        outerTableMain.setPosition(90, Gdx.graphics.getHeight()-510);
+        outerTableMain.setSize(550, 250);
+        outerTableMain.setVisible(false);
         if (Gdx.graphics.getHeight() < 1079) {
             outerTableNeeds.setSize(550, 420);
         }
@@ -2980,7 +3099,7 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
         outerTableScenarios.setPosition(100, 40);
         outerTableScenarios.setSize(530, 820*Float.parseFloat(String.valueOf(screenCoef)));
         outerTableActions.setPosition(100, 40);
-        outerTableActions.setSize(530, 400*Float.parseFloat(String.valueOf(screenCoef)));
+        outerTableActions.setSize(530, 600*Float.parseFloat(String.valueOf(screenCoef)));
         outerTableIndis.setPosition(Gdx.graphics.getWidth()-170, 120);
         outerTableIndis.setSize(170, 800*Float.parseFloat(String.valueOf(screenCoef)));
 
@@ -2996,6 +3115,7 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
         cardStage.addActor(outerTableScenarios);
         cardStage.addActor(outerTableIndis);
         cardStage.addActor(outerTableNeeds);
+        cardStage.addActor(outerTableMain);
         cardStage.addActor(tableInterests);
         cardStage.addActor(tableTalents);
         //cardStage.addActor(tableRoom);
@@ -3376,7 +3496,7 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                         objectsTest.get(objectObs).setAppearance(objectsTest.get(objectObs).getAppearance() - 1);
                     }
                 }
-                if (indis.size() > 0) {
+                if (indiObs > 0) {
                     for (int i = 0; i < furn.size(); i++) {
                         if (furn.get(i).type == objectsTest.get(objectObs).getType() && furn.get(i).appear == objectsTest.get(objectObs).getAppearance()) {
                             profit = (int) (furn.get(i).price * (0.6 + rnd(30) / 100.0));
@@ -5862,53 +5982,56 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
 
 
         public void act(float delta) {
+            double fpsmeter = 60 / Gdx.graphics.getFramesPerSecond();
             setBounds(actorX, actorY, texture.getWidth(), texture.getHeight());
             if (!LOADING && started && !society.getIndi(cb, myNum).alive) {
                 if (!(touchMarker((int) actorX, (int) actorY))) {
-                    actorY -= 1;
-                    actorX -= 1;
+                    actorY -= 1 * fpsmeter;
+                    actorX -= 1 * fpsmeter;
                     setTargetX(actorX - rnd(25));
                     setTargetX(actorY - rnd(25));
                 }
-                if (actorX < targetX) {
-                    actorX += 1;
+                if (actorX < targetX + 2 && actorX > targetX - 2) {
+                    actorX += 0;
                     if (!touchMarker((int) actorX, (int) actorY)) {
-                        actorY -= 1;
-                        actorX -= 1;
+                        setTargetX(actorX + rnd(25));
+                    }
+                }
+                else if (actorX < targetX) {
+                    actorX += 1 * fpsmeter;
+                    if (!touchMarker((int) actorX, (int) actorY)) {
+                        actorY -= 1 * fpsmeter;
+                        actorX -= 1 * fpsmeter;
                         setTargetX(actorX - rnd(25));
                     }
                 } else if (actorX > targetX) {
-                    actorX -= 1;
+                    actorX -= 1 * fpsmeter;
                     if (!touchMarker((int) actorX, (int) actorY)) {
-                        actorY += 1;
-                        actorX -= 1;
-                        setTargetX(actorX + rnd(25));
-                    }
-                } else if (actorX == targetX) {
-                    actorX += 0;
-                    if (!touchMarker((int) actorX, (int) actorY)) {
+                        actorY += 1 * fpsmeter;
+                        actorX -= 1 * fpsmeter;
                         setTargetX(actorX + rnd(25));
                     }
                 }/*else if (actorX > Gdx.graphics.getWidth()) {
                     actorX -= 1;
                 }*/
-                if (actorY < targetY) {
-                    actorY += 1;
+                if (actorY < targetY + 2 && actorY > targetY - 2) {
+                    actorY += 0;
                     if (!touchMarker((int) actorX, (int) actorY)) {
-                        actorY -= 1;
-                        actorX += 1;
+                        setTargetY(actorY + rnd(25));
+                    }
+                }
+                else if (actorY < targetY) {
+                    actorY += 1 * fpsmeter;
+                    if (!touchMarker((int) actorX, (int) actorY)) {
+                        actorY -= 1 * fpsmeter;
+                        actorX += 1 * fpsmeter;
                         setTargetY(actorY - rnd(25));
                     }
                 } else if (actorY > targetY) {
-                    actorY -= 1;
+                    actorY -= 1 * fpsmeter;
                     if (!touchMarker((int) actorX, (int) actorY)) {
-                        actorY += 1;
-                        actorX += 1;
-                        setTargetY(actorY + rnd(25));
-                    }
-                } else if (actorY == targetY) {
-                    actorY += 0;
-                    if (!touchMarker((int) actorX, (int) actorY)) {
+                        actorY += 1 * fpsmeter;
+                        actorX += 1 * fpsmeter;
                         setTargetY(actorY + rnd(25));
                     }
                 }
@@ -5919,50 +6042,52 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
             }
             else if (!LOADING && started && society.getIndi(cb, myNum).alive) {
                 if (!(touchMarker((int) actorX, (int) actorY))) {
-                    actorY -= 3;
-                    actorX -= 3;
+                    actorY -= 3 * fpsmeter;
+                    actorX -= 3 * fpsmeter;
                     setTargetX(actorX - rnd(25));
                     setTargetX(actorY - rnd(25));
                 }
-                if (actorX < targetX) {
-                    actorX += 1;
+                if (actorX < targetX + 4 && actorX > targetX - 4) {
+                    actorX += 0;
                     if (!touchMarker((int) actorX, (int) actorY)) {
-                        actorY -= 2;
-                        actorX -= 4;
+                        setTargetX(actorX + rnd(25));
+                    }
+                }
+                else if (actorX < targetX) {
+                    actorX += 1 * fpsmeter;
+                    if (!touchMarker((int) actorX, (int) actorY)) {
+                        actorY -= 2 * fpsmeter;
+                        actorX -= 4 * fpsmeter;
                         setTargetX(actorX - rnd(25));
                     }
                 } else if (actorX > targetX) {
-                    actorX -= 1;
+                    actorX -= 1 * fpsmeter;
                     if (!touchMarker((int) actorX, (int) actorY)) {
-                        actorY += 2;
-                        actorX -= 4;
-                        setTargetX(actorX + rnd(25));
-                    }
-                } else if (actorX == targetX) {
-                    actorX += 0;
-                    if (!touchMarker((int) actorX, (int) actorY)) {
+                        actorY += 2 * fpsmeter;
+                        actorX -= 4 * fpsmeter;
                         setTargetX(actorX + rnd(25));
                     }
                 }/*else if (actorX > Gdx.graphics.getWidth()) {
                     actorX -= 1;
                 }*/
-                if (actorY < targetY) {
-                    actorY += 1;
+                if (actorY < targetY + 4 && actorY > targetY - 4) {
+                    actorY += 0;
                     if (!touchMarker((int) actorX, (int) actorY)) {
-                        actorY -= 4;
-                        actorX += 2;
+                        setTargetY(actorY + rnd(25));
+                    }
+                }
+                else if (actorY < targetY) {
+                    actorY += 1 * fpsmeter;
+                    if (!touchMarker((int) actorX, (int) actorY)) {
+                        actorY -= 4 * fpsmeter;
+                        actorX += 2 * fpsmeter;
                         setTargetY(actorY - rnd(25));
                     }
                 } else if (actorY > targetY) {
-                    actorY -= 1;
+                    actorY -= 1 * fpsmeter;
                     if (!touchMarker((int) actorX, (int) actorY)) {
-                        actorY += 4;
-                        actorX += 2;
-                        setTargetY(actorY + rnd(25));
-                    }
-                } else if (actorY == targetY) {
-                    actorY += 0;
-                    if (!touchMarker((int) actorX, (int) actorY)) {
+                        actorY += 4 * fpsmeter;
+                        actorX += 2 * fpsmeter;
                         setTargetY(actorY + rnd(25));
                     }
                 }
@@ -5978,7 +6103,7 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                 ArrayList<Integer> avail = new ArrayList<Integer>();
                 if (society.getIndi(cb, myNum).getNeeds().get(0).getEducation() < society.getIndi(cb, myNum).getTalents().get(0).getMemory() * 0.7
                         && !(actNeeds.get("education") || actNeeds.get("music") || actNeeds.get("technics") || actNeeds.get("film") || actNeeds.get("sport"))) {
-                    avail.add(18); //лекции в телефоне
+                    //avail.add(18); //лекции в телефоне
                     if (society.getIndi(cb, myNum).getInterests().get(0).getBooks() > 40 && checkUnocc(11) != 0) {
                         avail.add(309);
                     }
@@ -6162,11 +6287,12 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                             avail.add(302);
                         }
                     }
+                    /*  ЗАЛИПАНИЕ В СМАРТФОН
                     if (society.getIndi(cb, myNum).getNeeds().get(0).getAesthetics() < 30 && !actNeeds.get("aesthetics")) {
                         avail.add(12);
                         avail.add(14);
                         actions.add(new Action(rnd(2) == 2 ? 12 : 14, (int)actorX+1, (int)actorY+1, homez));
-                    }
+                    }*/
                     if (!actNeeds.get("aesthetics") && checkUnocc(29) == 0 && checkUnocc(7) == 0
                             && society.getBoxes().get(cb).getProperty() == Private
                             && getCheapestItem(7) < society.getIndi(cb, myNum).getWealth()) {
@@ -6379,9 +6505,10 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                         }
                         //actions.add(0, new Action(603, 5000, objects.get(n).ox+50, objects.get(n).oy-100, homez));
                     }
+                    /*    ЗАЛИПАНИЕ В СМАРТФОН
                     else if (society.getIndi(cb, myNum).getNeeds().get(0).getFun() < 20 && !actNeeds.get("fun")) {
                         actions.add(new Action(rnd(2) == 2 ? 10 : rnd(2) == 2 ? 19 : 16, (int)actorX+1, (int)actorY+1, homez));
-                    }
+                    }*/
                 }
                 //ОБЩЕНИЕ
                 if ((society.getIndi(cb, myNum).getNeeds().get(0).getSocial() < society.getIndi(cb, myNum).getTalents().get(0).getSpeech() * 0.7 || (society.getIndi(cb, myNum).getTalents().get(0).getSpeech() > 50 && rnd(2) == 1)
@@ -6714,7 +6841,7 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                     targetX = actions.get(0).targetX;
                     targetY = actions.get(0).targetY;
                     if (status.equals("")) {status = specialStatus(actions.get(0).action, actions);}
-                    if (delay == 0 && actorX == actions.get(0).targetX && actorY == actions.get(0).targetY && !(new ArrayList<Integer>(Arrays.asList(1307, 1308, 1309, 1310)).contains(actions.get(0).action))) {
+                    if (delay == 0 && onRightPlace() && !(new ArrayList<Integer>(Arrays.asList(1307, 1308, 1309, 1310)).contains(actions.get(0).action))) {
                         delay = System.currentTimeMillis() + actionDelay(actions.get(0).action, myNum);
                         if (new ArrayList<Integer>(Arrays.asList(201, 400, 402, 801, 802, 1201, 1202, 1203, 1204, 1310, 1401)).contains(actions.get(0).action)) {
                             setVisible(false);
@@ -6762,7 +6889,7 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                             updateAppearance(2, HoldObject.None);
                         }
                     }
-                    else if (delay == 0 && actorX == actions.get(0).targetX && actorY == actions.get(0).targetY && Math.abs(actions.get(0).indis.get(0).getX() - getX()) < 30 && Math.abs(actions.get(0).indis.get(0).getY() - getY()) < 30) {
+                    else if (delay == 0 && onRightPlace() && Math.abs(actions.get(0).indis.get(0).getX() - getX()) < 30 && Math.abs(actions.get(0).indis.get(0).getY() - getY()) < 30) {
                         delay = System.currentTimeMillis() + actionDelay(actions.get(0).action, myNum);
                         if (new ArrayList<Integer>(Arrays.asList(1301, 1302, 1303, 1304, 1305, 1315, 1316, 1317, 1318, 1319, 1320)).contains(actions.get(0).action)) {
                             if (rnd(2) == 1) {
@@ -6772,7 +6899,7 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                             }
                         }
                     }
-                    else if (delay < System.currentTimeMillis() && actorX == actions.get(0).targetX && actorY == actions.get(0).targetY) {
+                    else if (delay < System.currentTimeMillis() && onRightPlace()) {
                         isTalking = false;
                         updateAppearance(1, HoldObject.None);
                         if (actions.get(0).action == 4002) {frameBorder.remove();}
@@ -6823,7 +6950,7 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                             actions.subList(10, actions.size() - 1).clear();
                         }
                     }
-                    else if (delay > System.currentTimeMillis() && (actorX != actions.get(0).targetX || actorY != actions.get(0).targetY)) {
+                    else if (delay > System.currentTimeMillis() && onWrongPlace()) {
                         //нужно адекватно затирать в actNeeds true на false
                         delay = 0;
                         status = "";
@@ -6839,6 +6966,14 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                 }
                 catch (IndexOutOfBoundsException e) {}
             }
+        }
+
+        public boolean onRightPlace() {
+            return actorX<actions.get(0).targetX + 4 && actorX > actions.get(0).targetX - 4 && actorY < actions.get(0).targetY + 4 && actorY > actions.get(0).targetY - 4;
+        }
+
+        public boolean onWrongPlace() {
+            return actorX > actions.get(0).targetX + 4 || actorX < actions.get(0).targetX - 4 || actorY > actions.get(0).targetY + 4 || actorY < actions.get(0).targetY - 4;
         }
 
         public void setAppearance(int appearance) {
@@ -7865,6 +8000,24 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
             if (cardType == 62) {
                 society.getIndi(cb, indiObs).getInterests().get(0).setMystic(society.getIndi(cb, indiObs).getInterests().get(0).getMystic() + cardCount);
             }
+            if (cardType == 82) {
+                society.getIndi(cb, indiObs).setGender(cardCount == -1? 0 : 1);
+                getIndiActor(indiObs).gender = society.getIndi(cb, indiObs).getGender();
+                getIndiActor(indiObs).updateAppearance(1, HoldObject.None);
+            }
+            if (cardType == 83) {
+                int wealth = society.getIndi(cb, indiObs).getWealth();
+                society.getIndi(cb, indiObs).setWealth(wealth * 0.005 < 0 ? wealth + 1 : (int) (wealth + wealth * 0.005));
+            }
+            if (cardType == 84) {
+                society.getIndi(cb, indiObs).setAge(society.getIndi(cb, indiObs).getAge() + cardCount);
+            }
+            if (cardType == 85) {
+                society.getIndi(cb, indiObs).setSelfEsteem(society.getIndi(cb, indiObs).getSelfEsteem() + cardCount);
+            }
+            if (cardType == 86) {
+                society.getIndi(cb, indiObs).setLove(society.getIndi(cb, indiObs).getLove() + cardCount);
+            }
         }
         else if (cardType == 0) {
             arrowHint.setVisible(false);
@@ -7992,8 +8145,8 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
     }
 
     public void updateInterface(int type) {
-        int[] arr = new int[] {18, 22, 41, 42, 43, 63, 64, 65}; //63,64,65 are for groups
-        if (type == 18) {
+        int[] arr = new int[] {22, 41, 42, 43, 63, 64, 65}; //63,64,65 are for groups
+        /*if (type == 18) {
             java.lang.StringBuilder s = new StringBuilder(langString.get("actionsCount") + ": " +
                     indis.get(indiObs).actions.size() + "\n");
             int sum = 0;
@@ -8003,14 +8156,14 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
                     + ", " + langString.get("yearBirth") + ": " + society.getIndi(cb, indiObs).getAge()
                     + "\n" + langString.get("budget") + ":" + society.getIndi(cb, indiObs).getWealth()
                     + "\n" + langString.get("address") + ":" + society.getIndi(cb, indiObs).getHomeX() + "/" + society.getIndi(cb, indiObs).getHomeY() + "/" + society.getIndi(cb, indiObs).getHomeZ()
-                    + /*"\n" + "Жизненная цель:" + society.getIndiTest(cb, indiObs).getLifePurpose()
-                        + */ "\n" + langString.get("selfEsteem") + ":" + society.getIndi(cb, indiObs).getSelfEsteem()
+                    + "\n" + "Жизненная цель:" + society.getIndiTest(cb, indiObs).getLifePurpose()
+                    +  "\n" + langString.get("selfEsteem") + ":" + society.getIndi(cb, indiObs).getSelfEsteem()
                     +  "\n" + langString.get("lovePts") + ":" + society.getIndi(cb, indiObs).getLove()
                     +  "\n" + "Тип помещения:" + society.getBoxes().get(cb).getProperty()
                     +  "\n\n"
                     + "EXTRA ACTIONS LOADED:" + extraActs.size() + "\n" + s
             );
-        }
+        }*/
         if (type == 22) {
             labelHint.setText("Внешность:" + society.getIndi(cb, indiObs).getSocialLifts().get(0).isAppearance()
                     + "\n" + "Карьера:" + society.getIndi(cb, indiObs).getSocialLifts().get(0).isCareer()
@@ -8065,28 +8218,30 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
             );
         }
         if (type == 63) {
-            String str = "";
+            StringBuilder str = new StringBuilder("");
             Gdx.app.log("social systems size", society.getSocialSystems().size()+"");
             for (int i = 0; i < society.getSocialSystems().get(groupObs).screws.size(); i++) {
-                str+=langString.get("level") + " " + i + ":\n";
+                str.append(langString.get("level") + " " + i + ":\n");
                 for (int j=0; j< society.getSocialSystems().get(groupObs).screws.get(i).size(); j++) {
                     int n = society.getSocialSystems().get(groupObs).screws.get(i).get(j).id;
                     try {
-                        str += "  " + society.getIndi(cb, n-1).name + " " + society.getIndi(cb, n-1).surname + ", " + df.format(society.getSocialSystems().get(groupObs).screws.get(i).get(j).efficiency * 100) + "%\n";
+                        str.append("  ").append(society.getIndi(cb, n-1).name).append(" ").append(society.getIndi(cb, n-1).surname).append(", ").append(df.format(society.getSocialSystems().get(groupObs).screws.get(i).get(j).efficiency * 100)).append("%\n");
                     }
                     catch (IndexOutOfBoundsException e) {
-                        str += "  " + langString.get("consumers") + "\n";
+                        str.append("  ").append(langString.get("consumers")).append("\n");
                     }
-                    for (int k=0; k<society.getSocialSystems().get(groupObs).screws.get(i).get(j).receive.size(); k++)
-                        str+="    R:"+society.getSocialSystems().get(groupObs).screws.get(i).get(j).receive.get(k).type + ": " + society.getSocialSystems().get(groupObs).screws.get(i).get(j).receive.get(k).amount + "\n";
-                    for (int k=0; k<society.getSocialSystems().get(groupObs).screws.get(i).get(j).transmit.size(); k++)
-                        str+="    T:"+society.getSocialSystems().get(groupObs).screws.get(i).get(j).transmit.get(k).type + ": " + society.getSocialSystems().get(groupObs).screws.get(i).get(j).transmit.get(k).amount + "\n";
+                    for (TransmitItem item : society.getSocialSystems().get(groupObs).screws.get(i).get(j).transmit.keySet()) {
+                        str.append("    T:").append(item.nameString).append(":").append((int) (society.getSocialSystems().get(groupObs).screws.get(i).get(j).transmit.get(item) * society.getSocialSystems().get(groupObs).screws.get(i).get(j).efficiency)).append("\n");
+                        for (ProfitEnum receive: item.receives.keySet()) {
+                            str.append("      R:").append(receive.name()).append(":").append(item.receives.get(receive)).append("\n");
+                        }
+                    }
                     for (int k=0; k<society.getSocialSystems().get(groupObs).screws.get(i).get(j).etiquette.size(); k++)
-                        str+="    E:"+society.getSocialSystems().get(groupObs).screws.get(i).get(j).etiquette.get(k) + "\n";
+                        str.append("    E:").append(society.getSocialSystems().get(groupObs).screws.get(i).get(j).etiquette.get(k)).append("\n");
                     for (int k=0; k<society.getSocialSystems().get(groupObs).screws.get(i).get(j).hours.size(); k++)
-                        str+="    H:"+society.getSocialSystems().get(groupObs).screws.get(i).get(j).hours.get(k).get(0) + ", hh:" +
-                                society.getSocialSystems().get(groupObs).screws.get(i).get(j).hours.get(k).get(1) + ":00, for " +
-                                society.getSocialSystems().get(groupObs).screws.get(i).get(j).hours.get(k).get(2) + " h.\n";
+                        str.append("    H:").append(society.getSocialSystems().get(groupObs).screws.get(i).get(j).hours.get(k).get(0)).append(", hh:")
+                                .append(society.getSocialSystems().get(groupObs).screws.get(i).get(j).hours.get(k).get(1)).append(":00, for ")
+                                .append(society.getSocialSystems().get(groupObs).screws.get(i).get(j).hours.get(k).get(2)).append(" h.\n");
                 }
             }
             labelHint.setText(str);
@@ -8134,6 +8289,11 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
             labelQuickness.setText(society.getIndi(cb, indiObs).getTalents().get(0).getQuickness() + " ");
             labelSpeech.setText(society.getIndi(cb, indiObs).getTalents().get(0).getSpeech() + " ");
             labelStamina.setText(society.getIndi(cb, indiObs).getTalents().get(0).getStamina() + " ");
+            labelBudget.setText(society.getIndi(cb, indiObs).getWealth() + "");
+            labelAge.setText(society.getBoxes().get(cb).yyyy - society.getIndi(cb, indiObs).getAge() + "");
+            labelSelfEsteem.setText(society.getIndi(cb, indiObs).getSelfEsteem() + "");
+            labelLovePts.setText(society.getIndi(cb, indiObs).getLove() + "");
+            labelSex.setText(society.getIndi(cb, indiObs).getGender() == 1 ? "M" : "F");
         }
         if (labelCelsius.getText().toString().equals("°C")) {
             labelTemperature.setText(society.getBoxes().get(cb).getTemperature() + "");
@@ -8804,9 +8964,6 @@ public class SocietyScreen extends ApplicationAdapter implements Screen, Gesture
             eff += indiT.getSpeech() / systemT.getSpeech();
             eff += indiT.getStamina() / systemT.getStamina();
             society.getSocialSystems().get(a).screws.get(b).get(i).efficiency = eff / 31;
-            for (int j=0; j<society.getSocialSystems().get(a).screws.get(b).get(i).transmit.size(); j++) {
-                society.getSocialSystems().get(a).screws.get(b).get(i).transmit.get(j).amount *= society.getSocialSystems().get(a).screws.get(b).get(i).efficiency;
-            }
         }
     }
 

@@ -1,11 +1,12 @@
 package com.peoplebox;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 public class SocialSystem {
     public LinkedList<ArrayList<Screw>> screws;
-    public ArrayList<ProfitEnum> profits = new ArrayList<>();
+    public HashMap<ProfitEnum, Integer> profits = new HashMap<>();
     public SocietyScreen.InterestsArray interests;
     public SocialSystemType type;
     public SocietyScreen.TalentsArray talents;
